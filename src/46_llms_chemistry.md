@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 32, 34 and 45.
 ```
 
-Language models read and write text, and much of chemistry *is* text: SMILES, reaction equations, procedures, papers. Models fine-tuned on chemical text can predict properties from a handful of examples {cite:p}`jablonka2024`, word embeddings trained on the literature encode latent materials knowledge {cite:p}`tshitoyan2019`, and language models wired to real tools can plan and execute experiments {cite:p}`bran2024,boiko2023`.
+Language models read and write text, and much of chemistry *is* text: SMILES, reaction equations, procedures, papers. Models fine-tuned on chemical text can predict properties from a handful of examples {cite:p}`jablonka2024`, word embeddings trained on the literature encode latent materials knowledge {cite:p}`tshitoyan2019`, and language models wired to real tools can plan and execute experiments {cite:p}`bran2024,boiko2023`. A **language model** is a network trained to predict the next piece of text, and the central discovery of the last few years is that a model trained on enough text can be *asked* to do a task in words, with examples supplied in the prompt rather than by retraining. For chemistry this matters in three ways: chemical notation is itself a language, so the same machinery applies to SMILES and reaction strings; the knowledge locked in millions of papers and procedures can be extracted as text; and a model can be given tools, such as the RDKit functions of Part III, and left to decide which to call. This chapter builds each piece from scratch, including a tokeniser, word embeddings, a procedure parser and an agent loop, so that nothing is hidden, and it ends with what has to be checked before trusting any of it.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -36,7 +36,7 @@ df = load_data("molecules_sim.csv")
 
 ## Chemistry as a language
 
-A tokeniser splits text into units a model can handle. For chemistry, the unit matters: characters, SMILES atoms, or learned subwords.
+A tokeniser splits text into units a model can handle. For chemistry, the unit matters: characters, SMILES atoms, or learned subwords. Splitting a SMILES string into single characters is simple but wrong in places: `Cl` would become a carbon followed by a meaningless `l`, and `[NH4+]` would become six unrelated symbols. A regular expression (Chapter 3) that knows about two-letter elements and bracketed atoms keeps each chemically meaningful unit together. The alternatives are compared on aspirin below.
 
 ```{code-cell} ipython3
 SMILES_ATOM = re.compile(r"(\[[^\]]+]|Br|Cl|Si|@@|%\d{2}|[BCNOPSFIbcnops]|\(|\)|\.|=|#|-|\+|\\|/|:|~|@|\*|\$|\d)")
@@ -47,7 +47,13 @@ print("atom tokens:", SMILES_ATOM.findall(s))
 
 ### Byte-pair encoding, from scratch
 
-BPE repeatedly merges the most frequent adjacent pair, which is how modern tokenisers learn chemical motifs such as `C(=O)O` as single units.
+**Byte-pair encoding** (BPE) is the compromise used by almost every modern language model. Instead of fixing the units in advance, it learns them from the data: start from the smallest units, count every adjacent pair, merge the most frequent pair into a single new unit, and repeat. Frequent sequences therefore become single tokens while rare ones stay split, which keeps the vocabulary small and the sequences short. BPE repeatedly merges the most frequent adjacent pair, which is how modern tokenisers learn chemical motifs such as `C(=O)O` as single units. One merge on a tiny corpus shows the mechanics:
+
+```{code-cell} ipython3
+from collections import Counter
+seq = ["C", "=", "O", "C", "=", "O", "N"]
+print(Counter(zip(seq, seq[1:])).most_common(2))     # ('C','=') is the most frequent pair
+```
 
 ```{code-cell} ipython3
 def learn_bpe(corpus, n_merges=60):
@@ -84,7 +90,14 @@ The model discovers carbonyls, aromatic rings and common substituents without be
 
 ## Word embeddings capture chemical meaning
 
-Tshitoyan and co-workers showed that embeddings trained on materials abstracts place related concepts near each other, and can even rank candidate materials before anyone studied them {cite:p}`tshitoyan2019`. Here is the mechanism on a small synthetic corpus, with embeddings learned by factorising a co-occurrence matrix.
+Tshitoyan and co-workers showed that embeddings trained on materials abstracts place related concepts near each other, and can even rank candidate materials before anyone studied them {cite:p}`tshitoyan2019`. Here is the mechanism on a small synthetic corpus, with embeddings learned by factorising a co-occurrence matrix. An **embedding** is a vector of numbers standing for a word, arranged so that words used in similar contexts have similar vectors. The simplest way to obtain one is to count how often each pair of words appears near each other, which gives a large square **co-occurrence matrix**, and then compress it with the singular value decomposition (Chapter 12), keeping only the strongest few directions. Similarity between two words is then the dot product of their vectors, which, because the vectors are scaled to unit length, is the cosine of the angle between them: 1 for identical direction, 0 for unrelated. Counting pairs within a window of four words on two sentences:
+
+```{code-cell} ipython3
+toks = "lithium cobalt oxide cathode".split()
+print([(a, b) for i, a in enumerate(toks) for b in toks[i + 1:i + 3]])
+```
+
+The log of the counts, `np.log1p`, is used rather than the raw counts so that a few very common words do not dominate.
 
 ```{code-cell} ipython3
 SENTENCES = [
@@ -151,7 +164,7 @@ plt.show()
 
 ## Text mining a procedure
 
-Much chemical knowledge sits in prose. Rule-based extraction gets a long way, and is a good baseline before reaching for a language model.
+Much chemical knowledge sits in prose: the experimental section of a paper states what was mixed, in what amount, at what temperature, for how long, and with what yield, but as sentences rather than as a table. Turning that into data is **information extraction**. Rule-based extraction gets a long way, and is a good baseline before reaching for a language model. The approach below uses regular expressions for the parts that have a fixed shape, such as `(1.87 g, 10.0 mmol)` or `110 °C`, and then looks at the words immediately before each bracket to find the reagent's name, dropping prose words such as "solution" and "added" with a stop list.
 
 ```{code-cell} ipython3
 PROCEDURE = """To a solution of 4-bromoanisole (1.87 g, 10.0 mmol) in dry toluene (40 mL) was added
@@ -205,7 +218,7 @@ This works, but notice how much of the code is bookkeeping about prose rather th
 
 ## In-context learning: predicting from a few examples
 
-A language model can be given examples in its prompt and asked to continue the pattern, with no training at all. Whether this beats a small fitted model is an empirical question, and often it does not {cite:p}`jablonka2024`. We can measure the idea honestly with a nearest-neighbour "prompt" baseline: the same information the model would see.
+A language model can be given examples in its prompt and asked to continue the pattern, with no training at all. Whether this beats a small fitted model is an empirical question, and often it does not {cite:p}`jablonka2024`. We can measure the idea honestly with a nearest-neighbour "prompt" baseline: the same information the model would see. **In-context learning** means putting a few labelled examples in the prompt, as text, and asking for the answer for a new case; nothing in the model is changed, so it is called *few-shot* learning when there are a handful of examples. This book cannot call a commercial model, and the result would not be reproducible if it did, so the comparison below uses a stand-in that has access to exactly the same information: for each test molecule, find the three most similar molecules among the examples and average their values, weighted by similarity (Chapter 21). This is reasoning by analogy, which is roughly what a language model can do with a short prompt. It is compared against a random forest fitted to the same examples, as the number of examples grows from 5 to 1500.
 
 ```{code-cell} ipython3
 from rdkit.Chem import rdFingerprintGenerator, DataStructs
@@ -241,11 +254,11 @@ plt.show()
 res.round(3)
 ```
 
-With a handful of examples, reasoning by analogy from similar molecules wins; once there are hundreds, a fitted model is better. That is the practical rule for deciding whether to prompt or to train.
+With five or ten examples, reasoning by analogy from similar molecules wins; from about twenty onwards the fitted model is better, and its lead grows steadily with the amount of data. That is the practical rule for deciding whether to prompt or to train: prompting is for the case where almost no labelled data exist.
 
 ## A tool-using agent, written out explicitly
 
-An "agent" is a loop: the model decides which tool to call, the tool runs, the result goes back into the context. The tools are ordinary Python functions. Here is the loop with a rule-based planner standing in for the model, so you can see the mechanism with nothing hidden.
+An "agent" is a loop: the model decides which tool to call, the tool runs, the result goes back into the context. The tools are ordinary Python functions. Here is the loop with a rule-based planner standing in for the model, so you can see the mechanism with nothing hidden. The parts are always the same. The **tools** are plain functions with a described input and output, here name lookup, property calculation, a solubility model and a substructure count. The **scratchpad** holds what has been learned so far. The **planner** looks at the task and the scratchpad and returns the next tool to call with its arguments; in a real agent this is the language model, and the scratchpad is part of its prompt. The loop runs the chosen tool, adds the result to the scratchpad, and stops when the planner has nothing left to ask or a tool reports an error. Every function returns a string beginning with `ERROR` rather than raising, so the loop can decide what to do about failure instead of crashing.
 
 ```{code-cell} ipython3
 def tool_lookup(name):
@@ -320,6 +333,8 @@ The agent's answer is only as trustworthy as its tools, and every claim it makes
 
 ## Where models go wrong
 
+A language model writes text that looks right, which is not the same as text that is right. A SMILES string it produces can be unparseable, or it can parse into a molecule that cannot exist, such as a carbon with five bonds. RDKit's `MolFromSmiles` returns `None` in both cases, which is why every structure must go through it before being used for anything. The examples below include one string that is perfectly fine, to make the point that the check, not the eye, is what decides.
+
 ```{code-cell} ipython3
 BAD_OUTPUTS = {"C1CC(C": "unbalanced ring and bracket", "c1ccccc1C(C)(C)(C)C": "five-valent carbon",
                "CC(=O)O)C": "stray closing bracket", "N(C)(C)(C)(C)C": "five bonds to nitrogen",
@@ -344,6 +359,16 @@ Any structure a language model writes must be parsed and sanitised before use. R
 4. **Disclose AI assistance** as your journal, institution or funder requires.
 5. **Keep a human responsible.** The author of a paper is accountable for every claim in it.
 6. **Think about misuse.** The same generative tools that design medicines can design toxins {cite:p}`urbina2022`. Do not build or publish systems aimed at harmful molecules, and treat screening against hazard lists as a basic professional duty.
+```
+
+```{admonition} Summary
+:class: tip
+- Chemical notation is a language: tokenise SMILES by atom, or learn subword units with byte-pair encoding.
+- Co-occurrence counts plus an SVD give embeddings in which related concepts sit close together.
+- Rule-based extraction of procedures is a workable baseline, and shows why structured output needs validating.
+- Few examples favour reasoning by analogy; many examples favour a fitted model.
+- An agent is a loop of planner, tool call and scratchpad; keep the trace so every claim is traceable.
+- Parse and sanitise every structure a model writes, and record the prompt, model and date.
 ```
 
 ## Exercises
