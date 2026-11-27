@@ -14,7 +14,7 @@ kernelspec:
 Assumes Parts V and VI.
 ```
 
-The previous parts built the pieces: models, representations, optimisers, generators. This chapter assembles them into the **discovery loop** that now runs in laboratories around the world: predict, select, make, measure, learn, repeat. Autonomous versions of this loop have discovered photocatalysts {cite:p}`burger2020` and synthesised new inorganic materials {cite:p}`szymanski2023`, while large-scale screening has proposed hundreds of thousands of candidate crystals {cite:p}`merchant2023`. The field's shape is well surveyed by Butler and co-workers {cite:p}`butler2018`.
+The previous parts built the pieces: models, representations, optimisers, generators. This chapter assembles them into the **discovery loop** that now runs in laboratories around the world: predict, select, make, measure, learn, repeat. Autonomous versions of this loop have discovered photocatalysts {cite:p}`burger2020` and synthesised new inorganic materials {cite:p}`szymanski2023`, while large-scale screening has proposed hundreds of thousands of candidate crystals {cite:p}`merchant2023`. The field's shape is well surveyed by Butler and co-workers {cite:p}`butler2018`. What makes the loop different from ordinary modelling is that the model's job is not to be accurate but to *decide what to do next*. In a project with a fixed budget of experiments, the measure of success is how good a result the budget buys, and that depends on the selection rule as much as on the model. The loop also has to respect two facts that a benchmark dataset hides: some candidates cannot be made at all, and experiments that fail still cost time. This chapter runs a complete campaign on the book's simulated library, compares four selection strategies against random choice, handles several objectives at once with Pareto fronts, filters for synthesisability, and ranks candidates by expected value rather than by predicted property.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -61,7 +61,7 @@ plt.show()
 
 ## A complete campaign, end to end
 
-We now run a full closed-loop campaign on our simulated chemistry. The "laboratory" is a function that returns a measurement with noise; the agent may call it only a limited number of times. This is exactly the structure of a real project, with the advantage that we know the right answer and can score the search.
+We now run a full closed-loop campaign on our simulated chemistry. The "laboratory" is a function that returns a measurement with noise; the agent may call it only a limited number of times. This is exactly the structure of a real project, with the advantage that we know the right answer and can score the search. The hidden objective combines four of the simulated properties into one number to be maximised: potency, solubility up to the point where more stops helping, a penalty for predicted toxicity, and drug-likeness. No part of the search is allowed to look at it; the only access is through `laboratory(i)`, which returns the value for one library member with noise added, standing in for measurement error. Counting calls to that function is how the strategies are compared.
 
 ```{code-cell} ipython3
 gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
@@ -81,6 +81,8 @@ def laboratory(i, noise=0.12):
 
 print(f"library size {len(df)},  best achievable objective {true_objective.max():.2f}")
 ```
+
+A campaign starts with a dozen molecules chosen at random, then repeats: fit models to everything measured so far, score every unmeasured molecule, measure the best six, and continue until the budget is spent. The four strategies differ only in how they score. **Random** ignores the model entirely and is the baseline every method must beat. **Greedy** picks the highest predicted value, pure exploitation. **Explore** picks the most uncertain, pure exploration. **Expected improvement** (Chapter 35) balances the two, and needs both a prediction and an uncertainty, which come from an ensemble of five random forests trained with different random seeds: their mean is the prediction and their spread the uncertainty (Chapter 34). Measuring a **batch** of six at a time rather than one reflects how experiments are actually run, in plates and racks.
 
 ```{code-cell} ipython3
 def campaign(strategy, budget=120, n_init=12, seed=0, batch=6):
@@ -132,7 +134,7 @@ ax.set(xlabel="molecules measured", ylabel="best objective found", title="Four s
 ax.legend(); plt.show()
 ```
 
-Pure exploitation (greedy) stalls on a local family; pure exploration wastes measurements; expected improvement, which balances the two, reaches the top of the library with a fraction of the experiments.
+Expected improvement ends ahead of the rest, reaching about 2.65 of the best possible 2.94 after 120 measurements. The other three are close together and none of them beats random by much: greedy stalls on one family of molecules, pure exploration spends its budget on the molecules it knows least about, and random choice from 2660 molecules is itself a reasonable way to find a good one. Two lessons follow. The gain from a clever strategy is real but modest, so it has to be measured rather than assumed, and a narrow gap over random is not a failure of the method but a property of the library: when good molecules are common, there is little for a model to add.
 
 ```{code-cell} ipython3
 trace, measured, values = campaign("EI", budget=120, seed=1)
@@ -143,7 +145,14 @@ Draw.MolsToGridImage([Chem.MolFromSmiles(s) for s in found.smiles[:8]], molsPerR
 
 ## Multi-objective optimisation and the Pareto front
 
-Real projects never optimise one number. A molecule that is potent but insoluble is useless, and so is the reverse. The honest answer is not a single winner but the **Pareto front**: the set of molecules that no other molecule beats on every objective at once.
+Real projects never optimise one number. A molecule that is potent but insoluble is useless, and so is the reverse. The honest answer is not a single winner but the **Pareto front**: the set of molecules that no other molecule beats on every objective at once. One point is said to **dominate** another when it is at least as good on every objective and strictly better on at least one; the Pareto front is everything that nothing else dominates. Each front point represents a different trade-off, and choosing among them is a judgement about the project, not a calculation. On four candidates scored for two objectives, both to be maximised:
+
+```{code-cell} ipython3
+pts = np.array([[7.0, -3.0], [6.0, -2.0], [5.0, -4.0], [7.5, -4.5]])
+print("dominated by the first point:", [bool(np.all(p <= pts[0]) and np.any(p < pts[0])) for p in pts])
+```
+
+The third point is beaten by the first on both counts and so drops out; the second and fourth survive because each is better than the first on one objective.
 
 ```{code-cell} ipython3
 def pareto_front(points):
@@ -151,7 +160,7 @@ def pareto_front(points):
     keep = np.ones(len(points), dtype=bool)
     for i, p in enumerate(points):
         if keep[i]:
-            dominated = np.all(points >= p, axis=1) & np.any(points > p, axis=1)
+            dominated = np.all(points <= p, axis=1) & np.any(points < p, axis=1)
             keep[dominated] = False
     return np.where(keep)[0]
 
@@ -177,7 +186,11 @@ Draw.MolsToGridImage([Chem.MolFromSmiles(s) for s in best_front.smiles], molsPer
 
 ### Scalarisation and hypervolume
 
-Two standard ways to turn several objectives into a decision: combine them with weights (and vary the weights), or measure the **hypervolume** a candidate set dominates.
+Two standard ways to turn several objectives into a decision: combine them with weights (and vary the weights), or measure the **hypervolume** a candidate set dominates. **Scalarisation** means adding the standardised objectives together with weights, which turns the problem back into a single number; the honest way to use it is to sweep the weights and see how the winner changes, which traces out the front. **Hypervolume** scores a whole set of candidates rather than one: it is the area (in two objectives, the volume in more) of the region that the set dominates, measured from a reference corner at the worst value of each objective. A set that covers the front well has a large hypervolume, so it is the standard way to compare multi-objective searches. For a single point two units better than the reference on each axis, the area is simply 2 × 2:
+
+```{code-cell} ipython3
+print((7.0 - 5.0) * (-2.0 - -4.0), "area dominated by one point above the reference corner")
+```
 
 ```{code-cell} ipython3
 def hypervolume_2d(points, ref):
@@ -208,9 +221,16 @@ ax.set(xlabel="pIC50", ylabel="logS", title="Each weighting picks a different wi
 plt.show()
 ```
 
+The campaign's hypervolume is barely above that of 120 random molecules, which is the expected result and worth stating: the campaign was optimising the single combined objective, not these two, so it had no reason to spread its measurements along the potency–solubility front. If the front is what matters, the acquisition function has to be the one that scores it, such as expected hypervolume improvement.
+
 ## Making the winners: synthesisability filters
 
-A candidate that cannot be made is not a candidate. Cheap filters catch most of the nonsense before a chemist sees it.
+A candidate that cannot be made is not a candidate. Cheap filters catch most of the nonsense before a chemist sees it. Three things make a molecule hard or risky to make: reactive or unstable groups, which are matched with the SMARTS alerts of Chapter 21; **stereocentres**, carbons whose four different substituents can be arranged two ways, since each one doubles the number of possible products and usually needs a separate controlled step; and sheer size, since every extra ring and atom means another step. `FindMolChiralCenters` lists the stereocentres, including those the SMILES string leaves unspecified:
+
+```{code-cell} ipython3
+print(Chem.FindMolChiralCenters(Chem.MolFromSmiles("CC(N)C(=O)O"), includeUnassigned=True,
+                                useLegacyImplementation=False))
+```
 
 ```{code-cell} ipython3
 ALERTS = {"reactive acyl halide": "C(=O)[Cl,Br,I]", "azide": "[N-]=[N+]=N", "peroxide": "[OX2][OX2]",
@@ -232,7 +252,14 @@ cand.head(10)
 
 ## Learning from failure
 
-The experiments that fail carry information too. A model trained on both successes and failures learns the boundary of the accessible space, which is what makes the next round smarter.
+The experiments that fail carry information too. A model trained on both successes and failures learns the boundary of the accessible space, which is what makes the next round smarter. Most published datasets record only what worked, which is why models trained on them are over-optimistic about what can be made. Here a synthesis attempt either succeeds or fails, with a probability that falls with size, stereocentres and reactive groups, and **logistic regression** (Chapter 31) learns that probability from the same features. The logistic function turns any number into a probability between 0 and 1:
+
+```{code-cell} ipython3
+for z in [-2.0, 0.0, 2.0]:
+    print(z, round(1 / (1 + np.exp(-z)), 2))
+```
+
+The payoff is the last plot. Multiplying the predicted objective by the predicted probability of success gives the **expected value** of running an experiment, and ranking by that is not the same as ranking by prediction: the circled points are the ones worth doing.
 
 ```{code-cell} ipython3
 from sklearn.linear_model import LogisticRegression
@@ -276,7 +303,7 @@ This is the single most useful idea in this chapter. A model that ranks by predi
 
 ## What autonomous laboratories add
 
-The published closed-loop systems differ in what they automate, not in the logic:
+Automation does not change the logic of the loop; it changes how many times per day the loop can turn, and which steps still need a person. The published systems differ in exactly that:
 
 | System type | Design | Synthesis | Measurement | Human role |
 |---|---|---|---|---|
@@ -317,6 +344,16 @@ All of these are open-literature reports; the citations point to the papers rath
 ```{admonition} How to read a discovery paper critically
 :class: tip
 Ask: what was the **baseline** (random selection? an expert?); how many experiments did the loop actually run; was the final result **validated independently** of the model; what was the **search space**, and would the answer have been found by enumeration; and are the data and code available so that the loop can be rerun?
+```
+
+```{admonition} Summary
+:class: tip
+- The discovery loop is design, predict, select, make, measure, learn; the model's job is to choose the next experiment.
+- Always compare a selection strategy against random choice at the same budget.
+- Expected improvement, using an ensemble for uncertainty, beats pure exploitation and pure exploration.
+- With several objectives, report the Pareto front; compare search methods by hypervolume.
+- Filter candidates for reactive groups, stereocentres and size before proposing them.
+- Rank by expected value, predicted gain times probability of success, not by predicted property alone.
 ```
 
 ## Exercises
