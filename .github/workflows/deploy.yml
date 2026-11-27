@@ -2,16 +2,9 @@ name: Build and deploy book
 on:
   push:
     branches: [main]
-  release:
-    types: [published]
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: "Attach the PDF to this existing release tag (optional)"
-        required: false
-        default: ""
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 concurrency:
@@ -44,18 +37,11 @@ jobs:
         with:
           name: molecules-data-python-pdf
           path: book/_build/molecules-data-python.pdf
-      - name: Attach the PDF to the release
-        if: github.event_name == 'release' || inputs.release_tag != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
-        run: gh release upload "$TAG" book/_build/molecules-data-python.pdf --clobber
       - uses: actions/upload-pages-artifact@v3
         with:
           path: book/_build/html
   deploy:
     needs: build
-    if: github.event_name != 'release'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
