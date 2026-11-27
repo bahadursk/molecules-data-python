@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 16 and 31.
 ```
 
-Experiments are expensive. When each reaction takes a day, you want to find the best conditions in as few runs as possible. **Bayesian optimisation** (BO) builds a probabilistic model of the response, then chooses the next experiment by balancing *exploitation* (go where the model predicts good results) and *exploration* (go where the model is unsure). It is the brain inside many self-driving laboratories.
+Experiments are expensive. When each reaction takes a day, you want to find the best conditions in as few runs as possible. **Bayesian optimisation** (BO) builds a probabilistic model of the response, then chooses the next experiment by balancing *exploitation* (go where the model predicts good results) and *exploration* (go where the model is unsure). It is the brain inside many self-driving laboratories. The word *Bayesian* refers to the way the model is updated: it starts with broad beliefs about the response, and each new measurement narrows those beliefs where it was made. Compared with a grid search, which spends experiments evenly everywhere, or changing one variable at a time, which can miss interactions between variables, BO usually reaches a good optimum in far fewer runs. This chapter builds the two ingredients, a Gaussian-process model and an acquisition function, then runs complete optimisation campaigns and compares them with random search.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -29,7 +29,18 @@ rng = np.random.default_rng(3)
 
 ## Gaussian processes
 
-A Gaussian process (GP) {cite:p}`rasmussen2006` predicts a mean **and** an uncertainty at every point.
+A Gaussian process (GP) {cite:p}`rasmussen2006` predicts a mean **and** an uncertainty at every point. Instead of assuming a formula such as a straight line or a parabola, a GP assumes only that the response is *smooth*: points close together have similar values. That assumption is encoded in a **kernel**, a function that says how strongly two inputs are correlated as a function of the distance between them; its **length scale** sets how far apart two points can be and still influence each other. Near a measurement the GP's prediction is pinned close to the measured value and the uncertainty is small; far from all measurements the prediction relaxes towards the average and the uncertainty grows. scikit-learn's `GaussianProcessRegressor` fits the kernel's settings to the data automatically. A `WhiteKernel` term represents measurement noise, and `normalize_y=True` rescales the target internally.
+
+A two-point example shows the key behaviour, small uncertainty at the data and large uncertainty between them:
+
+```{code-cell} ipython3
+gp_demo = GaussianProcessRegressor(RBF(1.0), optimizer=None).fit([[0.0], [4.0]], [1.0, 2.0])
+for x_q in [0.0, 2.0, 4.0]:
+    m_q, s_q = gp_demo.predict([[x_q]], return_std=True)
+    print(f"x = {x_q}: mean {m_q[0]:.2f}, uncertainty {s_q[0]:.2f}")
+```
+
+Here a hidden function plays the role of a real experiment: yield as a function of temperature, with a large peak near 92 °C and a smaller local maximum near 40 °C. After four experiments, the GP has a rough idea of the shape and knows where it is unsure.
 
 ```{code-cell} ipython3
 def true_yield(T):           # a hidden "experiment": yield vs temperature (°C)
@@ -52,9 +63,11 @@ plt.xlabel("T / °C"); plt.ylabel("yield / %"); plt.legend(); plt.title("A GP af
 
 ## Acquisition functions
 
-**Expected improvement** (EI) asks: by how much do we expect to beat the current best?
+The GP says what might happen at each condition; the **acquisition function** turns that into a decision about which experiment to run next. It gives each candidate a score that is high where the predicted mean is good (exploitation) or where the uncertainty is large (exploration), and the next experiment is the candidate with the highest score. **Expected improvement** (EI) asks: by how much do we expect to beat the current best? It averages the possible improvement over the GP's predicted distribution at each point, so a point with a slightly lower mean but a much larger uncertainty can still win.
 
 $$\mathrm{EI}(x) = (\mu - f^* - \xi)\,\Phi(z) + \sigma\,\phi(z), \qquad z = \frac{\mu - f^* - \xi}{\sigma}$$
+
+Here $f^*$ is the best result so far, $\Phi$ and $\phi$ are the cumulative and density functions of the normal distribution, and the small $\xi$ adds a little extra exploration. **Upper confidence bound** (UCB) is simpler: it adds κ standard deviations to the mean, so larger κ means more exploration.
 
 ```{code-cell} ipython3
 def expected_improvement(mu, sd, best, xi=0.01):
@@ -67,6 +80,8 @@ def ucb(mu, sd, kappa=2.0):
 ```
 
 ## The BO loop
+
+Bayesian optimisation repeats four steps: fit the GP to all results so far, compute the acquisition function over the candidates, run the experiment at its maximum, and add the result to the data. Each panel below shows one iteration: the GP (top) and EI (bottom), with the dashed line marking the next experiment. Watch how the first choices explore regions of high uncertainty and later ones home in on the peak.
 
 ```{code-cell} ipython3
 T_run, y_run = list(T_obs), list(y_obs)
@@ -88,6 +103,8 @@ plt.tight_layout(); plt.show()
 ```
 
 ## Two dimensions: temperature and catalyst loading
+
+Real optimisations have several variables, and their interactions are exactly what one-variable-at-a-time searches miss. The simulated reaction below depends on temperature and catalyst loading, with a broad main optimum and a narrow secondary one. Two practical details matter. The variables have very different ranges (tens of degrees versus a few mol %), so they are scaled to 0–1 before fitting, and each variable gets its own length scale. And instead of optimising EI continuously, it is evaluated on 3000 random candidate points and the best is chosen, a simple and robust approach. Each campaign starts with five random experiments, then lets BO choose twenty more.
 
 ```{code-cell} ipython3
 def experiment(T, load):
@@ -125,6 +142,8 @@ plt.show()
 
 ### Is it better than random?
 
+A single campaign could be lucky, so a fair comparison repeats it with several random seeds and plots the best result found so far against the number of experiments, with the range across seeds shaded.
+
 ```{code-cell} ipython3
 curves = {"random": [], "bo": []}
 for seed in range(6):
@@ -141,7 +160,7 @@ plt.show()
 
 ## Categorical variables: choosing ligand, base and additive
 
-Real reaction optimisation mixes continuous and categorical choices. Here we optimise over the simulated C–N coupling screen in `cn_coupling_hte_sim.csv`, pretending each of its 960 conditions costs one experiment. Similar campaigns on real high-throughput data were reported by Shields and co-workers {cite:p}`shields2021`.
+Many choices in chemistry are categories rather than numbers: which ligand, which base, which solvent. A GP needs numbers, so categories are turned into **one-hot** columns (Chapter 32) with `pd.get_dummies`, optionally supplemented by physical descriptors of each choice, such as a ligand's cone angle or a base's pKa, which tell the model that some categories are more alike than others. Real reaction optimisation mixes continuous and categorical choices. Here we optimise over the simulated C–N coupling screen in `cn_coupling_hte_sim.csv`, pretending each of its 960 conditions costs one experiment. Similar campaigns on real high-throughput data were reported by Shields and co-workers {cite:p}`shields2021`.
 
 ```{code-cell} ipython3
 DATA_URL = "https://raw.githubusercontent.com/bahadursk/molecules-data-python/main/book/data/"
@@ -177,7 +196,7 @@ plt.xlabel("experiments run"); plt.ylabel("best yield / %"); plt.legend(); plt.t
 
 ## Active learning for models
 
-The same idea builds better **models** with fewer labels: query the points where the model is most uncertain.
+The same idea builds better **models** with fewer labels: query the points where the model is most uncertain. In **active learning** the goal is not the single best condition but an accurate model everywhere, for example a property predictor for a whole chemical space, when each label (a measurement or a quantum calculation) is expensive. The simplest strategy is *uncertainty sampling*: always label the point where the model's uncertainty is largest. Below it is compared with random labelling on a wavy one-dimensional function.
 
 ```{code-cell} ipython3
 x_pool = np.linspace(0, 10, 500)[:, None]
@@ -198,7 +217,7 @@ plt.xlabel("labels acquired"); plt.ylabel("model error"); plt.legend(); plt.titl
 
 ## Design of experiments
 
-Before any model exists, space-filling designs give the best first batch.
+Before any model exists, space-filling designs give the best first batch. **Design of experiments** (DoE) is the statistical discipline of choosing experimental conditions to learn as much as possible from as few runs as possible. Purely random points tend to clump together and leave gaps. A **Latin hypercube** divides each variable's range into as many slices as there are points and puts exactly one point in each slice of every variable, so no value is repeated. **Sobol** sequences are *quasi-random*: deterministic sequences designed to fill space evenly (a power of two points works best). `scipy.stats.qmc` generates both.
 
 ```{code-cell} ipython3
 from scipy.stats import qmc
@@ -208,6 +227,17 @@ fig, axes = plt.subplots(1, 3, figsize=(12, 4))
 for ax, (name, pts), c in zip(axes, designs.items(), ["#e5487a", "#6c4ad6", "#0f9d8a"]):
     ax.scatter(*pts.T, color=c, s=50, edgecolor="k"); ax.set(title=name, xlim=(0, 1), ylim=(0, 1)); ax.set_aspect("equal")
 plt.tight_layout(); plt.show()
+```
+
+```{admonition} Summary
+:class: tip
+- Bayesian optimisation alternates between a probabilistic model and an acquisition function to choose each experiment.
+- A Gaussian process predicts a mean and an uncertainty; its kernel and length scale encode smoothness.
+- Expected improvement and UCB balance exploitation (good mean) and exploration (high uncertainty).
+- Scale continuous variables; one-hot encode categories, adding descriptors where possible.
+- Compare with random search over several seeds.
+- Active learning labels the most uncertain points to build accurate models cheaply.
+- Latin hypercube and Sobol designs give space-filling first batches.
 ```
 
 ## Exercises
