@@ -1,0 +1,80 @@
+format: jb-book
+root: intro
+parts:
+  - caption: Getting Started
+    chapters:
+      - file: front/preface
+      - file: front/how_to_use
+      - file: front/installation
+  - caption: "Part I · Python Fundamentals"
+    chapters:
+      - file: part1_python/01_python_calculator
+      - file: part1_python/02_data_types
+      - file: part1_python/03_strings
+      - file: part1_python/04_collections
+      - file: part1_python/05_control_flow
+      - file: part1_python/06_functions
+      - file: part1_python/07_comprehensions
+      - file: part1_python/08_files
+      - file: part1_python/09_errors
+      - file: part1_python/10_oop
+      - file: part1_python/11_modules_envs
+  - caption: "Part II · The Scientific Python Stack"
+    chapters:
+      - file: part2_scipy_stack/12_numpy
+      - file: part2_scipy_stack/13_matplotlib
+      - file: part2_scipy_stack/14_seaborn_plotly
+      - file: part2_scipy_stack/15_pandas
+      - file: part2_scipy_stack/16_scipy
+      - file: part2_scipy_stack/17_sympy
+      - file: part2_scipy_stack/18_units_uncertainty
+  - caption: "Part III · Cheminformatics and Molecular Visualisation"
+    chapters:
+      - file: part3_cheminformatics/19_representing_molecules
+      - file: part3_cheminformatics/20_rdkit_basics
+      - file: part3_cheminformatics/21_substructure_similarity
+      - file: part3_cheminformatics/22_reactions
+      - file: part3_cheminformatics/23_3d_structures
+      - file: part3_cheminformatics/24_databases
+  - caption: "Part IV · Chemistry Applications"
+    chapters:
+      - file: part4_applications/25_kinetics
+      - file: part4_applications/26_thermo_equilibrium
+      - file: part4_applications/27_spectroscopy
+      - file: part4_applications/28_quantum
+      - file: part4_applications/29_molecular_dynamics
+      - file: part4_applications/30_materials
+  - caption: "Part V · Machine Learning Foundations for Chemists"
+    chapters:
+      - file: part5_ml_foundations/31_ml_intro
+      - file: part5_ml_foundations/32_featurisation
+      - file: part5_ml_foundations/33_chemical_space
+      - file: part5_ml_foundations/34_deep_learning
+      - file: part5_ml_foundations/35_bayesian_opt
+  - caption: "Part VI · Machine Learning Across Chemistry and Materials Science"
+    chapters:
+      - file: part6_ml_applications/36_ml_drug_discovery
+      - file: part6_ml_applications/37_ml_organic_synthesis
+      - file: part6_ml_applications/38_ml_catalysis
+      - file: part6_ml_applications/39_ml_spectroscopy
+      - file: part6_ml_applications/40_ml_physical_chem
+      - file: part6_ml_applications/41_ml_materials
+      - file: part6_ml_applications/42_ml_energy_materials
+      - file: part6_ml_applications/43_ml_polymers
+      - file: part6_ml_applications/44_ml_bio_env
+      - file: part6_ml_applications/45_generative
+      - file: part6_ml_applications/46_llms_chemistry
+  - caption: "Part VII · Research Frontiers: AI-Assisted Chemistry"
+    chapters:
+      - file: part7_frontiers/47_ai_discovery
+      - file: part7_frontiers/48_ai_sensing
+      - file: part7_frontiers/49_ai_imaging
+      - file: part7_frontiers/50_ai_prediction
+      - file: part7_frontiers/51_ai_trust
+  - caption: Appendices
+    chapters:
+      - file: appendices/A1_cheatsheets
+      - file: appendices/A2_datasets
+      - file: appendices/A3_glossary
+      - file: appendices/A4_solutions
+      - file: appendices/A5_references

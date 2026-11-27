@@ -1,0 +1,4 @@
+book/_build/
+__pycache__/
+.ipynb_checkpoints/
+.jupyter_cache/

@@ -1,0 +1,15 @@
+jupyter-book>=1.0,<2
+jupytext
+numpy
+pandas
+matplotlib
+seaborn
+plotly
+scipy
+sympy
+rdkit
+py3Dmol
+scikit-learn
+pint
+uncertainties
+ipykernel

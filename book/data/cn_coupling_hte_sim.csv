@@ -1,0 +1,961 @@
+aryl_halide,aryl_halide_smiles,ligand,ligand_electron_richness,ligand_cone_angle,base,base_pKa,additive,yield_sim
+PhCl,Clc1ccccc1,L1,0.2,160,K2CO3,10.3,none,10.9
+PhCl,Clc1ccccc1,L1,0.2,160,K2CO3,10.3,isoxazole A,3.0
+PhCl,Clc1ccccc1,L1,0.2,160,K2CO3,10.3,isoxazole B,3.6
+PhCl,Clc1ccccc1,L1,0.2,160,K2CO3,10.3,ester C,13.6
+PhCl,Clc1ccccc1,L1,0.2,160,K2CO3,10.3,pyridine D,3.3
+PhCl,Clc1ccccc1,L1,0.2,160,K2CO3,10.3,water,13.6
+PhCl,Clc1ccccc1,L1,0.2,160,Cs2CO3,10.4,none,15.1
+PhCl,Clc1ccccc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,11.4
+PhCl,Clc1ccccc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,19.5
+PhCl,Clc1ccccc1,L1,0.2,160,Cs2CO3,10.4,ester C,11.6
+PhCl,Clc1ccccc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,8.6
+PhCl,Clc1ccccc1,L1,0.2,160,Cs2CO3,10.4,water,14.9
+PhCl,Clc1ccccc1,L1,0.2,160,KOtBu,17.0,none,32.8
+PhCl,Clc1ccccc1,L1,0.2,160,KOtBu,17.0,isoxazole A,24.3
+PhCl,Clc1ccccc1,L1,0.2,160,KOtBu,17.0,isoxazole B,16.3
+PhCl,Clc1ccccc1,L1,0.2,160,KOtBu,17.0,ester C,23.3
+PhCl,Clc1ccccc1,L1,0.2,160,KOtBu,17.0,pyridine D,13.9
+PhCl,Clc1ccccc1,L1,0.2,160,KOtBu,17.0,water,28.0
+PhCl,Clc1ccccc1,L1,0.2,160,DBU,13.5,none,15.4
+PhCl,Clc1ccccc1,L1,0.2,160,DBU,13.5,isoxazole A,19.4
+PhCl,Clc1ccccc1,L1,0.2,160,DBU,13.5,isoxazole B,6.7
+PhCl,Clc1ccccc1,L1,0.2,160,DBU,13.5,ester C,24.6
+PhCl,Clc1ccccc1,L1,0.2,160,DBU,13.5,pyridine D,13.0
+PhCl,Clc1ccccc1,L1,0.2,160,DBU,13.5,water,21.6
+PhCl,Clc1ccccc1,L1,0.2,160,K3PO4,12.3,none,15.9
+PhCl,Clc1ccccc1,L1,0.2,160,K3PO4,12.3,isoxazole A,13.9
+PhCl,Clc1ccccc1,L1,0.2,160,K3PO4,12.3,isoxazole B,13.6
+PhCl,Clc1ccccc1,L1,0.2,160,K3PO4,12.3,ester C,13.5
+PhCl,Clc1ccccc1,L1,0.2,160,K3PO4,12.3,pyridine D,1.4
+PhCl,Clc1ccccc1,L1,0.2,160,K3PO4,12.3,water,21.3
+PhCl,Clc1ccccc1,L2,0.5,175,K2CO3,10.3,none,37.8
+PhCl,Clc1ccccc1,L2,0.5,175,K2CO3,10.3,isoxazole A,42.8
+PhCl,Clc1ccccc1,L2,0.5,175,K2CO3,10.3,isoxazole B,25.2
+PhCl,Clc1ccccc1,L2,0.5,175,K2CO3,10.3,ester C,40.9
+PhCl,Clc1ccccc1,L2,0.5,175,K2CO3,10.3,pyridine D,16.9
+PhCl,Clc1ccccc1,L2,0.5,175,K2CO3,10.3,water,37.3
+PhCl,Clc1ccccc1,L2,0.5,175,Cs2CO3,10.4,none,39.2
+PhCl,Clc1ccccc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,38.0
+PhCl,Clc1ccccc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,25.5
+PhCl,Clc1ccccc1,L2,0.5,175,Cs2CO3,10.4,ester C,40.8
+PhCl,Clc1ccccc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,15.2
+PhCl,Clc1ccccc1,L2,0.5,175,Cs2CO3,10.4,water,42.8
+PhCl,Clc1ccccc1,L2,0.5,175,KOtBu,17.0,none,49.0
+PhCl,Clc1ccccc1,L2,0.5,175,KOtBu,17.0,isoxazole A,60.9
+PhCl,Clc1ccccc1,L2,0.5,175,KOtBu,17.0,isoxazole B,44.2
+PhCl,Clc1ccccc1,L2,0.5,175,KOtBu,17.0,ester C,55.0
+PhCl,Clc1ccccc1,L2,0.5,175,KOtBu,17.0,pyridine D,27.9
+PhCl,Clc1ccccc1,L2,0.5,175,KOtBu,17.0,water,56.3
+PhCl,Clc1ccccc1,L2,0.5,175,DBU,13.5,none,47.3
+PhCl,Clc1ccccc1,L2,0.5,175,DBU,13.5,isoxazole A,49.3
+PhCl,Clc1ccccc1,L2,0.5,175,DBU,13.5,isoxazole B,41.1
+PhCl,Clc1ccccc1,L2,0.5,175,DBU,13.5,ester C,45.9
+PhCl,Clc1ccccc1,L2,0.5,175,DBU,13.5,pyridine D,26.3
+PhCl,Clc1ccccc1,L2,0.5,175,DBU,13.5,water,48.0
+PhCl,Clc1ccccc1,L2,0.5,175,K3PO4,12.3,none,44.2
+PhCl,Clc1ccccc1,L2,0.5,175,K3PO4,12.3,isoxazole A,48.5
+PhCl,Clc1ccccc1,L2,0.5,175,K3PO4,12.3,isoxazole B,34.4
+PhCl,Clc1ccccc1,L2,0.5,175,K3PO4,12.3,ester C,39.8
+PhCl,Clc1ccccc1,L2,0.5,175,K3PO4,12.3,pyridine D,25.8
+PhCl,Clc1ccccc1,L2,0.5,175,K3PO4,12.3,water,40.8
+PhCl,Clc1ccccc1,L3,0.8,190,K2CO3,10.3,none,47.6
+PhCl,Clc1ccccc1,L3,0.8,190,K2CO3,10.3,isoxazole A,51.5
+PhCl,Clc1ccccc1,L3,0.8,190,K2CO3,10.3,isoxazole B,42.2
+PhCl,Clc1ccccc1,L3,0.8,190,K2CO3,10.3,ester C,57.7
+PhCl,Clc1ccccc1,L3,0.8,190,K2CO3,10.3,pyridine D,31.4
+PhCl,Clc1ccccc1,L3,0.8,190,K2CO3,10.3,water,51.7
+PhCl,Clc1ccccc1,L3,0.8,190,Cs2CO3,10.4,none,55.8
+PhCl,Clc1ccccc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,55.2
+PhCl,Clc1ccccc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,45.4
+PhCl,Clc1ccccc1,L3,0.8,190,Cs2CO3,10.4,ester C,57.0
+PhCl,Clc1ccccc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,34.4
+PhCl,Clc1ccccc1,L3,0.8,190,Cs2CO3,10.4,water,52.8
+PhCl,Clc1ccccc1,L3,0.8,190,KOtBu,17.0,none,69.1
+PhCl,Clc1ccccc1,L3,0.8,190,KOtBu,17.0,isoxazole A,66.0
+PhCl,Clc1ccccc1,L3,0.8,190,KOtBu,17.0,isoxazole B,65.3
+PhCl,Clc1ccccc1,L3,0.8,190,KOtBu,17.0,ester C,71.7
+PhCl,Clc1ccccc1,L3,0.8,190,KOtBu,17.0,pyridine D,53.6
+PhCl,Clc1ccccc1,L3,0.8,190,KOtBu,17.0,water,70.7
+PhCl,Clc1ccccc1,L3,0.8,190,DBU,13.5,none,63.6
+PhCl,Clc1ccccc1,L3,0.8,190,DBU,13.5,isoxazole A,62.5
+PhCl,Clc1ccccc1,L3,0.8,190,DBU,13.5,isoxazole B,46.2
+PhCl,Clc1ccccc1,L3,0.8,190,DBU,13.5,ester C,60.6
+PhCl,Clc1ccccc1,L3,0.8,190,DBU,13.5,pyridine D,31.5
+PhCl,Clc1ccccc1,L3,0.8,190,DBU,13.5,water,62.1
+PhCl,Clc1ccccc1,L3,0.8,190,K3PO4,12.3,none,70.5
+PhCl,Clc1ccccc1,L3,0.8,190,K3PO4,12.3,isoxazole A,62.9
+PhCl,Clc1ccccc1,L3,0.8,190,K3PO4,12.3,isoxazole B,54.1
+PhCl,Clc1ccccc1,L3,0.8,190,K3PO4,12.3,ester C,57.5
+PhCl,Clc1ccccc1,L3,0.8,190,K3PO4,12.3,pyridine D,33.2
+PhCl,Clc1ccccc1,L3,0.8,190,K3PO4,12.3,water,61.6
+PhCl,Clc1ccccc1,L4,0.65,205,K2CO3,10.3,none,35.0
+PhCl,Clc1ccccc1,L4,0.65,205,K2CO3,10.3,isoxazole A,27.8
+PhCl,Clc1ccccc1,L4,0.65,205,K2CO3,10.3,isoxazole B,33.6
+PhCl,Clc1ccccc1,L4,0.65,205,K2CO3,10.3,ester C,30.0
+PhCl,Clc1ccccc1,L4,0.65,205,K2CO3,10.3,pyridine D,15.0
+PhCl,Clc1ccccc1,L4,0.65,205,K2CO3,10.3,water,37.0
+PhCl,Clc1ccccc1,L4,0.65,205,Cs2CO3,10.4,none,34.1
+PhCl,Clc1ccccc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,35.8
+PhCl,Clc1ccccc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,15.5
+PhCl,Clc1ccccc1,L4,0.65,205,Cs2CO3,10.4,ester C,31.1
+PhCl,Clc1ccccc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,15.9
+PhCl,Clc1ccccc1,L4,0.65,205,Cs2CO3,10.4,water,32.4
+PhCl,Clc1ccccc1,L4,0.65,205,KOtBu,17.0,none,58.3
+PhCl,Clc1ccccc1,L4,0.65,205,KOtBu,17.0,isoxazole A,48.8
+PhCl,Clc1ccccc1,L4,0.65,205,KOtBu,17.0,isoxazole B,42.5
+PhCl,Clc1ccccc1,L4,0.65,205,KOtBu,17.0,ester C,58.2
+PhCl,Clc1ccccc1,L4,0.65,205,KOtBu,17.0,pyridine D,21.5
+PhCl,Clc1ccccc1,L4,0.65,205,KOtBu,17.0,water,45.7
+PhCl,Clc1ccccc1,L4,0.65,205,DBU,13.5,none,39.4
+PhCl,Clc1ccccc1,L4,0.65,205,DBU,13.5,isoxazole A,37.3
+PhCl,Clc1ccccc1,L4,0.65,205,DBU,13.5,isoxazole B,26.9
+PhCl,Clc1ccccc1,L4,0.65,205,DBU,13.5,ester C,41.9
+PhCl,Clc1ccccc1,L4,0.65,205,DBU,13.5,pyridine D,27.8
+PhCl,Clc1ccccc1,L4,0.65,205,DBU,13.5,water,35.9
+PhCl,Clc1ccccc1,L4,0.65,205,K3PO4,12.3,none,42.1
+PhCl,Clc1ccccc1,L4,0.65,205,K3PO4,12.3,isoxazole A,33.5
+PhCl,Clc1ccccc1,L4,0.65,205,K3PO4,12.3,isoxazole B,26.5
+PhCl,Clc1ccccc1,L4,0.65,205,K3PO4,12.3,ester C,41.6
+PhCl,Clc1ccccc1,L4,0.65,205,K3PO4,12.3,pyridine D,22.3
+PhCl,Clc1ccccc1,L4,0.65,205,K3PO4,12.3,water,42.4
+PhBr,Brc1ccccc1,L1,0.2,160,K2CO3,10.3,none,35.3
+PhBr,Brc1ccccc1,L1,0.2,160,K2CO3,10.3,isoxazole A,35.0
+PhBr,Brc1ccccc1,L1,0.2,160,K2CO3,10.3,isoxazole B,21.9
+PhBr,Brc1ccccc1,L1,0.2,160,K2CO3,10.3,ester C,40.3
+PhBr,Brc1ccccc1,L1,0.2,160,K2CO3,10.3,pyridine D,20.5
+PhBr,Brc1ccccc1,L1,0.2,160,K2CO3,10.3,water,28.0
+PhBr,Brc1ccccc1,L1,0.2,160,Cs2CO3,10.4,none,39.8
+PhBr,Brc1ccccc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,30.2
+PhBr,Brc1ccccc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,29.7
+PhBr,Brc1ccccc1,L1,0.2,160,Cs2CO3,10.4,ester C,30.2
+PhBr,Brc1ccccc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,26.5
+PhBr,Brc1ccccc1,L1,0.2,160,Cs2CO3,10.4,water,40.6
+PhBr,Brc1ccccc1,L1,0.2,160,KOtBu,17.0,none,59.0
+PhBr,Brc1ccccc1,L1,0.2,160,KOtBu,17.0,isoxazole A,57.7
+PhBr,Brc1ccccc1,L1,0.2,160,KOtBu,17.0,isoxazole B,40.0
+PhBr,Brc1ccccc1,L1,0.2,160,KOtBu,17.0,ester C,50.6
+PhBr,Brc1ccccc1,L1,0.2,160,KOtBu,17.0,pyridine D,38.6
+PhBr,Brc1ccccc1,L1,0.2,160,KOtBu,17.0,water,57.0
+PhBr,Brc1ccccc1,L1,0.2,160,DBU,13.5,none,46.4
+PhBr,Brc1ccccc1,L1,0.2,160,DBU,13.5,isoxazole A,41.2
+PhBr,Brc1ccccc1,L1,0.2,160,DBU,13.5,isoxazole B,32.9
+PhBr,Brc1ccccc1,L1,0.2,160,DBU,13.5,ester C,43.1
+PhBr,Brc1ccccc1,L1,0.2,160,DBU,13.5,pyridine D,26.7
+PhBr,Brc1ccccc1,L1,0.2,160,DBU,13.5,water,49.4
+PhBr,Brc1ccccc1,L1,0.2,160,K3PO4,12.3,none,49.2
+PhBr,Brc1ccccc1,L1,0.2,160,K3PO4,12.3,isoxazole A,41.0
+PhBr,Brc1ccccc1,L1,0.2,160,K3PO4,12.3,isoxazole B,33.0
+PhBr,Brc1ccccc1,L1,0.2,160,K3PO4,12.3,ester C,38.1
+PhBr,Brc1ccccc1,L1,0.2,160,K3PO4,12.3,pyridine D,13.7
+PhBr,Brc1ccccc1,L1,0.2,160,K3PO4,12.3,water,48.5
+PhBr,Brc1ccccc1,L2,0.5,175,K2CO3,10.3,none,59.2
+PhBr,Brc1ccccc1,L2,0.5,175,K2CO3,10.3,isoxazole A,63.9
+PhBr,Brc1ccccc1,L2,0.5,175,K2CO3,10.3,isoxazole B,56.7
+PhBr,Brc1ccccc1,L2,0.5,175,K2CO3,10.3,ester C,68.0
+PhBr,Brc1ccccc1,L2,0.5,175,K2CO3,10.3,pyridine D,43.5
+PhBr,Brc1ccccc1,L2,0.5,175,K2CO3,10.3,water,69.5
+PhBr,Brc1ccccc1,L2,0.5,175,Cs2CO3,10.4,none,70.3
+PhBr,Brc1ccccc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,63.8
+PhBr,Brc1ccccc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,52.3
+PhBr,Brc1ccccc1,L2,0.5,175,Cs2CO3,10.4,ester C,67.8
+PhBr,Brc1ccccc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,45.1
+PhBr,Brc1ccccc1,L2,0.5,175,Cs2CO3,10.4,water,67.0
+PhBr,Brc1ccccc1,L2,0.5,175,KOtBu,17.0,none,83.4
+PhBr,Brc1ccccc1,L2,0.5,175,KOtBu,17.0,isoxazole A,74.6
+PhBr,Brc1ccccc1,L2,0.5,175,KOtBu,17.0,isoxazole B,72.9
+PhBr,Brc1ccccc1,L2,0.5,175,KOtBu,17.0,ester C,87.8
+PhBr,Brc1ccccc1,L2,0.5,175,KOtBu,17.0,pyridine D,61.7
+PhBr,Brc1ccccc1,L2,0.5,175,KOtBu,17.0,water,83.1
+PhBr,Brc1ccccc1,L2,0.5,175,DBU,13.5,none,71.1
+PhBr,Brc1ccccc1,L2,0.5,175,DBU,13.5,isoxazole A,78.2
+PhBr,Brc1ccccc1,L2,0.5,175,DBU,13.5,isoxazole B,66.0
+PhBr,Brc1ccccc1,L2,0.5,175,DBU,13.5,ester C,70.2
+PhBr,Brc1ccccc1,L2,0.5,175,DBU,13.5,pyridine D,60.1
+PhBr,Brc1ccccc1,L2,0.5,175,DBU,13.5,water,63.5
+PhBr,Brc1ccccc1,L2,0.5,175,K3PO4,12.3,none,67.2
+PhBr,Brc1ccccc1,L2,0.5,175,K3PO4,12.3,isoxazole A,74.6
+PhBr,Brc1ccccc1,L2,0.5,175,K3PO4,12.3,isoxazole B,57.8
+PhBr,Brc1ccccc1,L2,0.5,175,K3PO4,12.3,ester C,65.9
+PhBr,Brc1ccccc1,L2,0.5,175,K3PO4,12.3,pyridine D,44.1
+PhBr,Brc1ccccc1,L2,0.5,175,K3PO4,12.3,water,72.8
+PhBr,Brc1ccccc1,L3,0.8,190,K2CO3,10.3,none,77.0
+PhBr,Brc1ccccc1,L3,0.8,190,K2CO3,10.3,isoxazole A,71.3
+PhBr,Brc1ccccc1,L3,0.8,190,K2CO3,10.3,isoxazole B,70.5
+PhBr,Brc1ccccc1,L3,0.8,190,K2CO3,10.3,ester C,78.7
+PhBr,Brc1ccccc1,L3,0.8,190,K2CO3,10.3,pyridine D,59.9
+PhBr,Brc1ccccc1,L3,0.8,190,K2CO3,10.3,water,72.3
+PhBr,Brc1ccccc1,L3,0.8,190,Cs2CO3,10.4,none,78.6
+PhBr,Brc1ccccc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,73.1
+PhBr,Brc1ccccc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,68.7
+PhBr,Brc1ccccc1,L3,0.8,190,Cs2CO3,10.4,ester C,77.8
+PhBr,Brc1ccccc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,64.6
+PhBr,Brc1ccccc1,L3,0.8,190,Cs2CO3,10.4,water,81.5
+PhBr,Brc1ccccc1,L3,0.8,190,KOtBu,17.0,none,91.0
+PhBr,Brc1ccccc1,L3,0.8,190,KOtBu,17.0,isoxazole A,94.1
+PhBr,Brc1ccccc1,L3,0.8,190,KOtBu,17.0,isoxazole B,79.5
+PhBr,Brc1ccccc1,L3,0.8,190,KOtBu,17.0,ester C,85.1
+PhBr,Brc1ccccc1,L3,0.8,190,KOtBu,17.0,pyridine D,75.3
+PhBr,Brc1ccccc1,L3,0.8,190,KOtBu,17.0,water,92.4
+PhBr,Brc1ccccc1,L3,0.8,190,DBU,13.5,none,85.5
+PhBr,Brc1ccccc1,L3,0.8,190,DBU,13.5,isoxazole A,84.0
+PhBr,Brc1ccccc1,L3,0.8,190,DBU,13.5,isoxazole B,82.7
+PhBr,Brc1ccccc1,L3,0.8,190,DBU,13.5,ester C,85.0
+PhBr,Brc1ccccc1,L3,0.8,190,DBU,13.5,pyridine D,67.0
+PhBr,Brc1ccccc1,L3,0.8,190,DBU,13.5,water,81.5
+PhBr,Brc1ccccc1,L3,0.8,190,K3PO4,12.3,none,84.5
+PhBr,Brc1ccccc1,L3,0.8,190,K3PO4,12.3,isoxazole A,77.0
+PhBr,Brc1ccccc1,L3,0.8,190,K3PO4,12.3,isoxazole B,76.5
+PhBr,Brc1ccccc1,L3,0.8,190,K3PO4,12.3,ester C,83.8
+PhBr,Brc1ccccc1,L3,0.8,190,K3PO4,12.3,pyridine D,64.3
+PhBr,Brc1ccccc1,L3,0.8,190,K3PO4,12.3,water,88.7
+PhBr,Brc1ccccc1,L4,0.65,205,K2CO3,10.3,none,66.8
+PhBr,Brc1ccccc1,L4,0.65,205,K2CO3,10.3,isoxazole A,56.0
+PhBr,Brc1ccccc1,L4,0.65,205,K2CO3,10.3,isoxazole B,52.3
+PhBr,Brc1ccccc1,L4,0.65,205,K2CO3,10.3,ester C,56.7
+PhBr,Brc1ccccc1,L4,0.65,205,K2CO3,10.3,pyridine D,39.1
+PhBr,Brc1ccccc1,L4,0.65,205,K2CO3,10.3,water,58.2
+PhBr,Brc1ccccc1,L4,0.65,205,Cs2CO3,10.4,none,57.8
+PhBr,Brc1ccccc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,58.9
+PhBr,Brc1ccccc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,52.5
+PhBr,Brc1ccccc1,L4,0.65,205,Cs2CO3,10.4,ester C,60.6
+PhBr,Brc1ccccc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,37.3
+PhBr,Brc1ccccc1,L4,0.65,205,Cs2CO3,10.4,water,64.8
+PhBr,Brc1ccccc1,L4,0.65,205,KOtBu,17.0,none,81.5
+PhBr,Brc1ccccc1,L4,0.65,205,KOtBu,17.0,isoxazole A,77.5
+PhBr,Brc1ccccc1,L4,0.65,205,KOtBu,17.0,isoxazole B,63.0
+PhBr,Brc1ccccc1,L4,0.65,205,KOtBu,17.0,ester C,67.1
+PhBr,Brc1ccccc1,L4,0.65,205,KOtBu,17.0,pyridine D,56.0
+PhBr,Brc1ccccc1,L4,0.65,205,KOtBu,17.0,water,79.4
+PhBr,Brc1ccccc1,L4,0.65,205,DBU,13.5,none,64.1
+PhBr,Brc1ccccc1,L4,0.65,205,DBU,13.5,isoxazole A,73.4
+PhBr,Brc1ccccc1,L4,0.65,205,DBU,13.5,isoxazole B,55.7
+PhBr,Brc1ccccc1,L4,0.65,205,DBU,13.5,ester C,74.0
+PhBr,Brc1ccccc1,L4,0.65,205,DBU,13.5,pyridine D,52.1
+PhBr,Brc1ccccc1,L4,0.65,205,DBU,13.5,water,71.8
+PhBr,Brc1ccccc1,L4,0.65,205,K3PO4,12.3,none,62.2
+PhBr,Brc1ccccc1,L4,0.65,205,K3PO4,12.3,isoxazole A,71.8
+PhBr,Brc1ccccc1,L4,0.65,205,K3PO4,12.3,isoxazole B,55.2
+PhBr,Brc1ccccc1,L4,0.65,205,K3PO4,12.3,ester C,64.7
+PhBr,Brc1ccccc1,L4,0.65,205,K3PO4,12.3,pyridine D,43.4
+PhBr,Brc1ccccc1,L4,0.65,205,K3PO4,12.3,water,64.1
+PhI,Ic1ccccc1,L1,0.2,160,K2CO3,10.3,none,54.5
+PhI,Ic1ccccc1,L1,0.2,160,K2CO3,10.3,isoxazole A,56.5
+PhI,Ic1ccccc1,L1,0.2,160,K2CO3,10.3,isoxazole B,45.3
+PhI,Ic1ccccc1,L1,0.2,160,K2CO3,10.3,ester C,50.4
+PhI,Ic1ccccc1,L1,0.2,160,K2CO3,10.3,pyridine D,27.6
+PhI,Ic1ccccc1,L1,0.2,160,K2CO3,10.3,water,49.4
+PhI,Ic1ccccc1,L1,0.2,160,Cs2CO3,10.4,none,57.9
+PhI,Ic1ccccc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,56.2
+PhI,Ic1ccccc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,41.2
+PhI,Ic1ccccc1,L1,0.2,160,Cs2CO3,10.4,ester C,49.7
+PhI,Ic1ccccc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,25.4
+PhI,Ic1ccccc1,L1,0.2,160,Cs2CO3,10.4,water,50.6
+PhI,Ic1ccccc1,L1,0.2,160,KOtBu,17.0,none,68.2
+PhI,Ic1ccccc1,L1,0.2,160,KOtBu,17.0,isoxazole A,75.8
+PhI,Ic1ccccc1,L1,0.2,160,KOtBu,17.0,isoxazole B,54.9
+PhI,Ic1ccccc1,L1,0.2,160,KOtBu,17.0,ester C,70.3
+PhI,Ic1ccccc1,L1,0.2,160,KOtBu,17.0,pyridine D,55.5
+PhI,Ic1ccccc1,L1,0.2,160,KOtBu,17.0,water,70.5
+PhI,Ic1ccccc1,L1,0.2,160,DBU,13.5,none,59.6
+PhI,Ic1ccccc1,L1,0.2,160,DBU,13.5,isoxazole A,54.0
+PhI,Ic1ccccc1,L1,0.2,160,DBU,13.5,isoxazole B,55.0
+PhI,Ic1ccccc1,L1,0.2,160,DBU,13.5,ester C,60.4
+PhI,Ic1ccccc1,L1,0.2,160,DBU,13.5,pyridine D,35.9
+PhI,Ic1ccccc1,L1,0.2,160,DBU,13.5,water,64.4
+PhI,Ic1ccccc1,L1,0.2,160,K3PO4,12.3,none,57.1
+PhI,Ic1ccccc1,L1,0.2,160,K3PO4,12.3,isoxazole A,51.7
+PhI,Ic1ccccc1,L1,0.2,160,K3PO4,12.3,isoxazole B,49.2
+PhI,Ic1ccccc1,L1,0.2,160,K3PO4,12.3,ester C,61.3
+PhI,Ic1ccccc1,L1,0.2,160,K3PO4,12.3,pyridine D,32.8
+PhI,Ic1ccccc1,L1,0.2,160,K3PO4,12.3,water,69.6
+PhI,Ic1ccccc1,L2,0.5,175,K2CO3,10.3,none,74.5
+PhI,Ic1ccccc1,L2,0.5,175,K2CO3,10.3,isoxazole A,87.2
+PhI,Ic1ccccc1,L2,0.5,175,K2CO3,10.3,isoxazole B,70.0
+PhI,Ic1ccccc1,L2,0.5,175,K2CO3,10.3,ester C,87.5
+PhI,Ic1ccccc1,L2,0.5,175,K2CO3,10.3,pyridine D,61.1
+PhI,Ic1ccccc1,L2,0.5,175,K2CO3,10.3,water,78.3
+PhI,Ic1ccccc1,L2,0.5,175,Cs2CO3,10.4,none,75.5
+PhI,Ic1ccccc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,77.3
+PhI,Ic1ccccc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,66.0
+PhI,Ic1ccccc1,L2,0.5,175,Cs2CO3,10.4,ester C,76.5
+PhI,Ic1ccccc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,65.7
+PhI,Ic1ccccc1,L2,0.5,175,Cs2CO3,10.4,water,76.1
+PhI,Ic1ccccc1,L2,0.5,175,KOtBu,17.0,none,94.6
+PhI,Ic1ccccc1,L2,0.5,175,KOtBu,17.0,isoxazole A,88.8
+PhI,Ic1ccccc1,L2,0.5,175,KOtBu,17.0,isoxazole B,85.5
+PhI,Ic1ccccc1,L2,0.5,175,KOtBu,17.0,ester C,89.9
+PhI,Ic1ccccc1,L2,0.5,175,KOtBu,17.0,pyridine D,74.3
+PhI,Ic1ccccc1,L2,0.5,175,KOtBu,17.0,water,93.5
+PhI,Ic1ccccc1,L2,0.5,175,DBU,13.5,none,82.9
+PhI,Ic1ccccc1,L2,0.5,175,DBU,13.5,isoxazole A,81.9
+PhI,Ic1ccccc1,L2,0.5,175,DBU,13.5,isoxazole B,84.1
+PhI,Ic1ccccc1,L2,0.5,175,DBU,13.5,ester C,82.7
+PhI,Ic1ccccc1,L2,0.5,175,DBU,13.5,pyridine D,64.4
+PhI,Ic1ccccc1,L2,0.5,175,DBU,13.5,water,82.6
+PhI,Ic1ccccc1,L2,0.5,175,K3PO4,12.3,none,85.4
+PhI,Ic1ccccc1,L2,0.5,175,K3PO4,12.3,isoxazole A,81.0
+PhI,Ic1ccccc1,L2,0.5,175,K3PO4,12.3,isoxazole B,77.3
+PhI,Ic1ccccc1,L2,0.5,175,K3PO4,12.3,ester C,85.4
+PhI,Ic1ccccc1,L2,0.5,175,K3PO4,12.3,pyridine D,69.8
+PhI,Ic1ccccc1,L2,0.5,175,K3PO4,12.3,water,91.6
+PhI,Ic1ccccc1,L3,0.8,190,K2CO3,10.3,none,91.4
+PhI,Ic1ccccc1,L3,0.8,190,K2CO3,10.3,isoxazole A,87.9
+PhI,Ic1ccccc1,L3,0.8,190,K2CO3,10.3,isoxazole B,78.4
+PhI,Ic1ccccc1,L3,0.8,190,K2CO3,10.3,ester C,86.2
+PhI,Ic1ccccc1,L3,0.8,190,K2CO3,10.3,pyridine D,67.7
+PhI,Ic1ccccc1,L3,0.8,190,K2CO3,10.3,water,84.4
+PhI,Ic1ccccc1,L3,0.8,190,Cs2CO3,10.4,none,90.1
+PhI,Ic1ccccc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,87.5
+PhI,Ic1ccccc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,79.3
+PhI,Ic1ccccc1,L3,0.8,190,Cs2CO3,10.4,ester C,87.6
+PhI,Ic1ccccc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,68.8
+PhI,Ic1ccccc1,L3,0.8,190,Cs2CO3,10.4,water,90.6
+PhI,Ic1ccccc1,L3,0.8,190,KOtBu,17.0,none,93.3
+PhI,Ic1ccccc1,L3,0.8,190,KOtBu,17.0,isoxazole A,100.0
+PhI,Ic1ccccc1,L3,0.8,190,KOtBu,17.0,isoxazole B,86.2
+PhI,Ic1ccccc1,L3,0.8,190,KOtBu,17.0,ester C,90.1
+PhI,Ic1ccccc1,L3,0.8,190,KOtBu,17.0,pyridine D,83.4
+PhI,Ic1ccccc1,L3,0.8,190,KOtBu,17.0,water,94.3
+PhI,Ic1ccccc1,L3,0.8,190,DBU,13.5,none,90.5
+PhI,Ic1ccccc1,L3,0.8,190,DBU,13.5,isoxazole A,90.1
+PhI,Ic1ccccc1,L3,0.8,190,DBU,13.5,isoxazole B,90.9
+PhI,Ic1ccccc1,L3,0.8,190,DBU,13.5,ester C,92.9
+PhI,Ic1ccccc1,L3,0.8,190,DBU,13.5,pyridine D,74.0
+PhI,Ic1ccccc1,L3,0.8,190,DBU,13.5,water,90.4
+PhI,Ic1ccccc1,L3,0.8,190,K3PO4,12.3,none,83.0
+PhI,Ic1ccccc1,L3,0.8,190,K3PO4,12.3,isoxazole A,96.0
+PhI,Ic1ccccc1,L3,0.8,190,K3PO4,12.3,isoxazole B,81.7
+PhI,Ic1ccccc1,L3,0.8,190,K3PO4,12.3,ester C,91.1
+PhI,Ic1ccccc1,L3,0.8,190,K3PO4,12.3,pyridine D,75.3
+PhI,Ic1ccccc1,L3,0.8,190,K3PO4,12.3,water,89.1
+PhI,Ic1ccccc1,L4,0.65,205,K2CO3,10.3,none,67.3
+PhI,Ic1ccccc1,L4,0.65,205,K2CO3,10.3,isoxazole A,72.8
+PhI,Ic1ccccc1,L4,0.65,205,K2CO3,10.3,isoxazole B,64.9
+PhI,Ic1ccccc1,L4,0.65,205,K2CO3,10.3,ester C,75.5
+PhI,Ic1ccccc1,L4,0.65,205,K2CO3,10.3,pyridine D,58.6
+PhI,Ic1ccccc1,L4,0.65,205,K2CO3,10.3,water,80.1
+PhI,Ic1ccccc1,L4,0.65,205,Cs2CO3,10.4,none,84.6
+PhI,Ic1ccccc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,66.9
+PhI,Ic1ccccc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,74.6
+PhI,Ic1ccccc1,L4,0.65,205,Cs2CO3,10.4,ester C,76.3
+PhI,Ic1ccccc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,56.5
+PhI,Ic1ccccc1,L4,0.65,205,Cs2CO3,10.4,water,73.5
+PhI,Ic1ccccc1,L4,0.65,205,KOtBu,17.0,none,86.6
+PhI,Ic1ccccc1,L4,0.65,205,KOtBu,17.0,isoxazole A,89.2
+PhI,Ic1ccccc1,L4,0.65,205,KOtBu,17.0,isoxazole B,83.0
+PhI,Ic1ccccc1,L4,0.65,205,KOtBu,17.0,ester C,83.0
+PhI,Ic1ccccc1,L4,0.65,205,KOtBu,17.0,pyridine D,69.2
+PhI,Ic1ccccc1,L4,0.65,205,KOtBu,17.0,water,83.0
+PhI,Ic1ccccc1,L4,0.65,205,DBU,13.5,none,78.5
+PhI,Ic1ccccc1,L4,0.65,205,DBU,13.5,isoxazole A,75.9
+PhI,Ic1ccccc1,L4,0.65,205,DBU,13.5,isoxazole B,70.2
+PhI,Ic1ccccc1,L4,0.65,205,DBU,13.5,ester C,85.3
+PhI,Ic1ccccc1,L4,0.65,205,DBU,13.5,pyridine D,66.1
+PhI,Ic1ccccc1,L4,0.65,205,DBU,13.5,water,79.3
+PhI,Ic1ccccc1,L4,0.65,205,K3PO4,12.3,none,75.3
+PhI,Ic1ccccc1,L4,0.65,205,K3PO4,12.3,isoxazole A,72.5
+PhI,Ic1ccccc1,L4,0.65,205,K3PO4,12.3,isoxazole B,70.3
+PhI,Ic1ccccc1,L4,0.65,205,K3PO4,12.3,ester C,70.8
+PhI,Ic1ccccc1,L4,0.65,205,K3PO4,12.3,pyridine D,62.0
+PhI,Ic1ccccc1,L4,0.65,205,K3PO4,12.3,water,81.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K2CO3,10.3,none,29.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K2CO3,10.3,isoxazole A,27.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K2CO3,10.3,isoxazole B,21.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K2CO3,10.3,ester C,37.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K2CO3,10.3,pyridine D,19.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K2CO3,10.3,water,33.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,Cs2CO3,10.4,none,34.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,34.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,27.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,Cs2CO3,10.4,ester C,27.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,17.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,Cs2CO3,10.4,water,32.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,KOtBu,17.0,none,54.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,KOtBu,17.0,isoxazole A,50.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,KOtBu,17.0,isoxazole B,41.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,KOtBu,17.0,ester C,53.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,KOtBu,17.0,pyridine D,33.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,KOtBu,17.0,water,49.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,DBU,13.5,none,44.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,DBU,13.5,isoxazole A,41.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,DBU,13.5,isoxazole B,29.2
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,DBU,13.5,ester C,42.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,DBU,13.5,pyridine D,20.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,DBU,13.5,water,37.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K3PO4,12.3,none,45.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K3PO4,12.3,isoxazole A,40.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K3PO4,12.3,isoxazole B,25.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K3PO4,12.3,ester C,41.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K3PO4,12.3,pyridine D,21.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L1,0.2,160,K3PO4,12.3,water,45.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K2CO3,10.3,none,64.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K2CO3,10.3,isoxazole A,58.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K2CO3,10.3,isoxazole B,48.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K2CO3,10.3,ester C,63.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K2CO3,10.3,pyridine D,35.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K2CO3,10.3,water,61.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,Cs2CO3,10.4,none,56.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,61.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,54.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,Cs2CO3,10.4,ester C,62.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,43.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,Cs2CO3,10.4,water,64.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,KOtBu,17.0,none,81.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,KOtBu,17.0,isoxazole A,80.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,KOtBu,17.0,isoxazole B,74.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,KOtBu,17.0,ester C,77.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,KOtBu,17.0,pyridine D,64.2
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,KOtBu,17.0,water,79.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,DBU,13.5,none,72.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,DBU,13.5,isoxazole A,71.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,DBU,13.5,isoxazole B,61.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,DBU,13.5,ester C,73.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,DBU,13.5,pyridine D,44.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,DBU,13.5,water,67.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K3PO4,12.3,none,62.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K3PO4,12.3,isoxazole A,71.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K3PO4,12.3,isoxazole B,57.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K3PO4,12.3,ester C,70.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K3PO4,12.3,pyridine D,54.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L2,0.5,175,K3PO4,12.3,water,75.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K2CO3,10.3,none,66.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K2CO3,10.3,isoxazole A,70.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K2CO3,10.3,isoxazole B,70.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K2CO3,10.3,ester C,74.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K2CO3,10.3,pyridine D,58.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K2CO3,10.3,water,82.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,Cs2CO3,10.4,none,72.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,84.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,66.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,Cs2CO3,10.4,ester C,74.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,58.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,Cs2CO3,10.4,water,89.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,KOtBu,17.0,none,87.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,KOtBu,17.0,isoxazole A,93.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,KOtBu,17.0,isoxazole B,85.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,KOtBu,17.0,ester C,87.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,KOtBu,17.0,pyridine D,75.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,KOtBu,17.0,water,83.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,DBU,13.5,none,80.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,DBU,13.5,isoxazole A,76.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,DBU,13.5,isoxazole B,77.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,DBU,13.5,ester C,77.2
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,DBU,13.5,pyridine D,63.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,DBU,13.5,water,75.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K3PO4,12.3,none,75.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K3PO4,12.3,isoxazole A,72.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K3PO4,12.3,isoxazole B,71.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K3PO4,12.3,ester C,75.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K3PO4,12.3,pyridine D,59.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L3,0.8,190,K3PO4,12.3,water,87.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K2CO3,10.3,none,62.5
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K2CO3,10.3,isoxazole A,50.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K2CO3,10.3,isoxazole B,41.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K2CO3,10.3,ester C,59.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K2CO3,10.3,pyridine D,36.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K2CO3,10.3,water,58.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,Cs2CO3,10.4,none,59.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,61.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,49.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,Cs2CO3,10.4,ester C,59.2
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,35.2
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,Cs2CO3,10.4,water,53.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,KOtBu,17.0,none,75.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,KOtBu,17.0,isoxazole A,77.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,KOtBu,17.0,isoxazole B,61.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,KOtBu,17.0,ester C,82.2
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,KOtBu,17.0,pyridine D,58.8
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,KOtBu,17.0,water,67.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,DBU,13.5,none,67.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,DBU,13.5,isoxazole A,64.4
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,DBU,13.5,isoxazole B,63.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,DBU,13.5,ester C,70.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,DBU,13.5,pyridine D,48.1
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,DBU,13.5,water,67.0
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K3PO4,12.3,none,65.6
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K3PO4,12.3,isoxazole A,66.9
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K3PO4,12.3,isoxazole B,47.7
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K3PO4,12.3,ester C,63.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K3PO4,12.3,pyridine D,40.3
+4-MeO-PhBr,COc1ccc(Br)cc1,L4,0.65,205,K3PO4,12.3,water,67.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K2CO3,10.3,none,17.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K2CO3,10.3,isoxazole A,11.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K2CO3,10.3,isoxazole B,4.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K2CO3,10.3,ester C,8.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K2CO3,10.3,pyridine D,8.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K2CO3,10.3,water,8.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,Cs2CO3,10.4,none,11.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,15.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,6.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,Cs2CO3,10.4,ester C,5.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,5.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,Cs2CO3,10.4,water,14.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,KOtBu,17.0,none,20.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,KOtBu,17.0,isoxazole A,27.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,KOtBu,17.0,isoxazole B,14.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,KOtBu,17.0,ester C,18.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,KOtBu,17.0,pyridine D,14.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,KOtBu,17.0,water,26.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,DBU,13.5,none,18.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,DBU,13.5,isoxazole A,12.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,DBU,13.5,isoxazole B,4.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,DBU,13.5,ester C,17.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,DBU,13.5,pyridine D,6.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,DBU,13.5,water,14.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K3PO4,12.3,none,16.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K3PO4,12.3,isoxazole A,19.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K3PO4,12.3,isoxazole B,7.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K3PO4,12.3,ester C,16.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K3PO4,12.3,pyridine D,6.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L1,0.2,160,K3PO4,12.3,water,27.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K2CO3,10.3,none,35.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K2CO3,10.3,isoxazole A,33.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K2CO3,10.3,isoxazole B,28.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K2CO3,10.3,ester C,48.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K2CO3,10.3,pyridine D,15.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K2CO3,10.3,water,33.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,Cs2CO3,10.4,none,36.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,32.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,31.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,Cs2CO3,10.4,ester C,33.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,20.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,Cs2CO3,10.4,water,36.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,KOtBu,17.0,none,60.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,KOtBu,17.0,isoxazole A,62.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,KOtBu,17.0,isoxazole B,48.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,KOtBu,17.0,ester C,53.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,KOtBu,17.0,pyridine D,35.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,KOtBu,17.0,water,55.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,DBU,13.5,none,47.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,DBU,13.5,isoxazole A,44.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,DBU,13.5,isoxazole B,36.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,DBU,13.5,ester C,44.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,DBU,13.5,pyridine D,26.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,DBU,13.5,water,54.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K3PO4,12.3,none,49.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K3PO4,12.3,isoxazole A,42.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K3PO4,12.3,isoxazole B,34.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K3PO4,12.3,ester C,36.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K3PO4,12.3,pyridine D,26.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L2,0.5,175,K3PO4,12.3,water,51.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K2CO3,10.3,none,46.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K2CO3,10.3,isoxazole A,47.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K2CO3,10.3,isoxazole B,37.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K2CO3,10.3,ester C,51.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K2CO3,10.3,pyridine D,27.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K2CO3,10.3,water,54.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,Cs2CO3,10.4,none,54.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,47.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,39.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,Cs2CO3,10.4,ester C,51.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,30.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,Cs2CO3,10.4,water,56.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,KOtBu,17.0,none,73.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,KOtBu,17.0,isoxazole A,78.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,KOtBu,17.0,isoxazole B,53.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,KOtBu,17.0,ester C,81.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,KOtBu,17.0,pyridine D,52.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,KOtBu,17.0,water,70.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,DBU,13.5,none,58.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,DBU,13.5,isoxazole A,64.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,DBU,13.5,isoxazole B,58.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,DBU,13.5,ester C,64.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,DBU,13.5,pyridine D,44.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,DBU,13.5,water,62.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K3PO4,12.3,none,56.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K3PO4,12.3,isoxazole A,55.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K3PO4,12.3,isoxazole B,41.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K3PO4,12.3,ester C,57.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K3PO4,12.3,pyridine D,40.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L3,0.8,190,K3PO4,12.3,water,71.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K2CO3,10.3,none,32.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K2CO3,10.3,isoxazole A,25.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K2CO3,10.3,isoxazole B,22.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K2CO3,10.3,ester C,33.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K2CO3,10.3,pyridine D,22.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K2CO3,10.3,water,33.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,Cs2CO3,10.4,none,37.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,35.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,26.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,Cs2CO3,10.4,ester C,33.9
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,17.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,Cs2CO3,10.4,water,31.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,KOtBu,17.0,none,51.4
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,KOtBu,17.0,isoxazole A,49.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,KOtBu,17.0,isoxazole B,44.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,KOtBu,17.0,ester C,45.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,KOtBu,17.0,pyridine D,26.8
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,KOtBu,17.0,water,55.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,DBU,13.5,none,37.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,DBU,13.5,isoxazole A,42.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,DBU,13.5,isoxazole B,30.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,DBU,13.5,ester C,35.6
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,DBU,13.5,pyridine D,22.1
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,DBU,13.5,water,46.3
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K3PO4,12.3,none,36.5
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K3PO4,12.3,isoxazole A,40.7
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K3PO4,12.3,isoxazole B,32.2
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K3PO4,12.3,ester C,32.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K3PO4,12.3,pyridine D,23.0
+4-CF3-PhCl,FC(F)(F)c1ccc(Cl)cc1,L4,0.65,205,K3PO4,12.3,water,40.2
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K2CO3,10.3,none,43.5
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K2CO3,10.3,isoxazole A,38.3
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K2CO3,10.3,isoxazole B,33.2
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K2CO3,10.3,ester C,52.1
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K2CO3,10.3,pyridine D,19.0
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K2CO3,10.3,water,35.0
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,Cs2CO3,10.4,none,40.4
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,42.9
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,37.2
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,Cs2CO3,10.4,ester C,45.8
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,20.3
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,Cs2CO3,10.4,water,38.3
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,KOtBu,17.0,none,54.3
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,KOtBu,17.0,isoxazole A,56.1
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,KOtBu,17.0,isoxazole B,49.4
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,KOtBu,17.0,ester C,63.8
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,KOtBu,17.0,pyridine D,43.3
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,KOtBu,17.0,water,55.7
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,DBU,13.5,none,46.4
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,DBU,13.5,isoxazole A,49.6
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,DBU,13.5,isoxazole B,40.8
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,DBU,13.5,ester C,51.2
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,DBU,13.5,pyridine D,22.3
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,DBU,13.5,water,44.2
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K3PO4,12.3,none,49.0
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K3PO4,12.3,isoxazole A,50.1
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K3PO4,12.3,isoxazole B,33.2
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K3PO4,12.3,ester C,45.7
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K3PO4,12.3,pyridine D,28.5
+3-pyridyl-Br,Brc1cccnc1,L1,0.2,160,K3PO4,12.3,water,51.7
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K2CO3,10.3,none,65.8
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K2CO3,10.3,isoxazole A,70.7
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K2CO3,10.3,isoxazole B,56.2
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K2CO3,10.3,ester C,71.7
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K2CO3,10.3,pyridine D,47.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K2CO3,10.3,water,66.7
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,Cs2CO3,10.4,none,70.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,67.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,56.4
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,Cs2CO3,10.4,ester C,72.3
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,45.8
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,Cs2CO3,10.4,water,75.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,KOtBu,17.0,none,88.2
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,KOtBu,17.0,isoxazole A,87.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,KOtBu,17.0,isoxazole B,72.0
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,KOtBu,17.0,ester C,86.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,KOtBu,17.0,pyridine D,64.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,KOtBu,17.0,water,87.7
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,DBU,13.5,none,73.0
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,DBU,13.5,isoxazole A,76.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,DBU,13.5,isoxazole B,72.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,DBU,13.5,ester C,75.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,DBU,13.5,pyridine D,56.2
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,DBU,13.5,water,77.6
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K3PO4,12.3,none,73.8
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K3PO4,12.3,isoxazole A,75.5
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K3PO4,12.3,isoxazole B,67.1
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K3PO4,12.3,ester C,69.4
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K3PO4,12.3,pyridine D,63.8
+3-pyridyl-Br,Brc1cccnc1,L2,0.5,175,K3PO4,12.3,water,82.7
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K2CO3,10.3,none,81.8
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K2CO3,10.3,isoxazole A,77.0
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K2CO3,10.3,isoxazole B,76.5
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K2CO3,10.3,ester C,78.0
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K2CO3,10.3,pyridine D,61.9
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K2CO3,10.3,water,79.0
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,Cs2CO3,10.4,none,80.8
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,86.9
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,71.2
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,Cs2CO3,10.4,ester C,85.4
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,63.9
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,Cs2CO3,10.4,water,76.6
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,KOtBu,17.0,none,99.1
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,KOtBu,17.0,isoxazole A,92.9
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,KOtBu,17.0,isoxazole B,79.8
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,KOtBu,17.0,ester C,88.5
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,KOtBu,17.0,pyridine D,74.8
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,KOtBu,17.0,water,86.6
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,DBU,13.5,none,82.1
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,DBU,13.5,isoxazole A,85.5
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,DBU,13.5,isoxazole B,80.2
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,DBU,13.5,ester C,88.2
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,DBU,13.5,pyridine D,70.5
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,DBU,13.5,water,85.5
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K3PO4,12.3,none,89.3
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K3PO4,12.3,isoxazole A,80.8
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K3PO4,12.3,isoxazole B,79.1
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K3PO4,12.3,ester C,87.5
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K3PO4,12.3,pyridine D,71.3
+3-pyridyl-Br,Brc1cccnc1,L3,0.8,190,K3PO4,12.3,water,83.0
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K2CO3,10.3,none,62.1
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K2CO3,10.3,isoxazole A,63.5
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K2CO3,10.3,isoxazole B,56.9
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K2CO3,10.3,ester C,68.1
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K2CO3,10.3,pyridine D,41.2
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K2CO3,10.3,water,69.6
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,Cs2CO3,10.4,none,66.5
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,61.2
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,58.1
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,Cs2CO3,10.4,ester C,57.1
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,41.5
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,Cs2CO3,10.4,water,56.3
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,KOtBu,17.0,none,80.2
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,KOtBu,17.0,isoxazole A,84.0
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,KOtBu,17.0,isoxazole B,75.3
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,KOtBu,17.0,ester C,70.6
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,KOtBu,17.0,pyridine D,62.7
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,KOtBu,17.0,water,82.3
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,DBU,13.5,none,75.3
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,DBU,13.5,isoxazole A,74.7
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,DBU,13.5,isoxazole B,66.6
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,DBU,13.5,ester C,66.6
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,DBU,13.5,pyridine D,51.0
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,DBU,13.5,water,69.6
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K3PO4,12.3,none,68.9
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K3PO4,12.3,isoxazole A,70.1
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K3PO4,12.3,isoxazole B,56.6
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K3PO4,12.3,ester C,67.2
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K3PO4,12.3,pyridine D,49.9
+3-pyridyl-Br,Brc1cccnc1,L4,0.65,205,K3PO4,12.3,water,71.0
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K2CO3,10.3,none,33.7
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K2CO3,10.3,isoxazole A,35.7
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K2CO3,10.3,isoxazole B,32.0
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K2CO3,10.3,ester C,34.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K2CO3,10.3,pyridine D,12.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K2CO3,10.3,water,31.7
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,Cs2CO3,10.4,none,36.2
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,29.0
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,23.8
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,Cs2CO3,10.4,ester C,32.3
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,Cs2CO3,10.4,pyridine D,26.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,Cs2CO3,10.4,water,38.8
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,KOtBu,17.0,none,51.9
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,KOtBu,17.0,isoxazole A,51.4
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,KOtBu,17.0,isoxazole B,40.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,KOtBu,17.0,ester C,55.4
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,KOtBu,17.0,pyridine D,33.0
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,KOtBu,17.0,water,49.3
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,DBU,13.5,none,45.9
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,DBU,13.5,isoxazole A,48.8
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,DBU,13.5,isoxazole B,37.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,DBU,13.5,ester C,44.6
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,DBU,13.5,pyridine D,30.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,DBU,13.5,water,45.8
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K3PO4,12.3,none,42.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K3PO4,12.3,isoxazole A,44.0
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K3PO4,12.3,isoxazole B,26.2
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K3PO4,12.3,ester C,47.1
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K3PO4,12.3,pyridine D,22.7
+2-thienyl-Br,Brc1cccs1,L1,0.2,160,K3PO4,12.3,water,45.7
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K2CO3,10.3,none,68.7
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K2CO3,10.3,isoxazole A,61.7
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K2CO3,10.3,isoxazole B,53.1
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K2CO3,10.3,ester C,67.5
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K2CO3,10.3,pyridine D,46.0
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K2CO3,10.3,water,60.6
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,Cs2CO3,10.4,none,65.5
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,62.6
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,55.1
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,Cs2CO3,10.4,ester C,62.1
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,Cs2CO3,10.4,pyridine D,47.3
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,Cs2CO3,10.4,water,66.9
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,KOtBu,17.0,none,77.1
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,KOtBu,17.0,isoxazole A,82.8
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,KOtBu,17.0,isoxazole B,74.2
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,KOtBu,17.0,ester C,81.0
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,KOtBu,17.0,pyridine D,58.0
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,KOtBu,17.0,water,76.7
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,DBU,13.5,none,72.8
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,DBU,13.5,isoxazole A,70.2
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,DBU,13.5,isoxazole B,63.6
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,DBU,13.5,ester C,76.0
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,DBU,13.5,pyridine D,56.3
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,DBU,13.5,water,73.3
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K3PO4,12.3,none,69.5
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K3PO4,12.3,isoxazole A,63.7
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K3PO4,12.3,isoxazole B,61.7
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K3PO4,12.3,ester C,69.0
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K3PO4,12.3,pyridine D,48.2
+2-thienyl-Br,Brc1cccs1,L2,0.5,175,K3PO4,12.3,water,77.2
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K2CO3,10.3,none,71.5
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K2CO3,10.3,isoxazole A,79.4
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K2CO3,10.3,isoxazole B,64.8
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K2CO3,10.3,ester C,71.0
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K2CO3,10.3,pyridine D,53.6
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K2CO3,10.3,water,72.3
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,Cs2CO3,10.4,none,76.5
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,84.0
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,75.6
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,Cs2CO3,10.4,ester C,75.7
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,Cs2CO3,10.4,pyridine D,56.7
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,Cs2CO3,10.4,water,82.0
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,KOtBu,17.0,none,91.9
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,KOtBu,17.0,isoxazole A,84.7
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,KOtBu,17.0,isoxazole B,85.2
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,KOtBu,17.0,ester C,89.2
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,KOtBu,17.0,pyridine D,79.4
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,KOtBu,17.0,water,98.3
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,DBU,13.5,none,82.3
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,DBU,13.5,isoxazole A,85.8
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,DBU,13.5,isoxazole B,76.7
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,DBU,13.5,ester C,83.7
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,DBU,13.5,pyridine D,63.1
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,DBU,13.5,water,81.6
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K3PO4,12.3,none,82.8
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K3PO4,12.3,isoxazole A,77.4
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K3PO4,12.3,isoxazole B,75.3
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K3PO4,12.3,ester C,81.9
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K3PO4,12.3,pyridine D,62.3
+2-thienyl-Br,Brc1cccs1,L3,0.8,190,K3PO4,12.3,water,91.8
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K2CO3,10.3,none,63.4
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K2CO3,10.3,isoxazole A,62.7
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K2CO3,10.3,isoxazole B,54.0
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K2CO3,10.3,ester C,60.0
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K2CO3,10.3,pyridine D,35.9
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K2CO3,10.3,water,61.9
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,Cs2CO3,10.4,none,61.1
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,62.9
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,50.7
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,Cs2CO3,10.4,ester C,59.0
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,Cs2CO3,10.4,pyridine D,35.9
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,Cs2CO3,10.4,water,55.2
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,KOtBu,17.0,none,72.1
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,KOtBu,17.0,isoxazole A,81.6
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,KOtBu,17.0,isoxazole B,69.0
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,KOtBu,17.0,ester C,77.8
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,KOtBu,17.0,pyridine D,54.4
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,KOtBu,17.0,water,74.3
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,DBU,13.5,none,70.3
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,DBU,13.5,isoxazole A,69.0
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,DBU,13.5,isoxazole B,64.9
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,DBU,13.5,ester C,59.4
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,DBU,13.5,pyridine D,47.2
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,DBU,13.5,water,69.6
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K3PO4,12.3,none,63.0
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K3PO4,12.3,isoxazole A,67.6
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K3PO4,12.3,isoxazole B,54.1
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K3PO4,12.3,ester C,65.2
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K3PO4,12.3,pyridine D,50.2
+2-thienyl-Br,Brc1cccs1,L4,0.65,205,K3PO4,12.3,water,65.1
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K2CO3,10.3,none,53.2
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K2CO3,10.3,isoxazole A,49.2
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K2CO3,10.3,isoxazole B,36.5
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K2CO3,10.3,ester C,53.0
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K2CO3,10.3,pyridine D,20.7
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K2CO3,10.3,water,52.7
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,Cs2CO3,10.4,none,45.5
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,Cs2CO3,10.4,isoxazole A,51.0
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,Cs2CO3,10.4,isoxazole B,38.5
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,Cs2CO3,10.4,ester C,54.9
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,Cs2CO3,10.4,pyridine D,30.5
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,Cs2CO3,10.4,water,52.9
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,KOtBu,17.0,none,64.3
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,KOtBu,17.0,isoxazole A,74.7
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,KOtBu,17.0,isoxazole B,58.2
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,KOtBu,17.0,ester C,75.2
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,KOtBu,17.0,pyridine D,44.8
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,KOtBu,17.0,water,74.5
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,DBU,13.5,none,64.0
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,DBU,13.5,isoxazole A,65.1
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,DBU,13.5,isoxazole B,46.8
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,DBU,13.5,ester C,59.0
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,DBU,13.5,pyridine D,38.6
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,DBU,13.5,water,63.3
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K3PO4,12.3,none,64.8
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K3PO4,12.3,isoxazole A,56.4
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K3PO4,12.3,isoxazole B,47.1
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K3PO4,12.3,ester C,55.7
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K3PO4,12.3,pyridine D,39.9
+4-Et-PhI,CCc1ccc(I)cc1,L1,0.2,160,K3PO4,12.3,water,59.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K2CO3,10.3,none,75.8
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K2CO3,10.3,isoxazole A,81.5
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K2CO3,10.3,isoxazole B,70.1
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K2CO3,10.3,ester C,86.1
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K2CO3,10.3,pyridine D,60.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K2CO3,10.3,water,70.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,Cs2CO3,10.4,none,77.2
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,Cs2CO3,10.4,isoxazole A,72.0
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,Cs2CO3,10.4,isoxazole B,70.8
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,Cs2CO3,10.4,ester C,77.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,Cs2CO3,10.4,pyridine D,59.3
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,Cs2CO3,10.4,water,72.5
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,KOtBu,17.0,none,90.9
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,KOtBu,17.0,isoxazole A,84.6
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,KOtBu,17.0,isoxazole B,92.6
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,KOtBu,17.0,ester C,94.7
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,KOtBu,17.0,pyridine D,71.2
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,KOtBu,17.0,water,90.1
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,DBU,13.5,none,83.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,DBU,13.5,isoxazole A,87.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,DBU,13.5,isoxazole B,78.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,DBU,13.5,ester C,85.5
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,DBU,13.5,pyridine D,64.5
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,DBU,13.5,water,78.7
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K3PO4,12.3,none,75.2
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K3PO4,12.3,isoxazole A,85.9
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K3PO4,12.3,isoxazole B,77.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K3PO4,12.3,ester C,84.4
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K3PO4,12.3,pyridine D,65.0
+4-Et-PhI,CCc1ccc(I)cc1,L2,0.5,175,K3PO4,12.3,water,85.6
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K2CO3,10.3,none,82.9
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K2CO3,10.3,isoxazole A,88.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K2CO3,10.3,isoxazole B,76.7
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K2CO3,10.3,ester C,84.8
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K2CO3,10.3,pyridine D,71.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K2CO3,10.3,water,84.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,Cs2CO3,10.4,none,82.9
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,Cs2CO3,10.4,isoxazole A,87.5
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,Cs2CO3,10.4,isoxazole B,81.3
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,Cs2CO3,10.4,ester C,86.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,Cs2CO3,10.4,pyridine D,72.5
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,Cs2CO3,10.4,water,87.1
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,KOtBu,17.0,none,91.7
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,KOtBu,17.0,isoxazole A,85.7
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,KOtBu,17.0,isoxazole B,91.4
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,KOtBu,17.0,ester C,85.8
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,KOtBu,17.0,pyridine D,87.7
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,KOtBu,17.0,water,94.1
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,DBU,13.5,none,86.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,DBU,13.5,isoxazole A,86.9
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,DBU,13.5,isoxazole B,84.6
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,DBU,13.5,ester C,93.5
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,DBU,13.5,pyridine D,82.9
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,DBU,13.5,water,97.1
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K3PO4,12.3,none,91.8
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K3PO4,12.3,isoxazole A,85.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K3PO4,12.3,isoxazole B,80.7
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K3PO4,12.3,ester C,96.5
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K3PO4,12.3,pyridine D,82.2
+4-Et-PhI,CCc1ccc(I)cc1,L3,0.8,190,K3PO4,12.3,water,91.7
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K2CO3,10.3,none,80.0
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K2CO3,10.3,isoxazole A,69.2
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K2CO3,10.3,isoxazole B,72.6
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K2CO3,10.3,ester C,75.9
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K2CO3,10.3,pyridine D,55.3
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K2CO3,10.3,water,72.6
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,Cs2CO3,10.4,none,67.9
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,Cs2CO3,10.4,isoxazole A,75.6
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,Cs2CO3,10.4,isoxazole B,74.1
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,Cs2CO3,10.4,ester C,73.1
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,Cs2CO3,10.4,pyridine D,51.3
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,Cs2CO3,10.4,water,73.0
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,KOtBu,17.0,none,86.7
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,KOtBu,17.0,isoxazole A,82.3
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,KOtBu,17.0,isoxazole B,83.4
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,KOtBu,17.0,ester C,83.4
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,KOtBu,17.0,pyridine D,77.1
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,KOtBu,17.0,water,80.5
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,DBU,13.5,none,84.3
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,DBU,13.5,isoxazole A,77.8
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,DBU,13.5,isoxazole B,74.3
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,DBU,13.5,ester C,81.8
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,DBU,13.5,pyridine D,62.7
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,DBU,13.5,water,79.1
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K3PO4,12.3,none,83.0
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K3PO4,12.3,isoxazole A,74.9
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K3PO4,12.3,isoxazole B,75.5
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K3PO4,12.3,ester C,69.1
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K3PO4,12.3,pyridine D,60.4
+4-Et-PhI,CCc1ccc(I)cc1,L4,0.65,205,K3PO4,12.3,water,75.8

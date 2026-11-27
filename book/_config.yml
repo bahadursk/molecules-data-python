@@ -1,0 +1,51 @@
+title: "Molecules, Data and Python"
+author: "Dr. Bahadur Sk"
+copyright: "2026"
+logo: _static/logo.png
+only_build_toc_files: true
+
+execute:
+  execute_notebooks: cache
+  timeout: 300
+  allow_errors: false
+
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_image
+    - substitution
+
+repository:
+  url: https://github.com/bahadursk/molecules-data-python
+  path_to_book: book
+  branch: main
+
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: true
+  home_page_in_navbar: true
+  favicon: _static/logo.png
+  extra_footer: |
+    <p>Code is MIT licensed. Text and figures are CC BY 4.0.</p>
+
+launch_buttons:
+  notebook_interface: jupyterlab
+  binderhub_url: https://mybinder.org
+  colab_url: https://colab.research.google.com
+  thebe: true
+
+bibtex_bibfiles:
+  - references.bib
+
+sphinx:
+  config:
+    bibtex_reference_style: author_year
+    suppress_warnings: ["mystnb.unknown_mime_type"]
+    html_css_files: ["custom.css"]
+    html_theme_options:
+      use_download_button: true
+      show_toc_level: 2

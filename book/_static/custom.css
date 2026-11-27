@@ -1,0 +1,19 @@
+/* Molecules, Data and Python: colour theme */
+:root {
+  --mdp-teal: #0f9d8a;
+  --mdp-violet: #6c4ad6;
+  --mdp-amber: #f2a93b;
+  --mdp-rose: #e5487a;
+}
+.admonition.level-1 { border-color: #2fa84f; }
+.admonition.level-1 > .admonition-title { background: #e6f6ea; }
+.admonition.level-2 { border-color: var(--mdp-amber); }
+.admonition.level-2 > .admonition-title { background: #fdf3e1; }
+.admonition.level-3 { border-color: var(--mdp-rose); }
+.admonition.level-3 > .admonition-title { background: #fde8ef; }
+.admonition.chem-note { border-color: var(--mdp-teal); }
+.admonition.chem-note > .admonition-title { background: #e3f5f2; }
+.admonition.ml-corner { border-color: var(--mdp-violet); }
+.admonition.ml-corner > .admonition-title { background: #eee9fb; }
+html[data-theme="dark"] .admonition > .admonition-title { background: #2a2a33 !important; }
+h1 { color: var(--mdp-violet); }

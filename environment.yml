@@ -1,0 +1,8 @@
+name: mdp
+channels: [conda-forge]
+dependencies:
+  - python=3.12
+  - pip
+  - jupyterlab
+  - pip:
+      - -r requirements.txt
