@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 12, 13, 16, 17 and an introductory quantum chemistry course.
 ```
 
-Quantum mechanics explains why bonds form, why molecules are coloured and why reactions have barriers. This chapter moves from textbook models solved numerically to real *ab initio* calculations with **PySCF** {cite:p}`sun2018`.
+Quantum mechanics explains why bonds form, why molecules are coloured and why reactions have barriers. Its central equation, the time-independent **Schrödinger equation** $\hat{H}\psi = E\psi$, says that the allowed energies $E$ of a system and its **wavefunctions** $\psi$ are the solutions of an eigenvalue problem: the Hamiltonian operator $\hat{H}$ (kinetic plus potential energy) acting on $\psi$ gives back $\psi$ multiplied by a number. The square of the wavefunction, $|\psi|^2$, is the probability density of finding the particle. Only a few textbook systems can be solved with pen and paper; everything else is solved numerically, and the trick is always to turn the equation into a matrix whose eigenvalues are the energies. **Quantum chemistry** applies this to molecules to predict structures, energies, spectra and reactivity from first principles. This chapter moves from textbook models solved numerically to real *ab initio* calculations with **PySCF** {cite:p}`sun2018`.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -24,7 +24,20 @@ from scipy.linalg import eigh_tridiagonal
 
 ## Solving the Schrödinger equation on a grid
 
-Discretising $-\frac{\hbar^2}{2m}\psi'' + V\psi = E\psi$ with finite differences turns it into a matrix eigenvalue problem. In atomic units ($\hbar = m_e = 1$):
+The key numerical idea is to represent $\psi$ by its values on a fine grid of points. The second derivative at each point can then be approximated from its neighbours, $\psi''(x_i) \approx (\psi_{i+1} - 2\psi_i + \psi_{i-1})/\Delta x^2$, a *finite difference*. With this replacement the Schrödinger equation becomes a set of linear equations linking each point to its neighbours, which is a matrix equation $\mathbf{H}\boldsymbol{\psi} = E\boldsymbol{\psi}$. Each point couples only to its two neighbours, so the matrix is *tridiagonal* (non-zero only on the diagonal and next to it), and `scipy.linalg.eigh_tridiagonal` finds its lowest eigenvalues quickly. **Atomic units** set $\hbar$, the electron mass and the elementary charge to 1, so energies come out in hartrees and lengths in bohr. Discretising $-\frac{\hbar^2}{2m}\psi'' + V\psi = E\psi$ with finite differences turns it into a matrix eigenvalue problem. In atomic units ($\hbar = m_e = 1$):
+
+The idea fits in a few lines for the simplest case, a particle in a box of length 1 with infinitely high walls, whose exact energies are $E_n = n^2\pi^2/2$ in atomic units. Building the matrix as a dense array makes its structure visible:
+
+```{code-cell} ipython3
+n_pts, L_box = 200, 1.0
+dx_box = L_box / (n_pts + 1)
+H_box = (np.diag(np.full(n_pts, 1.0)) - 0.5 * np.diag(np.ones(n_pts - 1), 1)
+         - 0.5 * np.diag(np.ones(n_pts - 1), -1)) / dx_box**2
+print("numerical:", np.linalg.eigvalsh(H_box)[:3].round(3))
+print("exact:    ", (np.arange(1, 4) ** 2 * np.pi**2 / 2).round(3))
+```
+
+The agreement is excellent. A general solver accepts any potential $V(x)$ on the grid, which lets us compare a box with soft walls, a harmonic oscillator and a Morse oscillator, the more realistic model of a chemical bond that dissociates at large separation:
 
 ```{code-cell} ipython3
 def solve_1d(V, x, n_states=6, mass=1.0):
@@ -61,7 +74,7 @@ The harmonic levels are evenly spaced at $(n + \frac{1}{2})\hbar\omega$; the Mor
 
 ## Conjugated dyes: particle in a box meets colour
 
-The π electrons of a cyanine dye behave like particles in a one-dimensional box of length *L*. The HOMO→LUMO transition gives
+The particle in a box is not only a teaching model. In a conjugated molecule the π electrons are delocalised along the chain and move almost freely within it, so the chain acts as a one-dimensional box. The box levels are $E_n = n^2h^2/(8m_eL^2)$, and with $N$ π electrons filling the levels two by two, the lowest-energy absorption promotes an electron from the highest occupied level $n = N/2$ to the next. The longer the box, the closer the levels and the longer the wavelength absorbed, which is why extending conjugation shifts a dye's colour towards red. The π electrons of a cyanine dye behave like particles in a one-dimensional box of length *L*. The HOMO→LUMO transition gives
 
 $$\lambda = \frac{8 m_e c L^2}{h (N + 1)}$$
 
@@ -77,6 +90,8 @@ for k in range(1, 5):                    # number of CH=CH units
 Each added double bond shifts absorption to longer wavelength by about 100 nm, in line with experiment.
 
 ## Hydrogen atom orbitals
+
+The hydrogen atom is the one real atom with an exact solution. Each **orbital** is labelled by three quantum numbers, $n$, $l$ and $m$, and factorises into a radial part $R_{nl}(r)$, which depends on the distance from the nucleus and is built from Laguerre polynomials, and an angular part, the spherical harmonic $Y_l^m(\theta, \phi)$, which gives the familiar s, p, d and f shapes. Both special functions are in `scipy.special`. Plotting a slice through the xz-plane with a diverging colormap shows the **nodes**, surfaces where $\psi = 0$ and the phase changes sign: an orbital has $n - 1$ nodes in total, $l$ of them angular.
 
 ```{code-cell} ipython3
 from scipy.special import sph_harm_y, genlaguerre
@@ -105,7 +120,16 @@ plt.tight_layout(); plt.show()
 
 ## Hückel theory for any conjugated molecule
 
-We build the Hückel matrix directly from an RDKit molecule, then draw the HOMO and LUMO coefficients on the structure.
+**Hückel theory** is the simplest molecular-orbital model of π systems. Each sp² carbon contributes one p orbital, and the Hamiltonian matrix is built from just two numbers: $\alpha$ on the diagonal (the energy of an isolated p orbital, set to 0) and $\beta$ between bonded atoms (a negative interaction energy, set to −1). Non-bonded pairs get 0, so the Hückel matrix is simply the negative of the adjacency matrix of the π framework (Chapter 19). Its eigenvalues are the orbital energies in units of $|\beta|$, and its eigenvectors give each atom's coefficient in each molecular orbital. For ethene there are two orbitals, bonding and antibonding:
+
+```{code-cell} ipython3
+H_ethene = np.array([[0.0, -1.0], [-1.0, 0.0]])
+E_eth, C_eth = np.linalg.eigh(H_ethene)
+print("energies (units of |β|):", E_eth)
+print("bonding orbital coefficients:", C_eth[:, 0].round(3))
+```
+
+The bonding orbital lies at $\alpha + \beta$ with coefficients of equal size, $1/\sqrt{2}$, on both carbons (the overall sign of an eigenvector is arbitrary, so both may come out negative). We build the Hückel matrix directly from an RDKit molecule, then draw the HOMO and LUMO coefficients on the structure.
 
 ```{code-cell} ipython3
 from rdkit import Chem
@@ -145,15 +169,24 @@ for name, smi in [("hexatriene", "C=CC=CC=C"), ("naphthalene", "c1ccc2ccccc2c1")
     display(SVG(draw_mo(m, conj, Cm[:, homo + 1], f"{name} LUMO")))
 ```
 
-Circle size shows the coefficient magnitude; colour shows its sign.
+Circle size shows the coefficient magnitude; colour shows its sign. Naphthalene, with ten π electrons in an aromatic framework, has a larger gap than the open-chain hexatriene, a sign of aromatic stabilisation. Azulene, an isomer of naphthalene built from a five- and a seven-membered ring, has a much smaller gap, which is why it is blue while naphthalene is colourless.
 
 ## Hartree–Fock and DFT with PySCF
 
-Now a real calculation: water with a Gaussian basis set.
+Real molecules have many interacting electrons, and the Schrödinger equation must be approximated. Two families of methods dominate. **Hartree–Fock** (HF) treats each electron as moving in the average field of all the others, so the many-electron problem becomes a set of one-electron orbital equations solved *self-consistently*: guess the orbitals, compute the average field, solve for new orbitals, and repeat until nothing changes (the **self-consistent field**, SCF). HF neglects the way electrons dodge each other instantaneously (**electron correlation**). **Density functional theory** (DFT) instead works with the electron density and includes correlation approximately through an exchange–correlation *functional*, such as the widely used B3LYP; it usually gives better energies at similar cost.
+
+Both methods expand the orbitals in a **basis set**, a fixed collection of Gaussian-shaped functions centred on each atom. Larger basis sets are more accurate and more expensive; `6-31g*` is a common small basis for organic molecules. PySCF builds a molecule with `gto.M` from coordinates (in ångströms) and a basis, and `scf.RHF(mol).run()` performs a restricted Hartree–Fock calculation, in which each spatial orbital holds two electrons of opposite spin. The smallest possible example is the hydrogen molecule:
 
 ```{code-cell} ipython3
 from pyscf import gto, scf, dft
 
+h2 = gto.M(atom="H 0 0 0; H 0 0 0.74", basis="sto-3g", verbose=0)
+print(f"H2 RHF/STO-3G energy: {scf.RHF(h2).run().e_tot:.4f} hartree")
+```
+
+Energies are reported in hartrees, and one hartree is 2625.5 kJ mol⁻¹, so differences of a few millihartree are chemically significant. Now a real calculation: water with a Gaussian basis set.
+
+```{code-cell} ipython3
 mol = gto.M(atom="O 0 0 0.1173; H 0 0.7572 -0.4692; H 0 -0.7572 -0.4692", basis="6-31g*", verbose=0)
 mf = scf.RHF(mol).run()
 ks = dft.RKS(mol, xc="b3lyp").run()
@@ -162,7 +195,11 @@ print(f"B3LYP energy {ks.e_tot:.6f} Eh")
 print("dipole (D):", np.round(mf.dip_moment(verbose=0), 3))
 ```
 
+The B3LYP energy is lower than the HF energy because DFT includes electron correlation. The dipole moment, computed from the electron density, comes out somewhat larger than the experimental 1.85 D, a known tendency of HF with small basis sets.
+
 ### Orbital energy diagram
+
+The SCF calculation also gives the **molecular orbital energies**, stored in `mf.mo_energy` in hartrees (multiplied by 27.2114 to convert to eV). With 10 electrons, water fills the lowest five orbitals; the highest occupied (HOMO) and lowest unoccupied (LUMO) orbitals control its chemistry and its lowest electronic excitation.
 
 ```{code-cell} ipython3
 labels = mol.ao_labels()
@@ -180,6 +217,8 @@ plt.show()
 ```
 
 ### A potential energy curve: H₂
+
+A **potential energy curve** gives the energy of a molecule as a function of a bond length, and its minimum is the equilibrium bond length. Computing one is a loop: build the molecule at each separation, run the calculation and store the energy. For H₂ the curve also exposes a famous limitation. **Unrestricted** HF (UHF) allows the two electrons to occupy different spatial orbitals; to let it find that solution, the initial guess density is nudged so that the spin symmetry is broken.
 
 ```{code-cell} ipython3
 Rs = np.linspace(0.4, 3.0, 25)
@@ -200,6 +239,16 @@ plt.show()
 ```{admonition} ⚗️ Chemistry note
 :class: chem-note
 Restricted Hartree–Fock forces both electrons into the same spatial orbital, so H₂ dissociates into a mixture of H⁺ + H⁻ and H + H. This **static correlation** problem is why bond breaking needs multireference or carefully broken-symmetry methods.
+```
+
+```{admonition} Summary
+:class: tip
+- Finite differences turn the Schrödinger equation into a matrix eigenvalue problem; eigenvalues are energies and eigenvectors wavefunctions.
+- Harmonic levels are evenly spaced; Morse levels converge towards dissociation.
+- Conjugated chains behave like particles in a box: longer chains absorb at longer wavelengths.
+- Hydrogen orbitals are radial functions times spherical harmonics; nodes are where the phase changes.
+- Hückel theory: the π Hamiltonian is minus the adjacency matrix; diagonalise for orbital energies and coefficients.
+- PySCF runs HF and DFT with Gaussian basis sets; RHF fails at bond breaking, which UHF partly repairs.
 ```
 
 ## Exercises
