@@ -14,7 +14,9 @@ kernelspec:
 Assumes Part I. Basic calculus helps.
 ```
 
-NumPy works with numbers; **SymPy** works with **symbols**. It rearranges equations, differentiates, integrates and solves exactly, then prints the result as beautiful mathematics.
+NumPy and SciPy work with numbers: give them values and they give you a numerical answer. **SymPy** works with **symbols**, letters that stand for quantities, just as you do with pen and paper. It can rearrange the ideal gas law for $V$, differentiate a rate law, integrate a wavefunction or solve an equilibrium expression *exactly*, and then print the result as properly typeset mathematics. This is called **computer algebra**. It is useful whenever you want a general formula rather than one number, when you want to check a derivation from a textbook, or when you want to derive an expression once and then evaluate it quickly for many values. This chapter shows how to create symbols and equations, solve them, do calculus with rate laws and quantum mechanics, and pass the results on to NumPy.
+
+SymPy is imported as `sp`, and `init_printing()` makes Jupyter display results as mathematics:
 
 ```{code-cell} ipython3
 import sympy as sp
@@ -23,17 +25,33 @@ sp.init_printing()
 
 ## Symbols and expressions
 
+In ordinary Python, writing `x + 1` fails unless `x` already has a value. In SymPy you first declare `x` as a **symbol** with `sp.symbols`, and then expressions containing it stay unevaluated, as algebra. Telling SymPy what you know about a symbol, for example `positive=True` for a pressure or a temperature, lets it simplify further, because it can then rule out negative or complex roots.
+
+The most basic expression behaves just like algebra on paper:
+
+```{code-cell} ipython3
+x = sp.symbols("x")
+expr = (x + 1)**2
+print(expr)
+print(sp.expand(expr))            # multiply out
+print(sp.factor(x**2 - 1))        # and factorise
+```
+
+An equation is written with `sp.Eq(left, right)`, because `=` already means assignment and `==` tests whether two expressions are identical. Here is the ideal gas law:
+
 ```{code-cell} ipython3
 P, V, n, R, T = sp.symbols("P V n R T", positive=True)
 ideal = sp.Eq(P * V, n * R * T)
 ideal
 ```
 
+`sp.solve(equation, symbol)` rearranges an equation for the symbol you choose and returns a list of solutions; here there is only one.
+
 ```{code-cell} ipython3
 sp.solve(ideal, V)[0]
 ```
 
-Substitute numbers:
+To get a number, substitute values for the symbols with `.subs({symbol: value})`, and convert the exact result to a decimal with `.evalf(digits)`. One mole at 0 °C and 1 atm gives the familiar molar volume in m³:
 
 ```{code-cell} ipython3
 V_expr = sp.solve(ideal, V)[0]
@@ -42,7 +60,7 @@ V_expr.subs({n: 1, R: 8.314, T: 273.15, P: 101325}).evalf(5)
 
 ## Solving equilibria exactly: ICE tables
 
-For a weak acid HA with initial concentration $C$:
+An **ICE table** (Initial, Change, Equilibrium) is the standard way to set up an equilibrium problem: if $x$ mol L⁻¹ of a weak acid HA dissociates, the equilibrium concentrations are $[\mathrm{H^+}] = [\mathrm{A^-}] = x$ and $[\mathrm{HA}] = C - x$, so $K_a = x^2/(C - x)$. Chapter 6 solved this quadratic numerically. SymPy solves it in general, giving a formula valid for any $C$ and $K_a$; because $x$ was declared positive, only the physical root is returned.
 
 ```{code-cell} ipython3
 x, C, Ka = sp.symbols("x C K_a", positive=True)
@@ -57,7 +75,7 @@ pH = -sp.log(H.subs({C: 0.1, Ka: 1.8e-5}), 10)
 print("pH =", sp.N(pH, 4))
 ```
 
-The approximation $x \approx \sqrt{K_a C}$ comes from a series expansion for small $K_a$:
+Textbooks often use the approximation $x \approx \sqrt{K_a C}$. Where does it come from? A **series expansion** writes an expression as a sum of powers of a small quantity, here $K_a$. The leading term of the expansion is exactly $\sqrt{K_a C}$, and the next term shows the size of the correction, so SymPy both derives the approximation and tells you when it is safe:
 
 ```{code-cell} ipython3
 sp.series(H, Ka, 0, 2)
@@ -65,7 +83,15 @@ sp.series(H, Ka, 0, 2)
 
 ## Calculus with rate laws
 
-The integrated second-order rate law from the differential form $-\mathrm{d}[A]/\mathrm{d}t = k[A]^2$:
+SymPy differentiates with `sp.diff(expr, x)` and integrates with `sp.integrate(expr, x)`, returning exact results. A first taste, with a first-order decay:
+
+```{code-cell} ipython3
+t, k, A0 = sp.symbols("t k A_0", positive=True)
+conc = A0 * sp.exp(-k * t)
+sp.diff(conc, t)                   # the rate of change, -k[A]
+```
+
+The derivative is $-k$ times the concentration, which is the first-order rate law: differentiating the integrated law gives back the differential law. SymPy can also go the other way and solve a **differential equation**, an equation relating a function to its derivatives. You declare an unknown function with `sp.Function`, write the equation with `.diff(t)`, and call `sp.dsolve` with the initial condition in `ics`. The integrated second-order rate law from the differential form $-\mathrm{d}[A]/\mathrm{d}t = k[A]^2$:
 
 ```{code-cell} ipython3
 t, k, A0 = sp.symbols("t k A_0", positive=True)
@@ -75,14 +101,14 @@ sol = sp.dsolve(ode, ics={A(0): A0})
 sol
 ```
 
-Half-life:
+The **half-life** is the time at which the concentration has fallen to half its initial value. Setting the solution equal to $[A]_0/2$ and solving for $t$ gives the textbook result that a second-order half-life depends on the starting concentration, unlike a first-order one:
 
 ```{code-cell} ipython3
 t_half = sp.solve(sp.Eq(sol.rhs, A0 / 2), t)[0]
 t_half
 ```
 
-Consecutive reactions A → B → C:
+Consecutive reactions A → B → C give a *system* of differential equations: A decays to B, and B is formed from A while decaying to C. `dsolve` accepts a list of equations and solves them together.
 
 ```{code-cell} ipython3
 k1, k2 = sp.symbols("k_1 k_2", positive=True)
@@ -93,7 +119,7 @@ B_t = sp.simplify(s[1].rhs)
 B_t
 ```
 
-When is B at its maximum?
+When is the intermediate B at its maximum? At a maximum the slope is zero, so we differentiate $[B](t)$ and solve for the time at which the derivative vanishes. The result, $t_\max = \ln(k_1/k_2)/(k_1 - k_2)$, is a classic of kinetics and tells a synthetic chemist exactly when to stop a reaction to collect the most intermediate.
 
 ```{code-cell} ipython3
 t_max = sp.solve(sp.diff(B_t, t), t)
@@ -117,6 +143,8 @@ plt.show()
 
 ## Thermodynamics: Clausius–Clapeyron
 
+The Clausius–Clapeyron equation links the vapour pressure of a liquid at two temperatures to its enthalpy of vaporisation. Solving it symbolically for $\Delta H_\mathrm{vap}$ gives a formula that can be used with any pair of measurements; substituting the vapour pressure of water at 25 °C (3.17 kPa) and at its boiling point (101.3 kPa) gives a value close to the tabulated 41 kJ mol⁻¹ near 100 °C. Symbol names can include LaTeX, as in `\Delta{}H_{vap}`, so the output looks like a textbook.
+
 ```{code-cell} ipython3
 P1, P2, T1, T2, dH = sp.symbols("P_1 P_2 T_1 T_2 \\Delta{}H_{vap}", positive=True)
 cc = sp.Eq(sp.log(P2 / P1), -dH / R * (1 / T2 - 1 / T1))
@@ -126,6 +154,8 @@ print("ΔHvap(water) ≈", sp.N(sol_dH.subs({P1: 3.17, P2: 101.3, T1: 298.15, T2
 ```
 
 ## Quantum mechanics: particle in a box
+
+The particle in a box is the simplest quantum system: a particle of mass $m$ confined to a line of length $L$. Its wavefunctions are $\psi_n = \sqrt{2/L}\sin(n\pi x/L)$. Two properties can be checked symbolically. A wavefunction must be **normalised**, meaning $\int_0^L \psi^2\,dx = 1$, so that the total probability of finding the particle is one. And applying the kinetic-energy operator $-\frac{\hbar^2}{2m}\frac{d^2}{dx^2}$ to $\psi$ must give a constant times $\psi$; that constant is the energy, $E_n = \frac{n^2\pi^2\hbar^2}{2mL^2}$. Declaring `n` as an integer lets SymPy simplify $\sin^2(n\pi) = 0$.
 
 ```{code-cell} ipython3
 xq, L = sp.symbols("x L", positive=True)
@@ -145,6 +175,8 @@ That is the variance of position, $\langle x^2\rangle - \langle x\rangle^2$, in 
 
 ## Balancing equations with exact matrices
 
+Balancing a chemical equation is a linear-algebra problem: each element gives one equation saying that atoms in equal atoms out, and the stoichiometric coefficients are the unknowns. Writing reactant counts as positive and product counts as negative, the coefficients form a vector that the matrix multiplies to zero, which is called the **null space** of the matrix. NumPy would give this as decimals; SymPy's exact `Matrix` gives exact fractions, which are then scaled to the smallest whole numbers. Here is the classic reaction of permanganate with hydrochloric acid:
+
 ```{code-cell} ipython3
 #               KMnO4  HCl  KCl  MnCl2  H2O  Cl2
 M = sp.Matrix([[ 1,    0,  -1,   0,    0,   0],   # K
@@ -159,11 +191,22 @@ print(list(coeffs))   # 2 KMnO4 + 16 HCl -> 2 KCl + 2 MnCl2 + 8 H2O + 5 Cl2
 
 ## LaTeX output
 
+**LaTeX** is the typesetting language used for mathematics in most scientific journals and theses. `sp.latex(expr)` converts any SymPy expression into LaTeX source, so a derived result can go straight into a document without retyping, and without the typos that retyping introduces.
+
 ```{code-cell} ipython3
 print(sp.latex(sol.rhs))
 ```
 
 Paste the output directly into a report or thesis.
+
+```{admonition} Summary
+:class: tip
+- Declare symbols with `sp.symbols("x y", positive=True)`; write equations with `sp.Eq`.
+- `sp.solve` rearranges and solves; `.subs()` substitutes values and `.evalf()` gives decimals.
+- `sp.diff`, `sp.integrate` and `sp.series` do exact calculus; `sp.dsolve` solves differential equations such as rate laws.
+- Exact `sp.Matrix` methods such as `nullspace` balance equations without rounding.
+- `sp.lambdify` turns an expression into a fast NumPy function; `sp.latex` exports it for documents.
+```
 
 ## Exercises
 
