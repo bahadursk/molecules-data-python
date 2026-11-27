@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 12, 13 and 16.
 ```
 
-Will a reaction go? How far? Which species dominate at a given pH? Thermodynamics answers with ΔG, K and mass balances, all of which are a few lines of Python.
+Will a reaction go? How far? Which species dominate at a given pH? Kinetics (Chapter 25) tells you how fast a reaction approaches its destination; **thermodynamics** tells you where that destination is. The central quantity is the **Gibbs energy change**, $\Delta G = \Delta H - T\Delta S$, which combines the heat released or absorbed ($\Delta H$, the enthalpy change) with the change in disorder ($\Delta S$, the entropy change). A negative $\Delta G^\circ$ means products are favoured at equilibrium, and its size sets the **equilibrium constant** through $\Delta G^\circ = -RT\ln K$. From $K$, together with *mass balances* (atoms are conserved) and *charge balances* (solutions are neutral), you can compute the full equilibrium composition of a gas mixture or a buffer. All of this is a few lines of Python. This chapter computes reaction thermodynamics from tables, follows how they change with temperature, solves gas-phase and acid–base equilibria, and draws a phase diagram.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -26,7 +26,20 @@ R = 8.314462618
 
 ## ΔH, ΔS and ΔG from tables
 
-Standard data at 298 K (ΔfH° in kJ/mol, S° in J/(mol K)):
+Thermodynamic tables list, for each substance, its **standard enthalpy of formation** ΔfH° (the enthalpy change when one mole is formed from its elements in their standard states, zero for the elements themselves) and its **standard molar entropy** S°. Because enthalpy and entropy are state functions, the values for any reaction follow by subtraction, products minus reactants, each multiplied by its stoichiometric coefficient:
+
+$$\Delta H^\circ = \sum_\text{products} n\,\Delta_f H^\circ - \sum_\text{reactants} n\,\Delta_f H^\circ$$
+
+and likewise for $\Delta S^\circ$. A minimal example by hand, the formation of liquid water from H₂ and ½O₂:
+
+```{code-cell} ipython3
+dH_w = -285.8 - (0 + 0.5 * 0)                          # kJ/mol
+dS_w = 70.0 - (130.7 + 0.5 * 205.2)                    # J/(mol K)
+dG_w = dH_w - 298.15 * dS_w / 1000                     # note the J → kJ conversion
+print(f"ΔH = {dH_w} kJ, ΔS = {dS_w:.1f} J/K, ΔG = {dG_w:.1f} kJ")
+```
+
+The result, −237 kJ mol⁻¹, is the tabulated Gibbs energy of formation of water. Storing the table in a pandas DataFrame and writing one function turns this into a calculator for any reaction. Standard data at 298 K (ΔfH° in kJ/mol, S° in J/(mol K)):
 
 ```{code-cell} ipython3
 data = pd.DataFrame({
@@ -49,7 +62,11 @@ for name, r, p in [("Haber", {"N2": 1, "H2": 3}, {"NH3": 2}),
     print(f"{name:22s} ΔH = {dH:8.1f} kJ  ΔS = {dS:7.1f} J/K  ΔG = {dG:8.1f} kJ  K = {np.exp(-dG*1000/(R*298.15)):.2e}")
 ```
 
+The Haber process and methane combustion are favourable at 298 K. Limestone calcination has a large positive ΔG°, so CaCO₃ is stable at room temperature, but its ΔS° is large and positive because a gas is released, which suggests heating will change the answer.
+
 ## Temperature dependence: where does ΔG change sign?
+
+If $\Delta H$ and $\Delta S$ change little with temperature (a reasonable first approximation), $\Delta G^\circ(T) = \Delta H^\circ - T\Delta S^\circ$ is a straight line in $T$ with slope $-\Delta S^\circ$. It crosses zero at the **crossover temperature** $T^* = \Delta H^\circ/\Delta S^\circ$. Reactions that release heat but lose entropy, such as the Haber synthesis (4 gas molecules become 2), are favoured below $T^*$; reactions that absorb heat but gain entropy, such as calcination, are favoured above it. Plots of ΔG° against T like this one are called Ellingham diagrams in metallurgy.
 
 ```{code-cell} ipython3
 T = np.linspace(300, 1500, 300)
@@ -70,7 +87,7 @@ plt.show()
 
 ## Equilibrium composition: the Haber process
 
-For N₂ + 3H₂ ⇌ 2NH₃ starting from a 1:3 feed, with extent ξ, solve $K_p = \frac{x_{NH_3}^2}{x_{N_2}x_{H_2}^3}\left(\frac{P^\circ}{P}\right)^2$.
+$K$ tells you the ratio of products to reactants at equilibrium, but a chemical engineer wants the actual composition. The **extent of reaction** ξ counts how many times the reaction has occurred: starting from 1 mol N₂ and 3 mol H₂, after extent ξ there are $1-\xi$, $3-3\xi$ and $2\xi$ moles, so a single unknown describes the whole mixture. For gases, $K_p$ is written in mole fractions $x$ and total pressure $P$, and because the reaction reduces the number of gas molecules, pressure enters the expression. The equilibrium ξ is the root of "expression minus K", found with `brentq` (Chapter 16). Taking logarithms of both sides keeps the numbers well scaled. For N₂ + 3H₂ ⇌ 2NH₃ starting from a 1:3 feed, with extent ξ, solve $K_p = \frac{x_{NH_3}^2}{x_{N_2}x_{H_2}^3}\left(\frac{P^\circ}{P}\right)^2$.
 
 ```{code-cell} ipython3
 dH, dS, _ = reaction_thermo({"N2": 1, "H2": 3}, {"NH3": 2})
@@ -92,9 +109,20 @@ ax.set(xlabel="T / °C", ylabel="NH₃ at equilibrium / mol %", title="Le Chatel
 plt.show()
 ```
 
+The curves show **Le Chatelier's principle** quantitatively: the yield of ammonia falls with temperature (the reaction is exothermic) and rises with pressure (fewer gas molecules on the product side). Industry runs at 400–500 °C despite the lower yield, because the reaction is far too slow at low temperature: a compromise between thermodynamics and kinetics.
+
 ## Acid–base speciation diagrams
 
-For a polyprotic acid H₃A, the fraction of each species depends only on pH and the pKa values.
+A **polyprotic acid** such as phosphoric acid, H₃PO₄, can lose several protons in turn, each step with its own pKa. In solution all the forms (H₃A, H₂A⁻, HA²⁻, A³⁻) coexist, and their **fractions** (often written α) depend only on pH and the pKa values. Each fraction is one term of a sum divided by the whole sum: the term for the species that has lost $i$ protons is $[\mathrm{H^+}]^{n-i} K_1 K_2 \cdots K_i$. A monoprotic acid has just two terms, which gives the familiar rule that the acid is half dissociated when pH = pKa:
+
+```{code-cell} ipython3
+pKa, pH_demo = 4.76, np.array([3.76, 4.76, 5.76])
+H_demo = 10.0 ** -pH_demo
+alpha_A = 10**-pKa / (H_demo + 10**-pKa)          # fraction of acetate
+print(alpha_A.round(3))                            # about 0.09, 0.50, 0.91
+```
+
+One pH unit either side of the pKa moves the balance to roughly 10:90 or 90:10. The general function handles any number of protons, and a speciation diagram plots every fraction against pH.
 
 ```{code-cell} ipython3
 def fractions(pH, pKas):
@@ -125,7 +153,7 @@ At physiological pH 7.4, phosphate is a roughly 60:40 mixture of HPO₄²⁻ and
 
 ## Exact titration curves by charge balance
 
-Instead of piecewise approximations, solve the full charge balance at every point:
+Chapters 5 and 13 built titration curves piecewise, switching formulas at the equivalence point. A more powerful approach uses one equation valid everywhere: the **charge balance**, which says that a solution is electrically neutral, so the total positive charge equals the total negative charge. Every concentration in it can be written in terms of $[\mathrm{H^+}]$ using the speciation fractions, so at each volume of base there is one unknown, the pH, and `brentq` finds it. The same code then handles strong, weak and polyprotic acids without any special cases. Instead of piecewise approximations, solve the full charge balance at every point:
 
 $$[H^+] + [Na^+] = [OH^-] + \sum_i i\,[H_{n-i}A^{i-}]$$
 
@@ -153,6 +181,8 @@ plt.show()
 
 ## A simple phase diagram: water
 
+A **phase diagram** shows which phase of a substance (solid, liquid or gas) is stable at each temperature and pressure. The lines are where two phases coexist in equilibrium, and their shape follows from thermodynamics. The **Clausius–Clapeyron equation**, $\ln(P/P_0) = -\frac{\Delta H}{R}\left(\frac{1}{T} - \frac{1}{T_0}\right)$, gives the liquid–vapour and solid–vapour lines from the enthalpies of vaporisation and sublimation, starting at the **triple point** where all three phases meet. The solid–liquid line follows from the Clapeyron equation, $dP/dT = \Delta H_\text{fus}/(T\Delta V_\text{fus})$; for water, ice is less dense than liquid, so $\Delta V_\text{fus}$ is negative and the melting line leans backwards, which is why pressure melts ice. A logarithmic pressure axis shows the whole range from 1 Pa to 1 GPa.
+
 ```{code-cell} ipython3
 T_tp, P_tp = 273.16, 611.657                       # triple point (K, Pa)
 Hvap, Hsub, Hfus = 45.05e3, 51.06e3, 6.01e3        # J/mol near the triple point
@@ -173,6 +203,16 @@ for txt, xy in [("ICE", (225, 1e5)), ("LIQUID", (400, 1e7)), ("VAPOUR", (450, 1e
     ax.text(*xy, txt, fontsize=13, weight="bold", alpha=0.6)
 ax.set(xlabel="T / K", ylabel="P / Pa", xlim=(200, 700), ylim=(1, 1e9), title="Phase diagram of water (Clausius–Clapeyron)")
 plt.show()
+```
+
+```{admonition} Summary
+:class: tip
+- Reaction ΔH° and ΔS° are products minus reactants from tables; $\Delta G^\circ = \Delta H^\circ - T\Delta S^\circ$ and $K = e^{-\Delta G^\circ/RT}$.
+- ΔG° changes sign at $T^* = \Delta H^\circ/\Delta S^\circ$.
+- An extent of reaction ξ reduces an equilibrium to one unknown, solved with `brentq`.
+- Speciation fractions depend only on pH and the pKa values; pH = pKa gives a 50:50 mixture.
+- A charge balance gives exact titration curves for any acid.
+- Clausius–Clapeyron and Clapeyron equations draw phase boundaries.
 ```
 
 ## Exercises
