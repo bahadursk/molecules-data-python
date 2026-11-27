@@ -5,6 +5,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Attach the PDF to this existing release tag (optional)"
+        required: false
+        default: ""
 permissions:
   contents: write
   pages: write
@@ -40,10 +45,11 @@ jobs:
           name: molecules-data-python-pdf
           path: book/_build/molecules-data-python.pdf
       - name: Attach the PDF to the release
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || inputs.release_tag != ''
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" book/_build/molecules-data-python.pdf --clobber
+          TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+        run: gh release upload "$TAG" book/_build/molecules-data-python.pdf --clobber
       - uses: actions/upload-pages-artifact@v3
         with:
           path: book/_build/html
