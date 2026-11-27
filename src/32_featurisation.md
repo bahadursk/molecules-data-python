@@ -14,7 +14,20 @@ kernelspec:
 Assumes Chapters 20, 21 and 31.
 ```
 
-A model can only learn what its features let it see. **Featurisation**, turning chemistry into numbers, is usually the most important decision in a chemical ML project. This chapter compares descriptors, fingerprints, graphs, strings, composition features and spectra.
+A model can only learn what its features let it see. Machine-learning algorithms work on vectors of numbers, but molecules are graphs, materials are periodic crystals and samples are spectra. **Featurisation** (also called *representation* or *encoding*) is the step that turns chemistry into a fixed-length vector of numbers for each example. It is usually the most important decision in a chemical ML project: a sophisticated model given features that ignore the relevant chemistry will fail, while a simple model given the right features often succeeds. A good featurisation captures the structural information that drives the property, gives similar vectors to similar molecules, and works for every example in the dataset. This chapter compares descriptors, fingerprints, graphs, strings, composition features and spectra, and tests several of them on the same tasks.
+
+The smallest featurisation of all is a hand-made list of numbers for each molecule, a few descriptors stacked into a matrix with one row per molecule:
+
+```{code-cell} ipython3
+from rdkit import Chem
+from rdkit.Chem import Descriptors
+small = ["CCO", "c1ccccc1", "CC(=O)O"]
+import numpy as np
+X_small = np.array([[Descriptors.MolWt(Chem.MolFromSmiles(s)), Descriptors.MolLogP(Chem.MolFromSmiles(s))] for s in small])
+print(X_small.round(2))          # rows: molecules; columns: MW, logP
+```
+
+Every featurisation in this chapter produces a matrix of this shape, just wider. We start by loading the dataset of Chapter 31.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -36,6 +49,8 @@ mols = [Chem.MolFromSmiles(s) for s in df.smiles]
 
 ## 1. Physicochemical descriptors
 
+**Descriptors** (Chapter 20) are numbers with a physical or chemical meaning: molecular weight, logP, polar surface area, counts of rings and heteroatoms, topological indices. Computing all of RDKit's 200-odd descriptors gives a rich, interpretable feature vector. Two clean-up steps are routine. Some descriptors return infinity or NaN for unusual molecules, and `np.nan_to_num` replaces those with zero. Others have the same value for every molecule in the dataset, so they carry no information; dropping columns whose standard deviation is essentially zero removes them.
+
 ```{code-cell} ipython3
 desc_names = [d[0] for d in Descriptors._descList]
 X_desc = np.array([[f(m) for _, f in Descriptors._descList] for m in mols])
@@ -46,6 +61,8 @@ print(X_desc.shape, "descriptor matrix")
 ```
 
 ## 2. Fingerprints
+
+**Fingerprints** (Chapter 21) record which substructures are present. For ML they must be converted from RDKit's bit-vector objects to NumPy arrays, which `DataStructs.ConvertToNumpyArray` does. Three variants are compared here. **Morgan bits** record presence or absence of each circular environment. **Morgan counts** record how many times each environment occurs, which distinguishes, for example, one hydroxyl from three. **MACCS keys** answer 166 predefined structural questions. Fingerprints are *sparse*: only a small fraction of bits are set for any one molecule, as the bit density shows.
 
 ```{code-cell} ipython3
 def fp_matrix(gen_or_func, mols, n_bits=2048):
@@ -63,6 +80,8 @@ print(X_morgan.shape, X_maccs.shape, f"Morgan bit density {X_morgan.mean():.3%}"
 ```
 
 ## 3. Compare them on two tasks
+
+The fair way to compare featurisations is to keep everything else fixed (same model, same cross-validation folds, same metric) and change only the features. Here a random forest predicts the simulated activity (pIC₅₀, scored by R²) and toxicity (scored by ROC-AUC), with 5-fold cross-validation (Chapter 31).
 
 ```{code-cell} ipython3
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
@@ -83,11 +102,19 @@ plt.tight_layout(); plt.show()
 res.round(3)
 ```
 
-Structure-based fingerprints win for both tasks, because the simulated activity and toxicity depend on **substructures** (a hinge-binding motif, toxic alerts) that whole-molecule descriptors blur away.
+Every rich representation beats the five simple descriptors on both tasks. For activity the full set of RDKit descriptors does best here, and for toxicity the substructure-aware MACCS keys and Morgan fingerprints edge ahead, because the simulated toxicity is driven by **substructures** (toxic alerts) that whole-molecule descriptors such as MW or TPSA blur away. The differences between the rich representations are small, which is typical: the gap between a poor featurisation and a reasonable one is usually much larger than the gap between reasonable ones.
 
 ## 4. Graphs
 
-A graph featurisation stores an atom-feature matrix and an adjacency matrix: the input to graph neural networks (Chapter 34).
+Descriptors and fingerprints compress a molecule into one vector of fixed length, and some information is lost in the process. A **graph featurisation** keeps the molecule's full structure: an atom-feature matrix with one row of numbers per atom, and an adjacency matrix (Chapter 19) saying which atoms are bonded. Each atom's features are typically a **one-hot encoding** of its element (a list of 0s with a single 1 marking which element it is) plus properties such as aromaticity, hydrogen count, degree and charge. Because molecules have different numbers of atoms, these matrices have different sizes, so they need models designed for graphs, the graph neural networks of Chapter 34.
+
+One-hot encoding is easiest to see on its own:
+
+```{code-cell} ipython3
+elements = ["C", "N", "O"]
+for atom in ["N", "C", "O"]:
+    print(atom, [int(atom == e) for e in elements])
+```
 
 ```{code-cell} ipython3
 ATOMS = ["C", "N", "O", "S", "F", "Cl", "Br", "other"]
@@ -112,7 +139,7 @@ plt.tight_layout(); plt.show()
 
 ## 5. Strings and tokens
 
-Language models read SMILES as sequences of tokens.
+Language models read SMILES as sequences of tokens. A **token** is the smallest meaningful unit of the string: a single atom such as `C`, a two-letter element such as `Cl` (which must not be split into `C` and `l`), a bracketed atom such as `[NH4+]`, a bond symbol or a ring-closure digit. **Tokenisation** splits a string into such units, and the set of all distinct tokens in a dataset is the **vocabulary**. Each token is then mapped to an integer, so a molecule becomes a sequence of integers that a sequence model such as a transformer can read (Chapters 45 and 46). A regular expression (Chapter 3) does the splitting.
 
 ```{code-cell} ipython3
 import re
@@ -128,10 +155,18 @@ print(len(vocab), "tokens in the vocabulary:", vocab)
 
 ## 6. Composition features for materials
 
-Materials often have no fixed molecular graph. Composition-based features, such as averages and spreads of elemental properties, work surprisingly well {cite:p}`ward2016`.
+Materials often have no fixed molecular graph: an alloy or a mixed oxide is described by its formula, and the crystal structure may not be known. Composition-based features, such as averages and spreads of elemental properties, work surprisingly well {cite:p}`ward2016`.
+
+The idea is to describe a compound by statistics of its elements' properties: the fraction-weighted **mean** electronegativity, the **range** of atomic radii, the average **deviation** from the mean, and so on. For NaCl, the mean electronegativity is simply the average of Na and Cl, weighted by their atomic fractions of 0.5 each:
 
 ```{code-cell} ipython3
 from pymatgen.core import Composition, Element
+print(0.5 * Element("Na").X + 0.5 * Element("Cl").X)
+```
+
+Applying six elemental properties and three statistics gives eighteen features per formula:
+
+```{code-cell} ipython3
 
 PROPS = {"Z": lambda e: e.Z, "X": lambda e: e.X, "radius": lambda e: float(e.atomic_radius or 0),
          "row": lambda e: e.row, "group": lambda e: e.group, "mass": lambda e: float(e.atomic_mass)}
@@ -153,7 +188,7 @@ pd.DataFrame({f: composition_features(f) for f in ["NaCl", "GaAs", "SrTiO3", "Li
 
 ## 7. Spectra as features
 
-A spectrum is already a vector. Binning it to a fixed grid makes it a feature vector for classification (Chapter 39).
+A spectrum is already a vector. Binning it to a fixed grid makes it a feature vector for classification (Chapter 39). If every spectrum is recorded (or interpolated, Chapter 16) at the same wavenumbers, the absorbance at each wavenumber becomes one feature, and a model can learn which regions distinguish one class of compound from another. Practical issues are baseline drift and small shifts in peak positions between instruments, which is why spectra are usually pre-processed first (Chapter 27). Below, simulated IR spectra of an alcohol, a ketone and an acid differ in exactly the bands an organic chemist would look for.
 
 ```{code-cell} ipython3
 wn = np.linspace(4000, 500, 700)
@@ -172,6 +207,8 @@ plt.show()
 
 ## Choosing features: a summary
 
+There is no single best representation; the right choice depends on the property, the amount of data and whether you need to interpret the model. As a rule of thumb, start with descriptors or fingerprints and a random forest, which form a strong baseline on small datasets, and move to learned representations such as graphs only when you have thousands of examples or more.
+
 | Representation | Good for | Watch out |
 |---|---|---|
 | Descriptors | small data, interpretability | may miss local structure |
@@ -181,6 +218,16 @@ plt.show()
 | Composition | inorganic materials | ignores structure and polymorphs |
 | 3D / crystal graphs | quantum and materials properties | need geometries |
 | Spectra | analytical chemistry | baseline, alignment, resolution |
+
+```{admonition} Summary
+:class: tip
+- Featurisation turns each molecule, material or sample into a fixed-length vector; it often matters more than the choice of model.
+- Descriptors are interpretable; clean out NaNs and constant columns.
+- Fingerprints capture substructures, which matter for properties such as toxicity; counts add multiplicity.
+- Compare representations with the same model, folds and metric.
+- Graphs (atom features + adjacency) feed graph neural networks; tokenised SMILES feed language models.
+- Composition statistics describe inorganic materials; binned spectra are features for analytical problems.
+```
 
 ## Exercises
 
