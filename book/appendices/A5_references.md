@@ -1,4 +1,4 @@
-# References
+# Appendix E: References
 
 Every work cited in the book is listed below. The book refers to these papers for their ideas and results only: no text, figures or data from them are reproduced. Most have a DOI, which leads to the publisher's page; many are also freely available as preprints or under open-access licences, and are well worth reading in full.
 

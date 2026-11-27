@@ -1,4 +1,4 @@
-# Glossary
+# Appendix C: Glossary
 
 Short definitions of terms used across the book, with the chapter where each is introduced. Chemistry terms are marked ⚗️, programming terms 🐍 and machine-learning terms 🤖.
 
@@ -82,7 +82,7 @@ Function
   🐍 A named, reusable block of code that takes inputs (arguments) and returns an output. Chapter 6.
 
 Gaussian process
-  🤖 A probabilistic model that predicts a mean and an uncertainty for every input, defined by a kernel describing how similar two inputs are. Chapters 34, 35, 50.
+  🤖 A probabilistic model that predicts a mean and an uncertainty for every input, defined by a kernel describing how similar two inputs are. Chapters 35, 50.
 
 Generative model
   🤖 A model that proposes new molecules or materials rather than only predicting properties of given ones. Chapter 45.
@@ -103,7 +103,7 @@ InChI / InChIKey
   ⚗️ The IUPAC International Chemical Identifier and its fixed-length hashed form, used to identify molecules uniquely. Chapter 19.
 
 Kernel
-  🤖 A function measuring similarity between two inputs, used by Gaussian processes and support vector machines. Chapters 34, 40.
+  🤖 A function measuring similarity between two inputs, used by Gaussian processes and kernel ridge regression. Chapters 35, 40.
 
 Lipinski's rule of five
   ⚗️ A guideline that orally active drugs usually have MW ≤ 500, logP ≤ 5, ≤ 5 H-bond donors and ≤ 10 acceptors. Chapter 20.

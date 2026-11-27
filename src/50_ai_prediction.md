@@ -313,7 +313,7 @@ ax.set(xlabel="day on stream", ylabel="relative activity", title="120 days of hi
 ax.legend(); plt.tight_layout(); plt.show()
 ```
 
-A Gaussian process (Chapter 34, {cite:p}`rasmussen2006`) gives a forecast *with error bars*, which is exactly what a shutdown decision needs. Note the kernel choice: a long-scale RBF for the deactivation trend, an explicit periodic term for the weekly cycle, and a white-noise term for the measurement error.
+A Gaussian process (Chapter 35, {cite:p}`rasmussen2006`) gives a forecast *with error bars*, which is exactly what a shutdown decision needs. Note the kernel choice: a long-scale RBF for the deactivation trend, an explicit periodic term for the weekly cycle, and a white-noise term for the measurement error.
 
 ```{code-cell} ipython3
 from sklearn.gaussian_process import GaussianProcessRegressor

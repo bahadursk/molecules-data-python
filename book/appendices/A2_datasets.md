@@ -1,4 +1,4 @@
-# Datasets Used in This Book
+# Appendix B: Datasets Used in This Book
 
 Every dataset in this book is either generated inside the notebook that uses it or produced by one script, [`tools/make_datasets.py`](https://github.com/bahadursk/molecules-data-python/blob/main/tools/make_datasets.py). The book therefore carries **no third-party data and no licensing restrictions**: you may copy, modify and redistribute every file under the book's CC-BY-4.0 licence.
 

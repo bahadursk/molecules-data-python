@@ -164,3 +164,82 @@ if __name__ == "__main__":
     social_card()
     for f in ["logo.png", "cover.png", "social_card.png"]:
         print("wrote", (OUT / f).relative_to(OUT.parents[1]))
+
+
+# ---------------------------------------------------------------------------
+# "Periodic table" of the Python libraries used in the book (original artwork:
+# text tiles only, no third-party logos).
+LIB_TILES = [
+    # (row, col, symbol, name, category, chapter)
+    (0, 0, "Py", "Python", "core", 1),
+    (0, 17, "Ju", "Jupyter", "core", 1),
+    (1, 0, "Np", "NumPy", "scipy", 12), (1, 1, "Pd", "pandas", "scipy", 15),
+    (1, 12, "Rd", "RDKit", "chem", 19), (1, 13, "3D", "py3Dmol", "chem", 23),
+    (1, 14, "Pc", "PubChemPy", "chem", 24), (1, 15, "Ch", "ChEMBL", "chem", 24),
+    (1, 16, "Pdb", "PDB", "chem", 24), (1, 17, "Mt", "Materials\nProject", "chem", 24),
+    (2, 0, "Mp", "Matplotlib", "viz", 13), (2, 1, "Sb", "seaborn", "viz", 14),
+    (2, 12, "Sc", "SciPy", "scipy", 16), (2, 13, "Sy", "SymPy", "scipy", 17),
+    (2, 14, "Pi", "pint", "scipy", 18), (2, 15, "Un", "uncert-\nainties", "scipy", 18),
+    (2, 16, "Ps", "PySCF", "chem", 28), (2, 17, "As", "ASE", "chem", 30),
+    (3, 0, "Pl", "Plotly", "viz", 14), (3, 1, "Pg", "pymatgen", "chem", 30),
+    (3, 2, "Md", "MDAnalysis", "chem", 29), (3, 3, "Sk", "scikit-\nlearn", "ml", 31),
+    (3, 4, "Pt", "PyTorch", "ml", 34), (3, 5, "Gp", "Gaussian\nprocesses", "ml", 35),
+    (3, 6, "Bo", "Bayesian\nopt.", "ml", 35), (3, 7, "Gn", "Graph\nnets", "ml", 34),
+    (3, 8, "Tf", "Trans-\nformers", "ml", 34), (3, 9, "Ga", "Genetic\nalgorithms", "ml", 45),
+    (3, 10, "Pls", "PLS", "ml", 39), (3, 11, "Nmf", "NMF", "ml", 49),
+    (3, 12, "Un", "U-Net", "ml", 49), (3, 13, "Sh", "Shapley\nvalues", "ml", 51),
+    (3, 14, "Al", "Active\nlearning", "ml", 35), (3, 15, "Dt", "Digital\ntwins", "ml", 50),
+    (3, 16, "Ll", "LLMs", "ml", 46), (3, 17, "Fr", "FAIR\ndata", "ml", 51),
+]
+CAT = {"core": ("#14142b", "Core tools"), "scipy": (TEAL, "Scientific Python"),
+       "viz": (AMBER, "Visualisation"), "chem": (VIOLET, "Chemistry & materials"),
+       "ml": (ROSE, "Machine learning & AI")}
+
+
+def library_table(name="library_table.png"):
+    fig = plt.figure(figsize=(14, 5.6), dpi=160)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(-0.3, 18.3); ax.set_ylim(-1.7, 4.85); ax.axis("off"); ax.invert_yaxis()
+    fig.patch.set_facecolor("white")
+    for r, c, sym, nm, cat, ch in LIB_TILES:
+        col = CAT[cat][0]
+        ax.add_patch(FancyBboxPatch((c + 0.06, r + 0.06), 0.88, 0.88,
+                                    boxstyle="round,pad=0,rounding_size=0.08", fc=col, ec="white", lw=1.5))
+        ax.text(c + 0.12, r + 0.22, str(ch), color="white", fontsize=6.5, va="center", ha="left", alpha=0.85)
+        ax.text(c + 0.5, r + 0.47, sym, color="white", fontsize=15, weight="bold", ha="center", va="center")
+        ax.text(c + 0.5, r + 0.79, nm, color="white", fontsize=5.6, ha="center", va="center", linespacing=0.9)
+    ax.text(9, -1.2, "Periodic Table of Python for Chemists", ha="center", va="center",
+            fontsize=21, weight="bold", color=INK)
+    ax.text(9, -0.55, "every tool and method used in Molecules, Data and Python\n(the small number on each tile is the chapter that introduces it)",
+            ha="center", va="center", fontsize=9.5, color="#555", linespacing=1.3)
+    for k, (cat, (col, lbl)) in enumerate(CAT.items()):
+        x = 2.6 + k * 2.75
+        ax.add_patch(FancyBboxPatch((x, 4.25), 0.32, 0.32, boxstyle="round,pad=0,rounding_size=0.05", fc=col, ec="none"))
+        ax.text(x + 0.42, 4.41, lbl, fontsize=9, va="center", color=INK)
+    fig.savefig(OUT / name, dpi=160, facecolor="white", bbox_inches="tight", pad_inches=0.08)
+    plt.close(fig)
+
+
+def logo_with_title(name="logo_title.png"):
+    """Sidebar logo: the hexagon mark above the book title."""
+    fig = plt.figure(figsize=(3.2, 2.6), dpi=200)
+    ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, 3.2); ax.set_ylim(0, 2.6); ax.axis("off")
+    fig.patch.set_alpha(0)
+    cx, cy, R = 1.6, 1.7, 0.62
+    ax.add_patch(RegularPolygon((cx, cy), 6, radius=R, orientation=np.pi / 6, fill=False, ec=TEAL, lw=5))
+    ax.add_patch(Circle((cx, cy), 0.36, fill=False, ec=VIOLET, lw=3))
+    ang = np.pi / 6 + np.arange(6) * np.pi / 3
+    for k, a in enumerate(ang):
+        ax.add_patch(Circle((cx + R * np.cos(a), cy + R * np.sin(a)), 0.1, color=PALETTE[k % 4], zorder=5))
+    xs = np.linspace(-0.28, 0.28, 40)
+    ax.plot(cx + xs, cy + 0.22 * np.tanh(4 * xs / 0.62) - 0.01, color=AMBER, lw=3, solid_capstyle="round")
+    ax.text(cx, 0.62, "Molecules, Data", ha="center", va="center", fontsize=13, weight="bold", color=VIOLET, style="italic")
+    ax.text(cx, 0.28, "and Python", ha="center", va="center", fontsize=13, weight="bold", color=TEAL, style="italic")
+    fig.savefig(OUT / name, transparent=True)
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    library_table()
+    logo_with_title()
+    print("wrote library_table.png and logo_title.png")

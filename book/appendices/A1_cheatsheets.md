@@ -1,4 +1,4 @@
-# Python and RDKit Cheat Sheets
+# Appendix A: Python and RDKit Cheat Sheets
 
 One-page reminders of the syntax used most often in this book. Each table points to the chapter where the idea is taught properly.
 

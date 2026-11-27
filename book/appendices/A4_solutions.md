@@ -7,7 +7,7 @@ kernelspec:
   display_name: Python 3
 ---
 
-# Selected Solutions
+# Appendix D: Selected Solutions
 
 Chapters 1–6 have their solutions in drop-down boxes directly under each exercise. This appendix gives worked solutions to a selection of exercises from later chapters, chosen because they exercise an idea that comes back again and again. Every cell below runs, so you can change the numbers and see what happens.
 
