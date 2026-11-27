@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 12, 13, 16 and 20.
 ```
 
-Spectra are how chemists see molecules. This chapter processes UV–Vis, IR, NMR and mass spectra in Python: calibration, peak picking, baseline correction, multiplet simulation, Fourier transforms and isotope patterns.
+Spectra are how chemists see molecules. A **spectrum** records how a sample interacts with radiation (or, in mass spectrometry, how its ions are sorted by mass) as a function of wavelength, frequency or mass-to-charge ratio. Each technique probes something different: UV–vis absorption shows electronic transitions and measures concentration, infrared (IR) shows bond vibrations and identifies functional groups, nuclear magnetic resonance (NMR) maps the hydrogen and carbon environments, and mass spectrometry (MS) gives the molecular mass and formula. In every case the raw signal must be processed before it can be interpreted: calibrated, cleaned of baseline drift and noise, transformed and assigned. To a computer a spectrum is just two arrays, x and y, so all of this is array arithmetic. This chapter processes UV–Vis, IR, NMR and mass spectra in Python: calibration, peak picking, baseline correction, multiplet simulation, Fourier transforms and isotope patterns.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -26,7 +26,18 @@ rng = np.random.default_rng(11)
 
 ## UV–Vis: Beer–Lambert calibration
 
+**Absorbance** $A$ measures how much light a solution absorbs: $A = -\log_{10}(I/I_0)$, where $I_0$ and $I$ are the light intensities entering and leaving the sample. The **Beer–Lambert law** says that absorbance is proportional to concentration $c$ and to the path length $l$ of the cell, with the **molar absorptivity** $\varepsilon$ as the constant of proportionality:
+
 $$A = \varepsilon\,l\,c$$
+
+This linear relationship is what makes UV–vis a quantitative technique. In practice $\varepsilon$ is not taken from a table but measured with a **calibration curve**: you record standards of known concentration, fit a straight line of absorbance against concentration, and read the unknown's concentration from the line. The basic arithmetic for one sample is a single division:
+
+```{code-cell} ipython3
+A_sample, epsilon_peak, path = 0.42, 6.0e3, 1.0      # absorbance, L/(mol cm), cm
+print(f"c = {A_sample / (epsilon_peak * path):.2e} mol/L")
+```
+
+Below, five simulated standards of a permanganate-like dye are measured across the visible range. The absorbance at the peak (525 nm) is extracted from each spectrum with `np.argmin(abs(wl - 525))`, the index of the wavelength closest to 525 nm, and fitted with `np.polyfit`. Inverting the line, $c = (A - b)/m$, converts the unknown's absorbance into a concentration.
 
 ```{code-cell} ipython3
 wl = np.linspace(350, 700, 351)
@@ -52,6 +63,8 @@ plt.tight_layout(); plt.show()
 ```
 
 ### Spectrum to perceived colour
+
+The colour we see is the light a solution *transmits*, so a spectrum predicts a colour. The transmitted fraction at each wavelength is $T = 10^{-A}$. Weighting an approximate RGB colour for each visible wavelength by its transmittance and adding them up gives the perceived colour of the solution, which here deepens from pale pink to purple as the concentration rises. (A rigorous calculation would use the CIE colour-matching functions; this approximation is enough to show the idea.)
 
 ```{code-cell} ipython3
 def wavelength_to_rgb(l):
@@ -79,7 +92,9 @@ plt.show()
 
 ## IR: baseline correction and peak picking
 
-Real spectra sit on curved baselines. **Asymmetric least squares** (ALS) fits a smooth curve that hugs the bottom of the spectrum.
+An IR spectrum shows absorption against **wavenumber** (in cm⁻¹, the number of waves per centimetre, proportional to energy), conventionally plotted from high to low. Characteristic bands identify functional groups: a broad O–H stretch near 3400 cm⁻¹, C–H stretches just below 3000, and a strong C=O stretch near 1700–1750.
+
+Real spectra sit on curved baselines caused by scattering, sample thickness or instrument drift, and a sloping baseline distorts peak heights and areas. **Baseline correction** estimates that slow background and subtracts it. **Asymmetric least squares** (ALS) fits a smooth curve that hugs the bottom of the spectrum. It balances two goals, controlled by two parameters: `lam` sets how smooth the baseline must be (larger is smoother), and `p` sets the asymmetry, so that points above the curve (peaks) are given a tiny weight and points below it a large weight. The fit is repeated a few times, updating the weights, until the curve settles under the peaks. The method is short to write because SciPy's sparse matrices handle the smoothness term efficiently.
 
 ```{code-cell} ipython3
 wn = np.linspace(4000, 500, 3500)
@@ -91,11 +106,11 @@ measured = true + baseline + rng.normal(0, 0.006, wn.size)
 
 def als_baseline(y, lam=1e6, p=0.01, n_iter=10):
     L = y.size
-    D = sparse.diags([1, -2, 1], [0, -1, -2], shape=(L, L - 2))
-    D = lam * D.dot(D.T)
+    D = sparse.diags([1.0, -2.0, 1.0], [0, -1, -2], shape=(L, L - 2))
+    D = (lam * D.dot(D.T)).tocsc()
     w = np.ones(L)
     for _ in range(n_iter):
-        W = sparse.spdiags(w, 0, L, L)
+        W = sparse.diags(w, 0, format="csc")
         z = spsolve(W + D, w * y)
         w = p * (y > z) + (1 - p) * (y < z)
     return z
@@ -117,15 +132,25 @@ axes[1].set(xlabel="Wavenumber / cm$^{-1}$", ylabel="A (corrected)"); axes[1].in
 plt.tight_layout(); plt.show()
 ```
 
+After correction, `find_peaks` with a prominence threshold picks the bands, and each is labelled with the nearest entry in a small table of assignments. The spectrum is consistent with an ester such as ethyl acetate, with a little water giving the O–H band.
+
 ## NMR: from multiplets to the Fourier transform
+
+In ¹H NMR, each chemically distinct hydrogen gives a signal at its own **chemical shift** δ (in ppm), which reflects its electronic environment. Signals are split by **spin–spin coupling** to neighbouring hydrogens, and the spacing between lines is the coupling constant $J$ in hertz. Because $J$ is fixed in Hz while the ppm scale is relative to the spectrometer frequency, a multiplet shrinks on the ppm axis at higher field: 7 Hz is 0.0175 ppm at 400 MHz.
 
 ### Simulating first-order multiplets
 
-A proton coupled to *n* equivalent neighbours splits into *n* + 1 lines with intensities from Pascal's triangle.
+A proton coupled to *n* equivalent neighbours splits into *n* + 1 lines with intensities from Pascal's triangle. This is the **n + 1 rule**, valid when the shift difference between coupled protons is much larger than $J$ (a *first-order* spectrum). The binomial coefficients $\binom{n}{k}$, available as `math.comb`, give exactly the rows of Pascal's triangle:
 
 ```{code-cell} ipython3
 from math import comb
+for n in range(5):
+    print(n, "neighbours:", [comb(n, k) for k in range(n + 1)])
+```
 
+The `multiplet` function turns a shift, a number of neighbours and a $J$ into a list of (position, height) lines, and `spectrum` draws each line as a Lorentzian, the natural NMR line shape.
+
+```{code-cell} ipython3
 def multiplet(center, n_neighbours, J_Hz, n_H, field_MHz=400):
     J = J_Hz / field_MHz
     lines = [(center + (k - n_neighbours / 2) * J, n_H * comb(n_neighbours, k) / 2 ** n_neighbours)
@@ -150,7 +175,16 @@ plt.show()
 
 ### The free induction decay and FFT
 
-An NMR spectrometer actually records a decaying oscillation in time, the **FID**. A Fourier transform turns it into the spectrum.
+An NMR spectrometer does not scan the frequencies one by one. It excites all the nuclei at once with a radio-frequency pulse and records the signal they emit as they relax: a sum of oscillations, one for each line, decaying over time. This decaying signal is the **free induction decay** (FID). The **Fourier transform** converts a signal in time into its component frequencies, turning the FID into the spectrum. The fast algorithm for this, the **FFT**, is `np.fft.fft`. A basic demonstration recovers the frequency of a pure oscillation:
+
+```{code-cell} ipython3
+tt = np.arange(256) / 256                     # one second sampled 256 times
+wave = np.cos(2 * np.pi * 10 * tt)            # a 10 Hz oscillation
+amplitude = np.abs(np.fft.rfft(wave))
+print("strongest frequency:", np.argmax(amplitude), "Hz")
+```
+
+The simulated FID below contains six lines. The decay time T₂ sets the natural line width (a faster decay gives broader lines). Multiplying the FID by a decaying exponential before the transform, called **line broadening** or apodisation, trades a little resolution for less noise. `fftshift` and `fftfreq` put the frequency axis in order.
 
 ```{code-cell} ipython3
 sw, N = 4000.0, 8192                       # spectral width (Hz), points
@@ -172,7 +206,7 @@ plt.tight_layout(); plt.show()
 
 ### Predicting shifts with RDKit-based rules
 
-A crude but instructive predictor assigns each hydrogen-bearing carbon a base shift by its environment.
+Chemical shifts follow the electronic environment: hydrogens on carbons next to electronegative atoms or π systems are *deshielded* and appear at higher δ. A crude but instructive predictor assigns each hydrogen-bearing carbon a base shift by its environment, using SMARTS patterns (Chapter 21) checked in order; the first pattern that matches an atom wins, which is what `setdefault` does.
 
 ```{code-cell} ipython3
 from rdkit import Chem
@@ -195,7 +229,14 @@ Chapter 39 replaces such hand-written rules with a machine-learned shift predict
 
 ## Mass spectrometry: isotope patterns
 
-The isotope pattern of a molecule is the convolution of its elements' isotope distributions.
+A mass spectrometer measures the mass-to-charge ratio m/z of ions. Most elements have several stable **isotopes**: about 1.1 % of carbon is ¹³C, and chlorine is roughly three parts ³⁵Cl to one part ³⁷Cl. A molecule therefore appears not as one peak but as a cluster: the M peak with only the lightest isotopes, an M+1 peak with one heavier isotope, and so on. The shape of the cluster is a fingerprint of the elements present. The probability of each combination follows from multiplying the probabilities of each atom's isotope, so the pattern of a molecule is built by combining its atoms one at a time, a process called **convolution**. For a single chlorine atom the pattern is just its natural abundances:
+
+```{code-cell} ipython3
+cl = {35: 0.7576, 37: 0.2424}
+print({m: round(100 * p / max(cl.values()), 1) for m, p in cl.items()})    # M : M+2 ≈ 100 : 32
+```
+
+The general function adds atoms one by one: for every peak in the current distribution and every isotope of the next atom, it shifts the mass and multiplies the probabilities. Peaks are tracked by their nominal (integer) mass offset, and tiny probabilities are dropped to keep the calculation fast.
 
 ```{code-cell} ipython3
 isotopes = {"C": [(12.000, 0.9893), (13.003, 0.0107)], "H": [(1.008, 0.99988), (2.014, 0.00012)],
@@ -228,6 +269,16 @@ axes[0].set_ylabel("relative intensity / %"); plt.tight_layout(); plt.show()
 ```
 
 Chlorine gives the familiar 3 : 1 M : M+2 pattern, two bromines a 1 : 2 : 1 triplet, and C₆₀ has so many carbons that M+1 is two-thirds the height of M.
+
+```{admonition} Summary
+:class: tip
+- Beer–Lambert: $A = \varepsilon l c$; a calibration line of standards converts absorbance to concentration.
+- Transmittance $T = 10^{-A}$ predicts perceived colour.
+- Asymmetric least squares removes curved baselines; `find_peaks` with a prominence threshold picks bands.
+- First-order NMR multiplets follow the n + 1 rule with Pascal's-triangle intensities; $J$ is fixed in Hz.
+- The FFT turns an NMR free induction decay into a spectrum.
+- Isotope patterns are convolutions of each atom's isotope abundances.
+```
 
 ## Exercises
 
