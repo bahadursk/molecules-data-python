@@ -1,6 +1,17 @@
 # Molecules, Data and Python
 
-![Molecules, Data and Python](book/_static/social_card.png)
+[![Molecules, Data and Python](book/_static/social_card.png)](https://bahadursk.github.io/molecules-data-python/intro.html)
+
+<h2 align="center">
+  📖 <a href="https://bahadursk.github.io/molecules-data-python/intro.html"><b>Read the book online → bahadursk.github.io/molecules-data-python</b></a>
+</h2>
+
+<p align="center">
+  <a href="https://bahadursk.github.io/molecules-data-python/intro.html"><img src="https://img.shields.io/badge/%F0%9F%93%96%20READ%20THE%20BOOK%20ONLINE-Click%20here-0f9d8a?style=for-the-badge" alt="Read the book online"></a>
+</p>
+
+> [!TIP]
+> **Start reading here: [https://bahadursk.github.io/molecules-data-python/intro.html](https://bahadursk.github.io/molecules-data-python/intro.html)**. Every chapter runs in your browser with one click (Colab or Binder), no installation needed.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24583664.svg)](https://doi.org/10.5281/zenodo.24583664)
 [![Book](https://img.shields.io/badge/read-online-6c4ad6)](https://bahadursk.github.io/molecules-data-python)
