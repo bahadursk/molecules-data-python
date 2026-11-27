@@ -14,7 +14,9 @@ kernelspec:
 Assumes Chapters 28, 29 and Part V.
 ```
 
-Quantum chemistry is accurate but slow; force fields are fast but approximate. **Machine-learned potentials** aim for both: train on quantum-mechanical energies and forces, then run at near-force-field speed. The ideas go back to neural-network potentials {cite:p}`behler2007`, Coulomb-matrix learning of atomisation energies {cite:p}`rupp2012`, Δ-learning {cite:p}`ramakrishnan2015` and architectures such as ANI {cite:p}`smith2017` and SchNet {cite:p}`schutt2018`, trained on datasets like QM9 {cite:p}`ramakrishnan2014`.
+Quantum chemistry is accurate but slow; force fields are fast but approximate. **Machine-learned potentials** aim for both: train on quantum-mechanical energies and forces, then run at near-force-field speed. The ideas go back to neural-network potentials {cite:p}`behler2007`, Coulomb-matrix learning of atomisation energies {cite:p}`rupp2012`, Δ-learning {cite:p}`ramakrishnan2015` and architectures such as ANI {cite:p}`smith2017` and SchNet {cite:p}`schutt2018`, trained on datasets like QM9 {cite:p}`ramakrishnan2014`. A **potential energy surface** (PES) gives the energy of a group of atoms as a function of their positions; its minima are stable structures, its saddle points are transition states, and its slopes are the forces that drive molecular dynamics (Chapter 29). A quantum calculation (Chapter 28) gives one point on the PES at a time, often taking minutes to hours, while a simulation needs millions of points. A machine-learned potential is a regression model (Chapter 31) whose input is a description of the atomic positions and whose output is the energy, trained on a few hundred or thousand quantum calculations and then evaluated in microseconds. This chapter learns a one-dimensional PES, computes a small dataset of molecular energies with PySCF, compares two ways of describing molecules, tries Δ-learning, and runs dynamics on a fitted potential.
+
+The cells in this chapter run real quantum-chemistry calculations, so they take a few minutes.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -30,7 +32,14 @@ HARTREE_KCAL = 627.5095
 
 ## Learning a potential energy surface
 
-Start with the simplest possible case: the bond-stretch curve of HF, computed with density functional theory, learned from a handful of points.
+Start with the simplest possible case: the bond-stretch curve of HF, computed with density functional theory, learned from a handful of points. The model is **kernel ridge regression** (KRR), the workhorse of early ML potentials. A **kernel** measures how similar two inputs are; the RBF kernel, $\exp(-\gamma |x - x'|^2)$, is 1 for identical inputs and falls towards 0 as they move apart, with $\gamma$ setting how quickly (Chapter 35 used the same idea in Gaussian processes). KRR predicts a new point as a weighted sum of kernel similarities to the training points, with the weights fitted so the training data are reproduced; `alpha` adds a little regularisation. With a tiny regularisation, it passes almost exactly through the training data and interpolates smoothly between them:
+
+```{code-cell} ipython3
+toy = KernelRidge(alpha=1e-8, kernel="rbf", gamma=1.0).fit([[0.0], [1.0], [2.0]], [0.0, 1.0, 4.0])
+print(toy.predict([[0.0], [1.5], [2.0]]).round(2))
+```
+
+Below, 30 B3LYP/6-31G* energies along the bond are computed, and only 7 of them are used to train the model.
 
 ```{code-cell} ipython3
 def hf_energy(r, method="b3lyp"):
@@ -54,7 +63,15 @@ plt.show()
 
 ## A molecular dataset: energies of small molecules
 
-Now the real task: predict energies of **different molecules** from their structures. We compute a small QM9-style dataset ourselves, so the book needs no external download.
+Now the real task: predict energies of **different molecules** from their structures. We compute a small QM9-style dataset ourselves, so the book needs no external download. Each molecule's 3D geometry comes from RDKit (Chapter 23), and its energy from a Hartree–Fock calculation with PySCF (Chapter 28). Total energies are dominated by the core electrons of each atom and are not chemically interesting, so the target is the **atomisation energy**: the molecule's energy minus the energies of its separated atoms, a negative number whose size measures the total bonding. For H₂ it is twice the H-atom energy subtracted from the molecular energy:
+
+```{code-cell} ipython3
+e_h2 = scf.RHF(gto.M(atom="H 0 0 0; H 0 0 0.74", basis="6-31g", verbose=0)).run().e_tot
+e_h = scf.UHF(gto.M(atom="H 0 0 0", basis="6-31g", spin=1, verbose=0)).run().e_tot
+print(f"{(e_h2 - 2 * e_h) * HARTREE_KCAL:.1f} kcal/mol")
+```
+
+Hartree–Fock underestimates bond energies because it neglects electron correlation; the experimental value for H₂ is about −109 kcal/mol. The atom energies are stored in a dictionary so each element is computed only once, a simple form of caching.
 
 ```{code-cell} ipython3
 from rdkit import Chem
@@ -101,7 +118,13 @@ print(len(qm), "molecules;  atomisation energies from", f"{qm.E_atomisation.min(
 
 $$M_{ij} = \begin{cases} 0.5\,Z_i^{2.4} & i = j\\ Z_iZ_j / |\mathbf R_i - \mathbf R_j| & i \ne j\end{cases}$$
 
-Sorting the eigenvalues makes it invariant to atom ordering, rotation and translation.
+Sorting the eigenvalues makes it invariant to atom ordering, rotation and translation. A representation for an ML potential must not change when the molecule is moved, rotated or its atoms are renumbered, because the energy does not change. The **Coulomb matrix** {cite:p}`rupp2012` has one row and column per atom: each off-diagonal element is the Coulomb repulsion between two nuclear charges, and each diagonal element is a fitted function of the atom's own charge. It depends only on distances, so it ignores translation and rotation, and its **eigenvalues** do not depend on the order of the atoms. Molecules have different numbers of atoms, so the sorted eigenvalue lists are padded with zeros to the same length. For H₂ the matrix is 2 × 2:
+
+```{code-cell} ipython3
+r_bohr = 0.74 / 0.529                      # bond length in bohr
+M_h2 = np.array([[0.5, 1 / r_bohr], [1 / r_bohr, 0.5]])
+print(M_h2.round(3), np.linalg.eigvalsh(M_h2).round(3))
+```
 
 ```{code-cell} ipython3
 Z = {"H": 1, "C": 6, "N": 7, "O": 8, "F": 9, "S": 16, "Cl": 17}
@@ -125,7 +148,7 @@ print(X_cm.shape)
 
 ## Representation 2: a simple bond-counting (atom-in-molecule) model
 
-A purely additive model over atom and bond types is the physicist's baseline.
+A purely additive model over atom and bond types is the physicist's baseline. Chemists have long known that bond energies are roughly transferable: a C–H bond contributes about the same energy in methane as in hexane. A model that counts each type of atom and bond and fits one energy per type with linear regression captures this idea directly, and it is the baseline any more sophisticated representation must beat. Each bond is labelled by its two elements in alphabetical order and its bond order, so ethanol gets counts such as `C-H_1` and `C-O_1`.
 
 ```{code-cell} ipython3
 def bond_counts(smi):
@@ -145,6 +168,8 @@ print(X_bc.shape, "bond-count features")
 ```
 
 ## Comparing representations
+
+Both representations are tested with the same 5-fold cross-validation. Kernel ridge has two settings, the regularisation `alpha` and the kernel width `gamma`, and `GridSearchCV` chooses them by an inner cross-validation on each training fold, so the outer test fold is never used for tuning. The Laplacian kernel, $\exp(-\gamma |x - x'|_1)$, is a common choice for Coulomb-matrix features.
 
 ```{code-cell} ipython3
 from sklearn.linear_model import RidgeCV
@@ -188,7 +213,12 @@ Atomisation energies span thousands of kcal/mol, so an R² near 1 is easy and me
 
 ## Δ-learning: predicting the correction, not the energy
 
-Instead of learning the expensive energy directly, learn the **difference** between a cheap and an expensive method {cite:p}`ramakrishnan2015`. Here the cheap method is the Hartree–Fock calculation we already did and the expensive one is B3LYP/6-31G*; the correction is mostly the (smooth, local) correlation energy, so it is an easier function to learn than the energy itself.
+Instead of learning the expensive energy directly, learn the **difference** between a cheap and an expensive method {cite:p}`ramakrishnan2015`. Here the cheap method is the Hartree–Fock calculation we already did and the expensive one is B3LYP/6-31G*; the correction is mostly the (smooth, local) correlation energy, so it is an easier function to learn than the energy itself. The prediction is then the cheap result plus the learned correction. With made-up numbers:
+
+```{code-cell} ipython3
+cheap_demo, true_demo = np.array([-100.0, -200.0, -300.0]), np.array([-120.0, -235.0, -352.0])
+print("corrections to learn:", true_demo - cheap_demo)   # much smaller range than the energies themselves
+```
 
 ```{code-cell} ipython3
 expensive = []
@@ -222,7 +252,16 @@ In this small example Δ-learning does **not** beat direct learning. The reason 
 
 ## A machine-learned force field for MD
 
-For dynamics we need **forces**, which are derivatives of the energy. Here we fit a potential to a diatomic and run dynamics with it, comparing against the quantum reference.
+For dynamics we need **forces**, which are derivatives of the energy. Here we fit a potential to a diatomic and run dynamics with it, comparing against the quantum reference. The force on a bond is minus the slope of the energy, $F = -dE/dr$: it pulls the atoms together when the bond is stretched and pushes them apart when it is compressed. A **Morse potential**, $D_e(1 - e^{-a(r - r_e)})^2$, is a physically motivated function with three meaningful parameters: the well depth $D_e$, the equilibrium bond length $r_e$ and the stiffness $a$. Fitting it with `curve_fit` (Chapter 16) gives an analytic energy whose derivative is the force. A finite-difference check confirms that the analytic and numerical slopes agree:
+
+```{code-cell} ipython3
+morse_demo = lambda r: 100 * (1 - np.exp(-2 * (r - 1.0))) ** 2
+h = 1e-5
+print((morse_demo(1.2 + h) - morse_demo(1.2 - h)) / (2 * h),
+      2 * 100 * 2 * np.exp(-2 * 0.2) * (1 - np.exp(-2 * 0.2)))   # numerical vs analytic dE/dr
+```
+
+Newton's equations of motion for the bond length are then integrated with `solve_ivp` (Chapter 16), starting from a stretched bond at rest.
 
 ```{code-cell} ipython3
 from scipy.optimize import curve_fit
@@ -257,6 +296,16 @@ print(f"Harmonic ω from the Morse fit: a*sqrt(2*De/mu) = {a * np.sqrt(2 * De * 
 ```
 
 We have kept the units deliberately simple, so these numbers are illustrative rather than spectroscopic. The workflow, fit a potential to quantum data and then integrate the equations of motion, is exactly how machine-learned interatomic potentials drive MD at DFT accuracy and force-field cost.
+
+```{admonition} Summary
+:class: tip
+- ML potentials learn the potential energy surface from quantum data and evaluate it at force-field speed.
+- Kernel ridge regression interpolates energies from a few training points.
+- Learn atomisation energies, not total energies, and judge models against 1 kcal/mol.
+- Representations must be invariant to translation, rotation and atom order: Coulomb-matrix eigenvalues, bond counts.
+- Δ-learning predicts the correction from a cheap to an expensive method; check whether it actually helps.
+- Forces are minus the energy gradient; a fitted potential drives molecular dynamics.
+```
 
 ## Exercises
 
