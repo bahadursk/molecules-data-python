@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 30, 41 and Part V.
 ```
 
-Energy technologies are limited by materials: how much charge a battery electrode can store and how long it lasts, how efficiently a solar absorber converts light, how much gas a porous framework can hold. Each has become a machine-learning problem, from battery lifetime prediction {cite:p}`severson2019` to the diversity of the MOF universe {cite:p}`moosavi2020`.
+Energy technologies are limited by materials: how much charge a battery electrode can store and how long it lasts, how efficiently a solar absorber converts light, how much gas a porous framework can hold. Each has become a machine-learning problem, from battery lifetime prediction {cite:p}`severson2019` to the diversity of the MOF universe {cite:p}`moosavi2020`. These problems share a pattern. Some quantities follow directly from simple physics, such as the theoretical capacity of a battery electrode from its formula or the maximum efficiency of a solar cell from its band gap, and computing them first sets the limits within which any real material must fall. Other quantities, such as how many cycles a battery will survive or how much methane a porous solid adsorbs, depend on complicated processes that are expensive to measure, and here models trained on data predict them from cheap measurements or descriptors. This chapter works through batteries (capacity, energy density, lifetime prediction), photovoltaics (the Shockley–Queisser limit and a perovskite screen) and metal–organic frameworks (gas uptake and deliverable capacity), with simulated data throughout.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -30,6 +30,15 @@ rng = np.random.default_rng(5)
 The specific capacity of an electrode material follows directly from stoichiometry:
 
 $$Q = \frac{n F}{3.6\,M} \quad [\mathrm{mAh\,g^{-1}}]$$
+
+Here $n$ is the number of electrons transferred per formula unit, $F$ the Faraday constant (the charge of one mole of electrons, 96 485 C mol⁻¹) and $M$ the molar mass in g mol⁻¹. The factor 3.6 converts coulombs per gram into milliampere-hours per gram, since 1 mAh = 3.6 C. A light material that exchanges many electrons stores the most charge per gram. For LiCoO₂, with one lithium (and so one electron) per formula unit:
+
+```{code-cell} ipython3
+M_lco = 6.94 + 58.93 + 2 * 16.00
+print(f"{1 * 96485.3 / (3.6 * M_lco):.0f} mAh/g")
+```
+
+pymatgen's `Composition(...).weight` gives the molar mass for any formula, so the calculation extends to a whole list of electrode materials.
 
 ```{code-cell} ipython3
 from pymatgen.core import Composition
@@ -57,6 +66,12 @@ Theoretical capacity is an upper bound. Practical capacity is limited by how muc
 
 ## Energy density and the Ragone picture
 
+Capacity alone is not the whole story. The energy stored is charge times voltage, so the specific energy in Wh kg⁻¹ is the capacity in mAh g⁻¹ multiplied by the cell voltage in volts (the factors of 1000 cancel). A high-voltage material with a modest capacity can store as much energy as a low-voltage one with a large capacity. A complete cell also contains an anode, electrolyte, separator and casing, which is why the code applies a rough factor of 0.4 to go from electrode to cell level. Plotting energy against cycle life on log axes, in the spirit of a **Ragone plot**, shows the central trade-off: the chemistries that store the most energy tend to last the fewest cycles. For a cell at 3.7 V with 180 mAh g⁻¹:
+
+```{code-cell} ipython3
+print(3.7 * 180, "Wh/kg at electrode level;", round(3.7 * 180 * 0.4), "Wh/kg as a rough cell-level estimate")
+```
+
 ```{code-cell} ipython3
 chem = pd.DataFrame({
     "chemistry": ["Pb-acid", "Ni-MH", "LFP", "NMC-622", "NCA", "Li-S", "Li-air (theor.)", "Na-ion"],
@@ -76,7 +91,11 @@ plt.colorbar(sc, label="electrode capacity / mAh g$^{-1}$"); plt.show()
 
 ## Predicting battery lifetime from early cycles
 
-Severson and co-workers showed that the **change in discharge-capacity curves over the first 100 cycles** predicts total lifetime, long before any capacity fade is visible {cite:p}`severson2019`. Here we simulate cells with that structure and reproduce the workflow.
+Severson and co-workers showed that the **change in discharge-capacity curves over the first 100 cycles** predicts total lifetime, long before any capacity fade is visible {cite:p}`severson2019`. Here we simulate cells with that structure and reproduce the workflow. Testing a battery to the end of its life, conventionally the cycle at which its capacity falls to 80 % of the initial value, can take months or years, so predicting lifetime from the first few weeks of data saves enormous time in development. Each simulated cell loses capacity by two hidden mechanisms: growth of the solid–electrolyte interphase (SEI), which consumes lithium and grows with the square root of cycle number, and loss of active material, which grows linearly. The rates differ from cell to cell, and the same SEI growth also raises the internal resistance, so the early data carry faint traces of the eventual lifetime. `np.argmax(cap < 0.8)` finds the first cycle at which the capacity drops below 80 %, because `argmax` of a Boolean array returns the position of the first `True`:
+
+```{code-cell} ipython3
+print(np.argmax(np.array([1.0, 0.9, 0.85, 0.79, 0.75]) < 0.8))
+```
 
 ```{code-cell} ipython3
 def simulate_cell(rng):
@@ -99,6 +118,8 @@ axes[1].hist([c[2] for c in cells], bins=25, color="#6c4ad6")
 axes[1].set(xlabel="cycle life (80 % capacity)", title="Lifetime distribution")
 plt.tight_layout(); plt.show()
 ```
+
+From the first 100 cycles of each cell, nine features are computed: capacities at cycles 10 and 100, their difference, the slope and curvature of a polynomial fit (Chapter 16), the variance of the cycle-to-cycle changes, the internal resistance and its change. Lifetime varies over a large range, so the model predicts $\log_{10}$ of the cycle life. The **elastic net** is a linear regression that combines the two penalties of Chapter 31, the ridge penalty, which shrinks coefficients, and the lasso penalty, which can set them exactly to zero, so it also selects features; `ElasticNetCV` chooses the strength of the penalties by cross-validation. Accuracy is reported as the **mean absolute percentage error** (MAPE), the average error as a percentage of the true lifetime.
 
 ```{code-cell} ipython3
 from sklearn.linear_model import ElasticNetCV
@@ -136,7 +157,13 @@ The strongest predictor is the *change* in the capacity curve, not its absolute 
 
 ## Photovoltaics: the Shockley–Queisser limit
 
-The band gap of an absorber sets a hard ceiling on efficiency: too small and photons are wasted as heat, too large and most of the spectrum is not absorbed.
+The band gap of an absorber sets a hard ceiling on efficiency: too small and photons are wasted as heat, too large and most of the spectrum is not absorbed. A photon with energy below the band gap passes straight through the absorber. A photon with energy above it is absorbed, but the excited electron quickly relaxes to the bottom of the conduction band, so any energy beyond the gap is lost as heat. Every absorbed photon therefore delivers at most the gap energy, and the efficiency is a balance between the number of photons absorbed, which falls as the gap rises, and the energy each one delivers, which rises with the gap. The detailed-balance calculation of Shockley and Queisser gives a maximum of about 33 % near 1.3–1.4 eV for a single junction under sunlight.
+
+The calculation below approximates sunlight as a black body at 5800 K, converts each wavelength to a photon energy with $E = hc/\lambda$, counts the photons above each gap by integrating with `np.trapezoid`, and applies simple empirical factors for the voltage and fill-factor losses, so its numbers are illustrative. A photon at 1100 nm has just enough energy for silicon:
+
+```{code-cell} ipython3
+print(f"{6.626e-34 * 2.998e8 / 1100e-9 / 1.602e-19:.2f} eV")
+```
 
 ```{code-cell} ipython3
 h, c, kB = 6.62607015e-34, 2.99792458e8, 1.380649e-23
@@ -174,6 +201,15 @@ plt.show()
 
 ### Screening perovskite compositions
 
+Halide perovskites have the formula ABX₃, with a large cation A (caesium or a small organic ion such as methylammonium, MA, or formamidinium, FA), a metal B (lead, tin or germanium) and a halide X. Whether a combination can form the perovskite structure is estimated from ionic radii by two geometric rules. **Goldschmidt's tolerance factor** $t = (r_A + r_X)/(\sqrt{2}(r_B + r_X))$ measures how well A fits into the cavity between the BX₆ octahedra, with values between about 0.8 and 1.0 favouring a perovskite; the **octahedral factor** $\mu = r_B/r_X$ checks that B fits inside its octahedron of halides. For CsPbI₃, using the radii in the table below (Å):
+
+```{code-cell} ipython3
+r_A, r_B, r_X = 1.88, 1.19, 2.20
+print(f"t = {(r_A + r_X) / (np.sqrt(2) * (r_B + r_X)):.3f}, mu = {r_B / r_X:.3f}")
+```
+
+The band gaps come from a simple lookup for each metal–halide pair, shifted by halide alloying and the size of A; they mimic the known trends (the gap rises from iodide to bromide to chloride) but are not measured values.
+
 ```{code-cell} ipython3
 A_ions = {"Cs": 1.88, "MA": 2.17, "FA": 2.53, "Rb": 1.72}
 B_ions = {"Pb": 1.19, "Sn": 1.10, "Ge": 0.73}
@@ -207,7 +243,7 @@ best[["composition", "t", "gap", "efficiency"]].round(2)
 
 ## MOFs: predicting gas uptake from pore descriptors
 
-Metal–organic frameworks are defined by their geometry: surface area, pore size, void fraction. Those few numbers predict adsorption well, which is why geometric descriptors dominate MOF informatics {cite:p}`moosavi2020`.
+Metal–organic frameworks are defined by their geometry: surface area, pore size, void fraction. Those few numbers predict adsorption well, which is why geometric descriptors dominate MOF informatics {cite:p}`moosavi2020`. A MOF is a crystalline network of metal ions or clusters linked by organic molecules, enclosing pores that can make up most of its volume; a single gram can have a surface area of several thousand square metres. Computer programs calculate the pore geometry of a hypothetical MOF in seconds, whereas a grand canonical Monte Carlo simulation of adsorption takes hours, so a model that maps geometry to uptake allows huge libraries to be screened. The simulated data below build in two physical regimes. At low pressure few molecules are adsorbed, and they sit at the strongest binding sites, so binding strength and pores close to the size of the molecule matter. At high pressure the pores fill, so the total pore volume, through surface area and void fraction, matters most.
 
 ```{code-cell} ipython3
 n = 500
@@ -219,8 +255,9 @@ density = np.clip(2.2 - 1.8 * void + rng.normal(0, 0.05, n), 0.2, 2.0)
 metal_strength = rng.choice([0.6, 1.0, 1.4], n)                   # open metal sites / functionalisation
 
 # Low-pressure uptake needs strong binding sites and small pores; high pressure needs volume
-uptake_1bar = 2 + 0.0012 * asa * metal_strength * np.exp(-(pore - 6) ** 2 / 60) + rng.normal(0, 0.6, n)
-uptake_65bar = 2 + 0.0085 * asa * void + 2.5 * metal_strength + rng.normal(0, 1.5, n)
+# Strong sites fill early (low pressure) and saturate, so their benefit at high pressure levels off
+uptake_1bar = 2 + 0.0032 * asa * metal_strength ** 2 * np.exp(-(pore - 6) ** 2 / 60) + rng.normal(0, 0.6, n)
+uptake_65bar = 2 + 0.0085 * asa * void + 40 * (1 - np.exp(-3 * metal_strength)) + rng.normal(0, 1.5, n)
 mof = pd.DataFrame({"ASA": asa, "pore_diameter": pore, "void_fraction": void, "density": density,
                     "site_strength": metal_strength, "uptake_1bar": uptake_1bar, "uptake_65bar": uptake_65bar})
 
@@ -244,7 +281,7 @@ plt.tight_layout(); plt.show()
 
 ### The deliverable-capacity trade-off
 
-What matters in a tank is the **deliverable** capacity, the difference between storage and release pressures, and that peaks at intermediate binding strength: Sabatier again (Chapter 38).
+What matters in a tank is the **deliverable** capacity, the difference between storage and release pressures, and that suffers when binding is too strong: Sabatier again (Chapter 38).
 
 ```{code-cell} ipython3
 mof["deliverable"] = mof.uptake_65bar - mof.uptake_1bar
@@ -254,6 +291,18 @@ for s, c, lab in [(0.6, "#3b82f6", "weak sites"), (1.0, "#f2a93b", "medium"), (1
     ax.scatter(sub.ASA, sub.deliverable, s=16, color=c, label=lab, alpha=0.7)
 ax.set(xlabel="surface area / m² g$^{-1}$", ylabel="deliverable capacity", title="Strong binding stores gas but will not release it")
 ax.legend(); plt.show()
+mof.groupby("site_strength")[["uptake_1bar", "uptake_65bar", "deliverable"]].mean().round(1)
+```
+
+Strong sites give the highest storage at 65 bar, but they also hold on to so much gas at 1 bar that they deliver the least; weak and medium sites deliver about the same. More binding is useful only up to a point.
+
+```{admonition} Summary
+:class: tip
+- Theoretical capacity follows from $nF/(3.6M)$; energy density multiplies capacity by voltage.
+- Early-cycle features, especially changes in the capacity curve, predict battery lifetime; predict log(lifetime) with a regularised linear model.
+- The Shockley–Queisser balance between absorbed photons and energy per photon sets an optimum band gap near 1.3–1.4 eV.
+- Tolerance and octahedral factors screen perovskite compositions for plausible geometry.
+- MOF uptake depends on binding sites at low pressure and pore volume at high pressure; deliverable capacity is the difference.
 ```
 
 ## Exercises
