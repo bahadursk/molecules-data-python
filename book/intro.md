@@ -42,3 +42,22 @@ Research-grade methods and current literature.
 
 ```{tableofcontents}
 ```
+
+## How to cite this book
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24583664.svg)](https://doi.org/10.5281/zenodo.24583664)
+
+> Sk, B. (2026). *Molecules, Data and Python* [Interactive book]. Zenodo. <https://doi.org/10.5281/zenodo.24583664>
+
+This DOI covers all versions and always resolves to the latest release. To cite version 1.0 specifically, use [10.5281/zenodo.24583665](https://doi.org/10.5281/zenodo.24583665).
+
+```bibtex
+@book{sk2026molecules,
+  author    = {Sk, Bahadur},
+  title     = {Molecules, Data and Python},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24583664},
+  url       = {https://doi.org/10.5281/zenodo.24583664}
+}
+```
