@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 12, 13, 31 and 34.
 ```
 
-Electron micrographs, optical images and hyperspectral maps are all arrays of numbers, and the questions chemists ask of them (how big are the particles? which phase is this region? where is the defect?) are image-analysis problems. Deep learning now does much of this work; segmentation architectures such as U-Net {cite:p}`ronneberger2015` are standard, and the use of deep learning in electron microscopy is thoroughly reviewed by Ede {cite:p}`ede2021`.
+Electron micrographs, optical images and hyperspectral maps are all arrays of numbers, and the questions chemists ask of them (how big are the particles? which phase is this region? where is the defect?) are image-analysis problems. Deep learning now does much of this work; segmentation architectures such as U-Net {cite:p}`ronneberger2015` are standard, and the use of deep learning in electron microscopy is thoroughly reviewed by Ede {cite:p}`ede2021`. The reason to automate is throughput and consistency. A particle size distribution measured by hand from a few dozen particles on one micrograph carries a large uncertainty and depends on who drew the outlines; a pipeline that processes a hundred images the same way every time gives a number that can be reproduced. Two tasks recur throughout. **Segmentation** decides, for every pixel, which object or phase it belongs to, which is what turns an image into measurements of size, shape and coverage. **Unmixing** applies to data where every pixel holds a whole spectrum and the question is which chemical components are present and where. This chapter does both, first with classical image processing, then with a small neural network, and ends with denoising and the warning that goes with it.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -25,6 +25,13 @@ rng = np.random.default_rng(7)
 ```
 
 ## An image is an array
+
+A greyscale image is a two-dimensional NumPy array (Chapter 12) whose values are brightnesses, so every operation in this chapter is array arithmetic. The synthetic micrograph below is built that way: bright discs on a grey background, blurred to imitate the microscope's limited resolution, with an illumination gradient across the field and random noise added. Because it is synthetic, the true label of every pixel is known, which is what makes it possible to score the methods honestly. A disc is drawn by testing which pixel coordinates lie within a radius of its centre, using the coordinate grids from `np.mgrid`:
+
+```{code-cell} ipython3
+yy, xx = np.mgrid[:5, :5]
+print(((yy - 2) ** 2 + (xx - 2) ** 2 < 2 ** 2).astype(int))
+```
 
 ```{code-cell} ipython3
 def synth_micrograph(n=320, n_particles=45, r_mean=13, r_sd=4.5, noise=0.10, blur=1.2, seed=0):
@@ -58,6 +65,13 @@ plt.tight_layout(); plt.show()
 
 ## Classical segmentation: threshold, label, measure
 
+The classical pipeline has four steps, and each one has a reason. **Flattening** subtracts a heavily smoothed copy of the image, which removes the slow illumination gradient while leaving the particles, since they are much smaller than the smoothing window. **Thresholding** turns the image into a yes/no mask; **Otsu's method** chooses the threshold automatically by picking the grey level that splits the histogram into two groups as distinct as possible, that is, the level that maximises the variance between the groups. A **binary opening** then erodes and dilates the mask, which deletes isolated noisy pixels while leaving real objects. Finally `ndi.label` numbers the connected regions, so that each particle becomes a separate integer:
+
+```{code-cell} ipython3
+mask_demo = np.array([[1, 1, 0, 0], [1, 0, 0, 1], [0, 0, 0, 1]])
+print(ndi.label(mask_demo)[0])          # two separate blobs get labels 1 and 2
+```
+
 ```{code-cell} ipython3
 def otsu(image, bins=256):
     """Otsu's threshold: maximise between-class variance."""
@@ -85,6 +99,13 @@ plt.tight_layout(); plt.show()
 ```
 
 ### Watershed: splitting touching particles
+
+Labelling connects anything that touches, so two particles in contact become one object and the measured size is wrong. The **watershed** method separates them using the **distance transform**, which replaces each pixel of the mask by its distance to the nearest background pixel. Each particle then has a peak at its centre, and the valley between two touching particles marks the boundary. Local maxima of the distance become **markers**, one per particle, and the mask is filled outward from the markers in order of decreasing distance, as if water were rising from each centre, with boundaries where two floods meet. The distance transform of a small block rises towards its centre line:
+
+```{code-cell} ipython3
+block = np.zeros((5, 9)); block[1:4, 1:8] = 1
+print(ndi.distance_transform_edt(block).round(1))
+```
 
 ```{code-cell} ipython3
 distance = ndi.distance_transform_edt(binary)
@@ -124,6 +145,13 @@ plt.tight_layout(); plt.show()
 
 ## Particle size distribution
 
+Once each particle has its own label, its area is just the number of pixels carrying that label, and an equivalent radius follows from $A = \pi r^2$. A quality check comes for free. **Circularity**, $4\pi A/P^2$ where $P$ is the perimeter, equals 1 for a perfect circle and falls as a shape becomes elongated or ragged, so it identifies objects that the watershed failed to split or that run off the edge of the image. The perimeter is counted as the pixels of the object that are lost when it is eroded by one pixel:
+
+```{code-cell} ipython3
+A_demo, P_demo = 1000, 112          # a roughly circular object
+print(round(4 * np.pi * A_demo / P_demo ** 2, 2))
+```
+
 ```{code-cell} ipython3
 areas = np.array([(ws == k).sum() for k in range(1, ws.max() + 1)])
 areas = areas[areas > 30]
@@ -154,7 +182,7 @@ Always report how a size distribution was obtained: the threshold method, the mi
 
 ## A small convolutional network for segmentation
 
-A learned segmenter looks at a patch around each pixel and decides whether that pixel belongs to a particle. Here is a compact convolutional network, trained on synthetic images with known labels, which is exactly how microscopy segmentation models are usually bootstrapped.
+A learned segmenter looks at a patch around each pixel and decides whether that pixel belongs to a particle. Here is a compact convolutional network, trained on synthetic images with known labels, which is exactly how microscopy segmentation models are usually bootstrapped. A **convolutional** layer slides a small learnable filter across the image and reports how strongly each position matches it, which is how a network learns to detect edges, blobs and textures (Chapter 34). The **U-Net** shape has two halves: an encoder that downsamples the image, so that later filters see a larger area and can use context, and a decoder that upsamples back to full resolution so that an output is produced for every pixel. The **skip connection** passes the high-resolution features from the encoder directly to the decoder, which is what lets the output have sharp boundaries rather than blurry ones. The loss is **binary cross-entropy** on each pixel, comparing the predicted probability of "particle" with the known label.
 
 ```{code-cell} ipython3
 import torch
@@ -195,6 +223,14 @@ for epoch in range(120):
 plt.plot(curve, color="#6c4ad6"); plt.xlabel("epoch"); plt.ylabel("BCE loss"); plt.title("Training the segmenter"); plt.show()
 ```
 
+Segmentations are compared by the **intersection over union** (IoU), also called the Jaccard index: the number of pixels both the prediction and the truth call "particle", divided by the number either of them does. It is 1 for a perfect match and 0 for no overlap, and unlike plain accuracy it is not flattered by a mostly empty image. On two overlapping blocks:
+
+```{code-cell} ipython3
+a_demo = np.array([1, 1, 1, 0, 0], bool)
+b_demo = np.array([0, 1, 1, 1, 0], bool)
+print((a_demo & b_demo).sum() / (a_demo | b_demo).sum())
+```
+
 ```{code-cell} ipython3
 test_img, test_truth, _ = synth_micrograph(n=160, n_particles=18, noise=0.16, seed=999)
 net.eval()
@@ -216,11 +252,17 @@ for ax, (im, title, cmap) in zip(axes, [(test_img, "test image", "gray"), (truth
 plt.tight_layout(); plt.show()
 ```
 
-The network learns to ignore the illumination gradient and the noise, which the global threshold cannot, and it needs no hand-tuning per image. In return it needs labelled data, which in real microscopy usually comes from a mixture of hand annotation, simulation and self-training.
+The network reaches an IoU of about 0.98 against 0.92 for the classical pipeline. The margin is modest, because the classical pipeline was given its flattening step and a threshold chosen automatically; the real advantage is that the network found the equivalent of those steps by itself and needs no hand-tuning for a new image. In return it needs labelled data, which in real microscopy usually comes from a mixture of hand annotation, simulation and self-training.
 
 ## Hyperspectral imaging: a spectrum at every pixel
 
-A Raman or energy-dispersive X-ray map is a three-dimensional data cube: two spatial axes and one spectral. Unmixing it recovers both the phases present and where they are.
+A Raman or energy-dispersive X-ray map is a three-dimensional data cube: two spatial axes and one spectral. Unmixing it recovers both the phases present and where they are. Each pixel's spectrum is a mixture of the spectra of the phases that lie under it, weighted by how much of each is there, exactly the linear mixing of Chapter 39 but repeated across an image. **Unmixing** means recovering both the pure spectra and the weight maps from the cube alone, with no reference spectra supplied. Building the cube is the forward version of that: `np.einsum` multiplies the abundance of each phase at each pixel by that phase's spectrum and sums over phases, giving an array of shape (y, x, bands):
+
+```{code-cell} ipython3
+ab_demo = np.array([[[0.5]], [[0.5]]])                      # two phases, one pixel, half each
+sp_demo = np.array([[1.0, 0.0], [0.0, 2.0]])                # their spectra, two bands
+print(np.einsum("pyx,pb->yxb", ab_demo, sp_demo))
+```
 
 ```{code-cell} ipython3
 n, bands = 96, 120
@@ -246,6 +288,8 @@ axes[3].imshow(np.moveaxis(abundance, 0, -1)); axes[3].set_title("true phase map
 plt.tight_layout(); plt.show()
 ```
 
+**Non-negative matrix factorisation** (NMF) splits the flattened cube, one row per pixel, into two matrices whose product approximates it: `W`, how much of each component is in each pixel, and `H`, the spectrum of each component. The constraint that makes it work for chemistry is in the name: both factors must be non-negative, since neither a concentration nor an intensity can be negative, and that is enough to make the recovered components resemble real pure spectra. PCA (Chapter 33) would fit the data just as well but with components containing negative lobes that mean nothing chemically. Two things must be checked. The number of components is chosen by the user, and a wrong choice either merges phases or splits one phase in two; and the components come out in no particular order, so they have to be matched against the truth, here by correlating each recovered spectrum with each true one.
+
 ```{code-cell} ipython3
 from sklearn.decomposition import NMF, PCA
 flat_cube = cube.reshape(-1, bands)
@@ -269,6 +313,8 @@ Non-negative matrix factorisation recovers both the pure spectra and their spati
 
 ### Pixel-wise classification
 
+If reference spectra or labelled regions are available, the map can be made by classification instead: treat each pixel's spectrum as a feature vector and each phase as a class. This is supervised, so it needs labels, but it handles overlapping spectra better than unmixing and gives a probability per pixel. The errors concentrate at the boundaries between phases, where a pixel genuinely contains two phases at once and no single label is right.
+
 ```{code-cell} ipython3
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -290,7 +336,12 @@ plt.tight_layout(); plt.show()
 
 ## Denoising: more signal from less dose
 
-Electron and X-ray doses damage samples, so real micrographs are noisy by necessity. Denoising lets you work at lower dose, and the simplest learned denoiser is remarkably effective.
+Electron and X-ray doses damage samples, so real micrographs are noisy by necessity. Denoising lets you work at lower dose. Three filters are compared, in increasing order of cleverness. A **Gaussian filter** averages each pixel with its neighbours, which suppresses noise and blurs edges in equal measure. A **median filter** takes the middle value of the neighbourhood instead, which removes isolated bright or dark pixels while keeping edges sharper. **Non-local means** averages a pixel with other pixels anywhere nearby whose *surroundings* look similar, so it averages over genuinely equivalent parts of the image rather than over an arbitrary disc. Quality is measured by the **peak signal-to-noise ratio** (PSNR) in decibels against the clean image, where higher is better and a few decibels is a visible difference. Because it is a logarithmic measure, halving the noise adds about 6 dB:
+
+```{code-cell} ipython3
+for noise in [0.4, 0.2, 0.1]:
+    print(noise, round(10 * np.log10(1.0 / noise ** 2), 1), "dB")
+```
 
 ```{code-cell} ipython3
 clean, _, _ = synth_micrograph(n=160, n_particles=20, noise=0.0, seed=5)
@@ -333,6 +384,16 @@ plt.tight_layout(); plt.show()
 
 ```{warning}
 Denoising and super-resolution models can **invent** structure that was never in the sample: a lattice where there was noise, a particle where there was none. Any feature that matters must be visible in the raw data, or confirmed at higher dose. Publish the raw frames alongside the processed ones.
+```
+
+```{admonition} Summary
+:class: tip
+- Images are arrays; flatten the illumination, threshold (Otsu), clean up, then label connected regions.
+- Watershed on the distance transform splits touching particles; circularity flags the ones it missed.
+- Document every pipeline choice, because they shift a reported particle size by tens of per cent.
+- A small U-Net segments pixels directly and copes with gradients and noise; compare with IoU.
+- NMF unmixes a hyperspectral cube into pure spectra and abundance maps without reference spectra.
+- Denoising filters trade sharpness for noise; never trust a feature that is not in the raw data.
 ```
 
 ## Reading further
