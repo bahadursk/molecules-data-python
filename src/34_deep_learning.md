@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 12, 31 and 32, and a little calculus.
 ```
 
-Deep neural networks learn their own features from raw inputs such as graphs, sequences and images. This chapter builds them from the ground up in **PyTorch**: tensors and automatic differentiation, a feed-forward network on fingerprints, a graph neural network written from scratch, a small transformer for SMILES, and uncertainty with ensembles.
+A **neural network** is a model built from many simple units arranged in layers. Each unit computes a weighted sum of its inputs and passes it through a simple non-linear function; stacking layers lets the network represent very complicated relationships. A network with several hidden layers is called **deep**, and its great strength is that it can learn its own features from raw inputs such as graphs, sequences and images, rather than relying on hand-made descriptors (Chapter 32). Training a network means adjusting its weights, often millions of them, to reduce the prediction error on the training data, which is done by **gradient descent**: compute how the error changes with each weight and nudge every weight a little downhill. This chapter builds networks from the ground up in **PyTorch**: tensors and automatic differentiation, a feed-forward network on fingerprints, a graph neural network written from scratch, a small transformer for SMILES, and uncertainty with ensembles.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -37,6 +37,17 @@ print("PyTorch", torch.__version__)
 
 ## Tensors and autograd
 
+PyTorch's basic object is the **tensor**, a multidimensional array much like a NumPy array (Chapter 12) but able to run on a GPU and to track the operations performed on it. If a tensor is created with `requires_grad=True`, PyTorch records every calculation that uses it, and calling `.backward()` on a final result computes the derivative of that result with respect to the tensor by the chain rule. This is **automatic differentiation** (autograd), and it means you never have to work out a gradient by hand. A one-line function shows it: the derivative of $x^2$ at $x = 3$ is $2x = 6$.
+
+```{code-cell} ipython3
+x_g = torch.tensor(3.0, requires_grad=True)
+f_g = x_g ** 2
+f_g.backward()
+print(x_g.grad)
+```
+
+Gradient descent uses these derivatives to fit parameters. Starting from a poor guess for a decay constant $k$, each step computes the **loss** (the mean squared error between the model and the data), its gradient with respect to $k$, and moves $k$ a small amount (the **learning rate**) against the gradient. An optimiser object such as `SGD` performs the update, and `zero_grad()` clears the previous gradient before each new one is computed.
+
 ```{code-cell} ipython3
 # Fit k in the Arrhenius-like model y = exp(-k x) by gradient descent, with gradients computed automatically
 x = torch.linspace(0, 5, 50)
@@ -55,6 +66,18 @@ plt.plot([h[0] for h in history], color="#6c4ad6"); plt.xlabel("step"); plt.ylab
 `loss.backward()` computes ∂loss/∂k by the chain rule, through every operation, automatically. That single idea trains every network below.
 
 ## A feed-forward network on fingerprints
+
+The simplest network is a **multilayer perceptron** (MLP), or feed-forward network. A **linear layer** (`nn.Linear`) multiplies its input vector by a weight matrix and adds a bias; an **activation function** such as ReLU, $\max(0, x)$, follows it, because without a non-linearity a stack of linear layers would collapse into a single linear model. **Dropout** randomly switches off a fraction of units during training, which discourages the network from relying on any single feature and reduces overfitting. In PyTorch a model is a class derived from `nn.Module` (Chapter 10) whose `forward` method says how the input flows through the layers.
+
+A single layer applied to one fingerprint-like input shows the shapes involved:
+
+```{code-cell} ipython3
+layer = nn.Linear(4, 2)                    # 4 inputs -> 2 outputs
+x_in = torch.tensor([[1.0, 0.0, 1.0, 1.0]])
+print(layer(x_in).shape, torch.relu(layer(x_in)))
+```
+
+Training loops over **epochs** (complete passes through the training data), and within each epoch over **mini-batches** of 64 molecules, a compromise between the noise of single examples and the cost of the whole dataset. The data are split three ways: the network is trained on the training set, its progress is watched on a **validation** set to choose settings and detect overfitting, and the test set is used once at the end. Count fingerprints are compressed with `log1p` so that large counts do not dominate. `AdamW` is an adaptive optimiser that works well with default settings, and its `weight_decay` gently shrinks the weights.
 
 ```{code-cell} ipython3
 gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=1024)
@@ -99,13 +122,23 @@ from sklearn.metrics import r2_score
 print(f"MLP test R² = {r2_score(y[te], pred):.3f}")
 ```
 
+The learning curves show the training error falling steadily while the validation error levels off; a widening gap between them is the signature of overfitting.
+
 ## A graph neural network from scratch
 
-In a **message-passing** network {cite:p}`gilmer2017` each atom repeatedly gathers information from its bonded neighbours:
+Fingerprints are fixed by hand before training. A **graph neural network** (GNN) instead learns directly from the molecular graph of Chapter 32: one feature vector per atom and an adjacency matrix. In a **message-passing** network {cite:p}`gilmer2017` each atom repeatedly gathers information from its bonded neighbours:
 
 $$\mathbf h_v^{(t+1)} = \sigma\Big(W_1 \mathbf h_v^{(t)} + W_2 \sum_{u \in \mathcal N(v)} \mathbf h_u^{(t)}\Big)$$
 
-After a few rounds, the atom vectors are summed into one molecule vector and passed to a regressor.
+After a few rounds, the atom vectors are summed into one molecule vector and passed to a regressor. Each round lets information travel one bond further, so after three rounds every atom "knows" about its neighbourhood up to three bonds away, much like a Morgan fingerprint of radius 3, except that what to record is learned. Multiplying the atom-feature matrix by the adjacency matrix, `A @ h`, adds up each atom's neighbours' vectors in one operation:
+
+```{code-cell} ipython3
+A_demo = torch.tensor([[0., 1., 0.], [1., 0., 1.], [0., 1., 0.]])   # a three-atom chain
+h_demo = torch.tensor([[1.], [10.], [100.]])                           # one number per atom
+print((A_demo @ h_demo).squeeze().tolist())                            # sum of each atom's neighbours
+```
+
+To train on many molecules at once, their graphs are stacked into one large **block-diagonal** adjacency matrix, so that atoms of different molecules never exchange messages, and an `owner` index records which molecule each atom belongs to. Summing atom vectors per molecule (`index_add_`) is the **readout** or pooling step.
 
 ```{code-cell} ipython3
 ATOMS = ["C", "N", "O", "S", "F", "Cl", "Br"]
@@ -163,7 +196,7 @@ Production libraries (PyTorch Geometric, DGL, Chemprop) add edge features, atten
 
 ### What did the network learn?
 
-Atom-level contributions can be read straight from the model by passing each atom's final vector through the readout.
+Because the readout sums atom vectors, the final prediction is (before the last non-linear step) a sum of per-atom terms. Atom-level contributions can be read straight from the model by passing each atom's final vector through the readout.
 
 ```{code-cell} ipython3
 from rdkit.Chem.Draw import SimilarityMaps, rdMolDraw2D
@@ -188,7 +221,14 @@ d.FinishDrawing(); print(smi); Image(d.GetDrawingText())
 
 ## A tiny transformer for SMILES
 
-Transformers treat SMILES as sentences, and attention lets every token look at every other token.
+Transformers treat SMILES as sentences, and attention lets every token look at every other token. The **transformer** is the architecture behind modern language models. Its key mechanism, **self-attention**, lets each token compute how relevant every other token in the sequence is to it and combine their information accordingly, so a ring-closure digit can "attend" to its partner far along the string. The pieces are: tokenisation (Chapter 32) and an **embedding** layer that turns each token id into a learned vector; a **positional** vector added to each, because attention on its own ignores order; several encoder layers; and a prediction head. Sequences are padded to the same length with token 0, and a padding mask tells attention to ignore those positions. A special first token (CLS) collects information from the whole sequence and is used for the prediction.
+
+An embedding is simply a learnable lookup table:
+
+```{code-cell} ipython3
+emb_demo = nn.Embedding(5, 3)                 # 5 possible tokens, each mapped to a 3-number vector
+print(emb_demo(torch.tensor([2, 2, 4])).shape)  # same token -> same vector
+```
 
 ```{code-cell} ipython3
 import re
@@ -206,7 +246,7 @@ class SmilesTransformer(nn.Module):
         self.tok = nn.Embedding(n_vocab, d, padding_idx=0)
         self.pos = nn.Parameter(torch.randn(max_len, d) * 0.02)
         layer = nn.TransformerEncoderLayer(d, heads, dim_feedforward=128, batch_first=True, dropout=0.1)
-        self.enc = nn.TransformerEncoder(layer, layers)
+        self.enc = nn.TransformerEncoder(layer, layers, enable_nested_tensor=False)
         self.head = nn.Linear(d, 1)
     def forward(self, s):
         z = self.enc(self.tok(s) + self.pos, src_key_padding_mask=(s == 0))
@@ -225,7 +265,7 @@ with torch.no_grad():
 
 ## Uncertainty with deep ensembles
 
-Train several networks from different random starts. Where they disagree, be cautious.
+A single network gives a prediction but no indication of how much to trust it. A **deep ensemble** estimates that trust cheaply. Train several networks from different random starts. Where they disagree, be cautious. Networks trained from different random initial weights end up in different solutions that agree where the training data are dense and diverge where they are sparse, so the standard deviation across the ensemble acts as an uncertainty estimate. The check below sorts the test molecules by that spread into five groups; if the uncertainty is meaningful, the most confident group should have the smallest actual errors. Chapter 51 discusses uncertainty in depth.
 
 ```{code-cell} ipython3
 ens_preds = []
@@ -247,6 +287,8 @@ plt.show()
 
 ## Comparing everything
 
+The honest end of any modelling exercise is a comparison on the same test set, including a strong classical baseline.
+
 ```{code-cell} ipython3
 from sklearn.ensemble import RandomForestRegressor
 rf = RandomForestRegressor(300, n_jobs=-1, random_state=0).fit(X[tr], y[tr])
@@ -260,6 +302,16 @@ pd.Series(res).sort_values().plot.barh(color="#6c4ad6", figsize=(7, 3)); plt.xla
 ```{admonition} 🤖 ML corner
 :class: ml-corner
 With a few thousand molecules, a random forest on fingerprints is a very strong baseline that deep models often fail to beat. Deep learning shines with large datasets, raw inputs (spectra, images, 3D structures) and multitask problems. Always compare against a simple baseline.
+```
+
+```{admonition} Summary
+:class: tip
+- Tensors are GPU-capable arrays; autograd computes gradients with `.backward()`; optimisers update weights by gradient descent.
+- An MLP stacks linear layers and non-linear activations; dropout and weight decay limit overfitting.
+- Train in mini-batches over epochs, watch a validation set, test once.
+- GNNs pass messages along bonds (`A @ h`) and pool atom vectors into a molecule vector.
+- Transformers embed tokens, add positions and use self-attention.
+- Deep ensembles give uncertainty estimates; always compare with a random-forest baseline.
 ```
 
 ## Exercises
