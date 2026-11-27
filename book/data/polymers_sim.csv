@@ -1,0 +1,49 @@
+name,repeat_unit,Tg_C,source
+polyethylene,*CC*,-120.0,approximate textbook value
+polypropylene,*CC(C)*,-10.0,approximate textbook value
+polystyrene,*CC(c1ccccc1)*,100.0,approximate textbook value
+PVC,*CC(Cl)*,80.0,approximate textbook value
+PMMA,*CC(C)(C(=O)OC)*,105.0,approximate textbook value
+PVA,*CC(O)*,85.0,approximate textbook value
+PAN,*CC(C#N)*,95.0,approximate textbook value
+PTFE,*C(F)(F)C(F)(F)*,115.0,approximate textbook value
+PEO,*CCO*,-60.0,approximate textbook value
+PET-like,*OCCOC(=O)c1ccc(cc1)C(=O)*,70.0,approximate textbook value
+nylon-6-like,*NCCCCCC(=O)*,50.0,approximate textbook value
+PVDF,*CC(F)(F)*,-35.0,approximate textbook value
+poly(4-methylstyrene),*CC(c1ccc(C)cc1)*,105.0,approximate textbook value
+poly(vinyl acetate),*CC(OC(C)=O)*,30.0,approximate textbook value
+poly(acrylic acid),*CC(C(=O)O)*,105.0,approximate textbook value
+polyisoprene,*CC(C)=CC*,-70.0,approximate textbook value
+polybutadiene,*CC=CC*,-90.0,approximate textbook value
+poly(4-vinylpyridine),*CC(c1ccncc1)*,140.0,approximate textbook value
+poly(tBu acrylate),*CC(C(=O)OC(C)(C)C)*,40.0,approximate textbook value
+PC-like,*Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OC(=O)*,150.0,approximate textbook value
+α-methyl poly(vinyl-C),*CC(C)(C)*,5.7,simulated
+poly(vinyl-CC),*CC(CC)*,46.3,simulated
+α-methyl poly(vinyl-CC),*CC(C)(CC)*,-21.5,simulated
+poly(vinyl-CCCC),*CC(CCCC)*,-28.8,simulated
+α-methyl poly(vinyl-CCCC),*CC(C)(CCCC)*,-64.3,simulated
+poly(vinyl-CCCCCC),*CC(CCCCCC)*,-50.5,simulated
+α-methyl poly(vinyl-CCCCCC),*CC(C)(CCCCCC)*,-57.0,simulated
+α-methyl poly(vinyl-c1ccccc1),*CC(C)(c1ccccc1)*,11.5,simulated
+poly(vinyl-c1ccc(Cl)cc1),*CC(c1ccc(Cl)cc1)*,62.7,simulated
+α-methyl poly(vinyl-c1ccc(Cl)cc1),*CC(C)(c1ccc(Cl)cc1)*,55.7,simulated
+α-methyl poly(vinyl-Cl),*CC(C)(Cl)*,-17.9,simulated
+poly(vinyl-F),*CC(F)*,35.5,simulated
+α-methyl poly(vinyl-F),*CC(C)(F)*,-3.0,simulated
+α-methyl poly(vinyl-O),*CC(C)(O)*,23.7,simulated
+poly(vinyl-C(=O)OC),*CC(C(=O)OC)*,57.8,simulated
+poly(vinyl-C(=O)OCC),*CC(C(=O)OCC)*,42.9,simulated
+α-methyl poly(vinyl-C(=O)OCC),*CC(C)(C(=O)OCC)*,55.9,simulated
+poly(vinyl-C(=O)OCCCC),*CC(C(=O)OCCCC)*,26.9,simulated
+α-methyl poly(vinyl-C(=O)OCCCC),*CC(C)(C(=O)OCCCC)*,-10.9,simulated
+α-methyl poly(vinyl-C#N),*CC(C)(C#N)*,37.5,simulated
+poly(vinyl-OC(=O)C),*CC(OC(=O)C)*,72.6,simulated
+α-methyl poly(vinyl-OC(=O)C),*CC(C)(OC(=O)C)*,65.0,simulated
+poly(vinyl-C(=O)N),*CC(C(=O)N)*,93.7,simulated
+α-methyl poly(vinyl-C(=O)N),*CC(C)(C(=O)N)*,67.4,simulated
+α-methyl poly(vinyl-c1ccncc1),*CC(C)(c1ccncc1)*,68.0,simulated
+α-methyl poly(vinyl-C(=O)OC(C)(C)C),*CC(C)(C(=O)OC(C)(C)C)*,85.2,simulated
+poly(vinyl-OC),*CC(OC)*,8.3,simulated
+α-methyl poly(vinyl-OC),*CC(C)(OC)*,24.1,simulated

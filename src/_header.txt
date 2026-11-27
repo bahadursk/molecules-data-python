@@ -1,0 +1,8 @@
+---
+jupytext:
+  text_representation:
+    format_name: myst
+kernelspec:
+  name: python3
+  display_name: Python 3
+---
