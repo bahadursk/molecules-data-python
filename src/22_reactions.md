@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 19–21 and organic chemistry.
 ```
 
-Reactions can be written in code just like molecules. With **reaction SMARTS** we can draw schemes, apply transformations to new substrates, and enumerate thousands of virtual products, the basis of combinatorial chemistry and of ML retrosynthesis.
+A reaction is a transformation: some bonds break, others form, and the atoms rearrange into products. Just as SMILES writes a molecule as text, **reaction SMILES** writes a reaction as text, and **reaction SMARTS** writes a *general rule* for a reaction type, such as "any carboxylic acid plus any amine gives an amide". Having reactions in code is useful in three ways. You can draw clean schemes for reports. You can apply a known transformation to new substrates to predict their products, and do it for thousands of combinations to build a **virtual library** before synthesising anything, which is the basis of combinatorial chemistry. And you can run a rule backwards to suggest how a target could be made, which is the core idea behind computer-aided retrosynthesis. This chapter covers each in turn.
 
 ```{code-cell} ipython3
 from rdkit import Chem
@@ -28,7 +28,15 @@ import matplotlib.pyplot as plt
 
 ## Reaction SMILES and drawing schemes
 
-The format is `reactants>agents>products`.
+A reaction SMILES has three parts separated by `>`: `reactants>agents>products`. Molecules within a part are separated by dots, and the agents part (catalysts, solvents, reagents that are not incorporated) may be empty, giving `reactants>>products`. `AllChem.ReactionFromSmarts(text, useSmiles=True)` reads it into a reaction object, which can report its reactants and products:
+
+```{code-cell} ipython3
+rxn = AllChem.ReactionFromSmarts("CC(=O)O.OCC>>CC(=O)OCC.O", useSmiles=True)
+print(rxn.GetNumReactantTemplates(), "reactants,", rxn.GetNumProductTemplates(), "products")
+print([Chem.MolToSmiles(m) for m in rxn.GetReactants()])
+```
+
+RDKit can draw a reaction object as a scheme. The helper below wraps the SVG drawer; `highlightByReactant=True` colours each reactant's atoms differently. Here is the Fischer esterification of acetic acid with ethanol, with acid as the agent above the arrow:
 
 ```{code-cell} ipython3
 def draw_reaction(rxn, size=(800, 220)):
@@ -43,6 +51,8 @@ draw_reaction(esterification)
 
 ### Atom mapping shows where atoms go
 
+A reaction SMILES as written says which molecules go in and come out, but not which atom becomes which. **Atom mapping** adds that information: each reactant atom gets a number after a colon (`[C:2]`), and the same number on a product atom says it is the same atom. Mapping is what turns a reaction from a before-and-after picture into a mechanism-level statement, and it is how reaction rules know which bonds change. In the esterification below, map number 4 is the acid's hydroxyl oxygen, which ends up in water, and number 5 is the alcohol's oxygen, which ends up in the ester.
+
 ```{code-cell} ipython3
 mapped = AllChem.ReactionFromSmarts("[CH3:1][C:2](=[O:3])[OH:4].[OH:5][CH2:6][CH3:7]>>[CH3:1][C:2](=[O:3])[O:5][CH2:6][CH3:7].[OH2:4]",
                                     useSmiles=True)
@@ -53,7 +63,19 @@ The colours follow each reactant's atoms into the product. Isotope-labelling exp
 
 ## Running reactions on new substrates
 
-A reaction **template** written in SMARTS can be applied to any molecule that matches it.
+A reaction **template** is a reaction SMARTS that describes only the atoms that change and their immediate surroundings, using the pattern language of Chapter 21, with mapped atoms carried into the product. Because it is a pattern, it can be applied to *any* molecule that matches it. `rxn.RunReactants((mol1, mol2))` tries every way of matching the reactant patterns and returns a tuple of possible product sets; each set is a tuple of molecules, which is why the code below picks `[0][0]`, the first product of the first outcome. Products come back unsanitised, so `Chem.SanitizeMol` is called to tidy valences and aromaticity before use.
+
+The most basic template turns any primary alcohol into its aldehyde (an oxidation):
+
+```{code-cell} ipython3
+oxidation = AllChem.ReactionFromSmarts("[CH2:1][OH:2]>>[CH1:1]=[O:2]")
+for smi in ["CCO", "OCc1ccccc1"]:
+    p = oxidation.RunReactants((Chem.MolFromSmiles(smi),))[0][0]
+    Chem.SanitizeMol(p)
+    print(smi, "->", Chem.MolToSmiles(p))
+```
+
+An amide coupling template joins any carboxylic acid with any primary or secondary amine that is not already an amide, which covers one of the most common reactions in medicinal chemistry:
 
 ```{code-cell} ipython3
 amide_coupling = AllChem.ReactionFromSmarts("[C:1](=[O:2])[OH].[N;H2,H1;!$(NC=O):3]>>[C:1](=[O:2])[N:3]")
@@ -66,6 +88,8 @@ Draw.MolsToGridImage(products, legends=[Chem.MolToSmiles(p) for p in products], 
 ```
 
 ## A colourful named-reaction gallery
+
+Reaction SMILES can describe any transformation, so a gallery of named reactions becomes a few lines of data. These are written as complete, specific reactions (with `useSmiles=True`) for drawing rather than as general templates. `display()` shows each drawing inside the loop, since only the last value of a cell is shown automatically.
 
 ```{code-cell} ipython3
 named = {
@@ -83,7 +107,7 @@ for name, smi in named.items():
 
 ## Enumerating a virtual library
 
-A two-component reductive amination with 6 aldehydes and 6 amines gives 36 products:
+**Library enumeration** applies one template to every combination of building blocks to list all the products that could be made. Chemists use this to decide which compounds are worth making: properties can be computed for the whole virtual library, and only the most promising members are synthesised. `itertools.product` (Chapter 7) generates every pairing. A two-component reductive amination, in which an aldehyde and an amine form a new C–N bond, with 6 aldehydes and 6 amines gives 36 products:
 
 ```{code-cell} ipython3
 red_am = AllChem.ReactionFromSmarts("[CH1:1]=O.[N;H2,H1;!$(NC=O):2]>>[CH2:1][N:2]")
@@ -102,6 +126,8 @@ print(len(lib), "products")
 Draw.MolsToGridImage([Chem.MolFromSmiles(s) for s in lib.smiles[:12]], molsPerRow=6, subImgSize=(160, 130))
 ```
 
+Because the library is a DataFrame, it can be reshaped into an aldehyde × amine grid and shown as a heatmap, which makes it easy to see which building blocks push the lipophilicity up or down:
+
 ```{code-cell} ipython3
 pivot = lib.pivot(index="aldehyde", columns="amine", values="logP")
 import seaborn as sns
@@ -112,7 +138,7 @@ plt.title("cLogP across the virtual library"); plt.show()
 
 ## Retrosynthesis: running templates backwards
 
-A template written product-first disconnects a target into possible starting materials.
+**Retrosynthesis** is the planning technique taught in organic chemistry: start from the target molecule and work backwards, "disconnecting" bonds to find simpler precursors, until you reach compounds you can buy. Each disconnection is the reverse of a known reaction. In code, a retro-template is simply a template written product-first, so applying it to the target returns candidate starting materials. Some disconnections fail to give valid molecules, so each outcome is sanitised inside `try`/`except` (Chapter 9) and invalid ones are skipped. A `set` removes duplicate suggestions. The SMARTS `-!@` means "a single bond that is not in a ring", so the Suzuki template breaks only biaryl bonds.
 
 ```{code-cell} ipython3
 retro_templates = {
@@ -137,6 +163,15 @@ for name, smarts in retro_templates.items():
 ```
 
 Real retrosynthesis software combines tens of thousands of such templates, learned from reaction databases, with a search algorithm and a neural network that ranks the options {cite:p}`segler2018`. Template-free models treat reaction prediction as translating reactant SMILES into product SMILES {cite:p}`schwaller2019`. We return to this in Chapter 37.
+
+```{admonition} Summary
+:class: tip
+- Reaction SMILES: `reactants>agents>products`; read with `AllChem.ReactionFromSmarts(..., useSmiles=True)` and draw with `DrawReaction`.
+- Atom maps (`[C:1]`) record which reactant atom becomes which product atom.
+- A reaction template in SMARTS applies to any matching substrate with `RunReactants`; sanitise the products.
+- Combining templates with `itertools.product` enumerates virtual libraries for property screening.
+- Retro-templates run reactions backwards to suggest disconnections, the basis of computer-aided retrosynthesis.
+```
 
 ## Exercises
 
