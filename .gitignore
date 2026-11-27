@@ -2,3 +2,4 @@ book/_build/
 __pycache__/
 .ipynb_checkpoints/
 .jupyter_cache/
+book/part1_python/chem_files/
