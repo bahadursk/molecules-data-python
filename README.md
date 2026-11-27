@@ -2,7 +2,7 @@
 
 ![Molecules, Data and Python](book/_static/social_card.png)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24583664.svg)](https://doi.org/10.5281/zenodo.24583664)
 [![Book](https://img.shields.io/badge/read-online-6c4ad6)](https://bahadursk.github.io/molecules-data-python)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
@@ -35,11 +35,6 @@ Code: MIT. Text and figures: CC BY 4.0.
 
 ## How to cite
 
-See [`CITATION.cff`](CITATION.cff), or use the "Cite this repository" button on GitHub. Each GitHub release is archived on Zenodo with its own DOI.
+> Sk, B. (2026). *Molecules, Data and Python*. Zenodo. https://doi.org/10.5281/zenodo.24583664
 
-## Getting a DOI (one-time setup)
-
-1. Author details are already in `CITATION.cff` and `.zenodo.json`.
-2. Sign in to [zenodo.org](https://zenodo.org) with GitHub, open **Settings → GitHub**, and switch on this repository.
-3. On GitHub, create a release (for example `v1.0.0`). Zenodo archives it and mints a DOI within minutes.
-4. Replace `XXXXXXX` in the badge above and in `CITATION.cff` with the concept DOI Zenodo shows (it always points to the latest version).
+This DOI covers all versions and always resolves to the latest release. To cite version 1.0 specifically, use [10.5281/zenodo.24583665](https://doi.org/10.5281/zenodo.24583665). See also [`CITATION.cff`](CITATION.cff) or the "Cite this repository" button on GitHub. Each new GitHub release is archived on Zenodo automatically.

@@ -11,10 +11,17 @@ authors:
     given-names: "Bahadur"
     orcid: "https://orcid.org/0000-0002-7098-5429"
     affiliation: "Koneru Lakshmaiah Education Foundation (Deemed to be University), Green Fields, Vaddeswaram, Guntur District, Andhra Pradesh 522302, India"
-version: "1.0.0"
+version: "1.0"
 date-released: "2026-11-27"
 license: CC-BY-4.0
 repository-code: "https://github.com/bahadursk/molecules-data-python"
 keywords: [chemistry, python, cheminformatics, machine learning, materials science, jupyter book, education]
-# After Zenodo mints a DOI, uncomment and fill in:
-# doi: "10.5281/zenodo.XXXXXXX"
+# Concept DOI: always resolves to the latest version on Zenodo
+doi: "10.5281/zenodo.24583664"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24583664"
+    description: "Concept DOI (all versions)"
+  - type: doi
+    value: "10.5281/zenodo.24583665"
+    description: "Version 1.0"
