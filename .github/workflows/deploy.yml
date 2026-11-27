@@ -19,24 +19,10 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
       - run: pip install -r requirements.txt
       - run: python tools/build_book.py
       - name: Build the website
         run: jupyter-book build book
-      - name: Build the PDF
-        run: |
-          jupyter-book build book --builder singlehtml
-          npm install --no-save playwright@1.49.1
-          npx playwright install --with-deps chromium
-          node tools/make_pdf.js
-          cp book/_build/molecules-data-python.pdf book/_build/html/
-      - uses: actions/upload-artifact@v4
-        with:
-          name: molecules-data-python-pdf
-          path: book/_build/molecules-data-python.pdf
       - uses: actions/upload-pages-artifact@v3
         with:
           path: book/_build/html

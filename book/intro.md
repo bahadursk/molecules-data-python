@@ -9,8 +9,6 @@
 
 This is an interactive, open book for anyone who works with chemistry: school students meeting Python for the first time, undergraduates analysing lab data, and researchers building models of molecules and materials. Every page is a Jupyter notebook. Press the 🚀 rocket at the top of any chapter to run it in Google Colab or Binder, change the code, and see what happens.
 
-📄 Prefer paper or offline reading? [Download the whole book as a PDF](https://bahadursk.github.io/molecules-data-python/molecules-data-python.pdf).
-
 ## What makes this book different
 
 - **Chemistry first.** Every Python idea is introduced through a chemical problem: molar masses, titrations, spectra, kinetics, crystal structures.
