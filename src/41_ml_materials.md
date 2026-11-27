@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 30 and Part V.
 ```
 
-Materials informatics predicts the properties of solids from composition and structure, then uses those models to screen millions of hypothetical compounds. Composition-only models {cite:p}`ward2016`, crystal graph networks {cite:p}`xie2018` and open databases {cite:p}`jain2013` are the standard toolkit; large-scale screening of this kind has recently proposed hundreds of thousands of new stable crystals {cite:p}`merchant2023`.
+Materials informatics predicts the properties of solids from composition and structure, then uses those models to screen millions of hypothetical compounds. Composition-only models {cite:p}`ward2016`, crystal graph networks {cite:p}`xie2018` and open databases {cite:p}`jain2013` are the standard toolkit; large-scale screening of this kind has recently proposed hundreds of thousands of new stable crystals {cite:p}`merchant2023`. The motivation is the size of the search space. Even restricting attention to compounds of two elements in a few simple ratios gives thousands of formulas, and three or four elements give millions; synthesising and measuring each one, or even running a DFT calculation on each, is impossible. A model trained on the compounds that *have* been measured or calculated can predict the rest in seconds and pass only the most promising to experiment. Two properties dominate inorganic screening: the **band gap**, the energy needed to excite an electron across the gap between filled and empty states (it decides whether a solid is a metal, a semiconductor or an insulator, Chapter 30), and the **formation energy**, the energy released when the compound forms from its elements, which decides whether it is stable. This chapter builds composition features, trains models for both properties, tests them on unseen chemistries, sketches a crystal graph, checks stability with a convex hull, and runs a screening campaign for a solar-cell absorber.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -42,6 +42,14 @@ mat.head()
 
 ## Exploring the dataset
 
+Each row is a binary compound $A_xB_y$ with a cation-like element A and an anion-like element B, their electronegativities χ, and whether the formula is **charge balanced**, that is, whether common oxidation states of A and B can add up to zero (as in NaCl or Al₂O₃). pymatgen can check this directly:
+
+```{code-cell} ipython3
+print(Composition("Al2O3").oxi_state_guesses()[:1], Composition("NaCl2").oxi_state_guesses())
+```
+
+An empty result means no combination of oxidation states balances, which is usually a sign of a metallic or unlikely compound. Plotting the simulated properties against these simple quantities shows the trends the model will need to learn.
+
 ```{code-cell} ipython3
 fig, axes = plt.subplots(1, 3, figsize=(15, 4))
 sns.scatterplot(mat, x="chi_B", y="chi_A", hue="band_gap_sim_eV", palette="viridis", size="band_gap_sim_eV",
@@ -55,6 +63,13 @@ plt.tight_layout(); plt.show()
 ```
 
 ## Composition featurisation
+
+The composition features of Chapter 32 are built here in full. For each of eight elemental properties (atomic number, electronegativity, periodic row and group, radius, mass, Mendeleev number and number of valence electrons), five statistics are computed over the elements in the formula: the fraction-weighted mean, the range, the mean absolute deviation, the maximum and the minimum. The *Mendeleev number* orders the elements so that chemically similar ones are close together, which makes it a useful single number for an element's "chemistry". The atomic fractions come from `Composition`:
+
+```{code-cell} ipython3
+c_demo = Composition("Al2O3")
+print({str(e): round(c_demo.get_atomic_fraction(e), 2) for e in c_demo.elements})
+```
 
 ```{code-cell} ipython3
 PROPS = {"Z": lambda e: e.Z, "X": lambda e: e.X, "row": lambda e: e.row, "group": lambda e: e.group,
@@ -83,6 +98,8 @@ F.head(3).round(2).iloc[:, :8]
 
 ## Predicting band gap and formation energy
 
+A random forest (Chapter 31) is trained for each target with 5-fold cross-validation, and the out-of-fold predictions are plotted against the true values. The mean absolute error is in the property's own units (eV, or eV per atom), which makes it easy to judge: typical differences between DFT and experiment for band gaps are several tenths of an eV.
+
 ```{code-cell} ipython3
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_predict, KFold, GroupKFold
@@ -106,6 +123,8 @@ plt.tight_layout(); plt.show()
 
 ### Extrapolating to unseen chemistries
 
+A random split puts NaCl in the training set and NaBr in the test set, so the model has already seen sodium compounds. Grouping by the cation element A with `GroupKFold` (Chapter 33) keeps every compound of a given cation in the same fold, so the test asks how well the model predicts compounds of an element it has never seen.
+
 ```{code-cell} ipython3
 for col in targets:
     p_rand = cross_val_predict(RandomForestRegressor(300, n_jobs=-1, random_state=0), F.values, mat[col], cv=cv)
@@ -125,7 +144,14 @@ plt.title("The model relies on electronegativity spread and radii"); plt.show()
 
 ## A crystal graph network, in miniature
 
-Crystal graph convolutional networks {cite:p}`xie2018` build a graph whose nodes are atoms in the unit cell and whose edges are neighbours within a cutoff, with distances as edge features. Here is the featurisation step for a real structure.
+Crystal graph convolutional networks {cite:p}`xie2018` build a graph whose nodes are atoms in the unit cell and whose edges are neighbours within a cutoff, with distances as edge features. Here is the featurisation step for a real structure. Composition features ignore the arrangement of atoms, but a crystal is a periodic structure: a small **unit cell** of atoms repeated in all three directions (Chapter 30). A **crystal graph** treats each atom of the unit cell as a node and connects it to every neighbour within a cutoff distance, including neighbours in the next cells, so a single unit cell gives many edges. Each edge carries its distance, expanded into a set of overlapping Gaussian functions so that a network can respond to it smoothly; a distance of 2 Å "lights up" the basis functions centred near 2 Å:
+
+```{code-cell} ipython3
+centres_demo = np.linspace(0.5, 4.0, 8)
+print(np.exp(-((2.0 - centres_demo) / 0.5) ** 2).round(2))
+```
+
+The example is the perovskite SrTiO₃, whose cubic unit cell holds one Sr, one Ti and three O atoms.
 
 ```{code-cell} ipython3
 from pymatgen.core import Structure, Lattice
@@ -159,7 +185,13 @@ The convolution then updates each atom from its neighbours and their bond distan
 
 ## Screening for stability: the convex hull
 
-A compound is thermodynamically stable only if it lies **on** the convex hull of formation energies, not above it.
+A compound is thermodynamically stable only if it lies **on** the convex hull of formation energies, not above it. A negative formation energy is not enough. A compound of composition $x$ competes not only with the pure elements but with every mixture of other compounds of the same overall composition; if a mixture of two neighbouring phases has lower energy, the compound will eventually decompose into them. Plotting formation energy against composition, the **convex hull** is the lowest line that connects points without any point lying below it. Compounds on the line are stable, and the vertical distance of any other compound above it, the **energy above the hull**, is the energy it would release on decomposing. For a composition between two stable phases, the hull energy is found by linear interpolation between them:
+
+```{code-cell} ipython3
+print(np.interp(0.4, [0.33, 0.5], [-0.52, -0.78]).round(3), "eV per atom on the hull at x = 0.4")
+```
+
+Compounds within a few tens of meV per atom above the hull are often still synthesisable as metastable phases. `scipy.spatial.ConvexHull` finds the hull of a set of points.
 
 ```{code-cell} ipython3
 from scipy.spatial import ConvexHull
@@ -186,11 +218,11 @@ plt.legend(); plt.title("Energy above the hull decides synthesisability"); plt.s
 
 ## A screening campaign
 
-Predict properties for every composition the model has **not** seen, then filter for a target window: a stable semiconductor with a gap between 1.1 and 1.7 eV, the range for a single-junction solar absorber.
+Predict properties for every composition the model has **not** seen, then filter for a target window: a stable semiconductor with a gap between 1.1 and 1.7 eV, the range for a single-junction solar absorber. Such a window balances absorbing as much of the solar spectrum as possible (a small gap absorbs more photons) against the voltage each absorbed photon delivers (a large gap gives more). The candidate formulas are all combinations of 20 cations and 12 anions in five simple ratios, minus those already in the training data; each is featurised and passed through both models, and `query` keeps those inside the window with a formation energy below −0.4 eV per atom.
 
 ```{code-cell} ipython3
 import itertools
-cations = ["Li", "Na", "K", "Mg", "Ca", "Sr", "Zn", "Cd", "Al", "Ga", "In", "Be", "Ba", "Rb"]
+cations = ["Li", "Na", "K", "Mg", "Ca", "Sr", "Zn", "Cd", "Al", "Ga", "In", "Be", "Ba", "Rb", "Cu", "Ag", "Sn", "Pb", "Ge", "Tl"]
 anions = ["O", "S", "Se", "Te", "N", "P", "As", "F", "Cl", "Br", "I", "Sb"]
 cand = []
 for a, b in itertools.product(cations, anions):
@@ -217,8 +249,31 @@ plt.show()
 hits.head(10).round(2)
 ```
 
+Look critically at the list. Some formulas, such as Tl₂Cl, cannot be charge balanced with common oxidation states, and copper, silver, tin, lead, germanium and thallium never appear in the training data, so every prediction for them is an extrapolation (Chapter 36). A cheap chemical filter removes the first problem, and flagging the second keeps it visible:
+
+```{code-cell} ipython3
+train_cations = set(mat.A)
+hits = hits.assign(balanced=[len(Composition(f).oxi_state_guesses()) > 0 for f in hits.formula],
+                   seen_cation=[Composition(f).elements[0].symbol in train_cations for f in hits.formula])
+print(f"{hits.balanced.sum()} of {len(hits)} hits are charge balanced; "
+      f"{(hits.balanced & hits.seen_cation).sum()} of those have a cation the model was trained on")
+hits[hits.balanced].head(10).round(2)
+```
+
+Every surviving hit contains a cation the model has never seen, because the compositions of the familiar cations were already in the training data. That is the honest outcome of this screen: it proposes candidates, but outside the training domain, so each one needs a DFT check before anyone tries to make it. Charge balance by `oxi_state_guesses` is also generous, since it allows unusual oxidation states such as Ag²⁺.
+
 ```{warning}
 Composition-only models cannot distinguish polymorphs: anatase and rutile TiO₂ have the same formula and very different properties. They are a filter, not an oracle. The next step is always a structure prediction and a DFT calculation on the survivors.
+```
+
+```{admonition} Summary
+:class: tip
+- Materials informatics predicts properties such as band gap and formation energy to screen huge composition spaces.
+- Composition features are weighted statistics of elemental properties; check charge balance with `oxi_state_guesses`.
+- Random CV overstates performance; leave-element-out CV tests new chemistries.
+- Crystal graphs connect atoms to periodic neighbours, with Gaussian-expanded distances on the edges.
+- Stability is decided by the energy above the convex hull, not by the formation energy alone.
+- Screening hits from composition-only models are hypotheses for structure prediction and DFT.
 ```
 
 ## Exercises
