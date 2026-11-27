@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 12, 13 and 16.
 ```
 
-Rate laws are **differential equations**. Only the simplest have neat textbook solutions; everything else, from enzyme cascades to oscillating reactions, is solved numerically. SciPy's `solve_ivp` makes this routine.
+**Chemical kinetics** studies how fast reactions go and by what steps. A **rate law** states how the rate of a reaction depends on the concentrations, for example rate $= k[A]$ for a first-order reaction, where $k$ is the rate constant. Because a rate is a change in concentration per unit time, a rate law is a **differential equation**: $\frac{d[A]}{dt} = -k[A]$ says how $[A]$ changes, not what it is. Solving the equation gives $[A]$ at every time, which is what you can compare with experiment. Only the simplest rate laws have neat textbook solutions; everything else, from enzyme cascades to oscillating reactions, is solved numerically. SciPy's `solve_ivp` makes this routine. This chapter starts from the integrated rate laws, shows how to solve any mechanism numerically, explores selectivity, enzymes and oscillations, fits rate constants to data, and ends with the random kinetics of small numbers of molecules.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -25,6 +25,16 @@ COL = ["#e5487a", "#f2a93b", "#0f9d8a", "#6c4ad6", "#3b82f6"]
 ```
 
 ## Integrated rate laws
+
+For a single reactant with a simple order, the rate law can be integrated by hand. A **zero-order** reaction proceeds at a constant rate, so $[A] = [A]_0 - kt$ falls in a straight line. A **first-order** reaction has a rate proportional to $[A]$, giving exponential decay, $[A] = [A]_0 e^{-kt}$; its half-life, $t_{1/2} = \ln 2/k$, does not depend on the starting concentration. A **second-order** reaction has rate $k[A]^2$, giving $1/[A] = 1/[A]_0 + kt$. Each law becomes a straight line when plotted the right way, which is the classic method for finding a reaction's order from data: plot $[A]$, $\ln[A]$ and $1/[A]$ against time and see which is linear. The first-order half-life is easy to check numerically:
+
+```{code-cell} ipython3
+k_demo = 0.5                                   # per minute
+t_half = np.log(2) / k_demo
+print(f"t1/2 = {t_half:.2f} min; fraction left after one half-life = {np.exp(-k_demo * t_half):.2f}")
+```
+
+The three integrated laws side by side, with their linearising plots:
 
 ```{code-cell} ipython3
 t = np.linspace(0, 10, 200)
@@ -42,7 +52,21 @@ plt.tight_layout(); plt.show()
 
 ## Numerical solution with `solve_ivp`
 
-For A → B → C with rate constants $k_1, k_2$:
+A **mechanism** with several steps gives a *system* of differential equations, one per species, and most systems have no simple formula. Numerical solvers handle them all the same way: starting from known initial concentrations, they take many small time steps, at each step using the rate equations to work out how much every concentration changes. This is called solving an **initial value problem**. `solve_ivp(f, (t0, t_end), y0)` needs three things: a function `f(t, y)` that returns the list of rates $d y/dt$ for the current concentrations `y`, the time span, and the initial concentrations. Extra constants such as rate constants are passed with `args=`. The solver chooses its own step sizes, taking small steps where concentrations change fast and large ones where they change slowly.
+
+The most basic use solves first-order decay and checks it against the exact answer:
+
+```{code-cell} ipython3
+def first_order(t, y, k):
+    return [-k * y[0]]
+
+s = solve_ivp(first_order, (0, 5), [1.0], args=(0.5,), t_eval=[0, 1, 2, 5])
+print(s.t)
+print(s.y[0].round(4))
+print(np.exp(-0.5 * s.t).round(4))            # exact solution for comparison
+```
+
+`t_eval` asks for results at chosen times, `s.t` holds those times and `s.y` holds one row per species. For A → B → C with rate constants $k_1, k_2$:
 
 $$\frac{d[A]}{dt} = -k_1[A], \quad \frac{d[B]}{dt} = k_1[A] - k_2[B], \quad \frac{d[C]}{dt} = k_2[B]$$
 
@@ -61,9 +85,11 @@ for ax, (k1, k2) in zip(axes, [(1, 0.1), (1, 1.0), (0.1, 1)]):
 axes[0].set_ylabel("concentration"); axes[0].legend(); plt.tight_layout(); plt.show()
 ```
 
-When $k_2 \gg k_1$ (right), B never builds up: this is the regime where the **steady-state approximation** works.
+`dense_output=True` makes the solution available at any time through `sol.sol(t)`, which gives smooth curves for plotting. When $k_2 \gg k_1$ (right), B never builds up: this is the regime where the **steady-state approximation** works, in which the concentration of a reactive intermediate is assumed to stay small and nearly constant. When $k_2 \ll k_1$ (left), B accumulates and A → B appears to be complete before C forms.
 
 ## Parallel reactions and selectivity
+
+When one reactant can follow two competing pathways, A → B and A → C, the ratio of products, the **selectivity**, depends on the ratio of rate constants. Through the Arrhenius equation, $k = A e^{-E_a/RT}$, the rate constants depend on temperature, and the one with the higher activation energy rises faster with temperature. Raising the temperature therefore shifts selectivity towards the high-barrier product. Chemists use this to steer reactions: running a reaction cold favours the product with the lower barrier (*kinetic control*). Below, the fraction of B is computed at six temperatures for $E_{a,1} = 50$ and $E_{a,2} = 65$ kJ mol⁻¹.
 
 ```{code-cell} ipython3
 def parallel(t, y, k1, k2):
@@ -83,7 +109,7 @@ plt.show()
 
 ## Pre-equilibrium and enzyme kinetics
 
-E + S ⇌ ES → E + P, solved in full and compared with the Michaelis–Menten approximation:
+Enzymes catalyse reactions by first binding the substrate S to form a complex ES, which then converts it to product P and releases the enzyme: E + S ⇌ ES → E + P. Textbooks derive the Michaelis–Menten equation (Chapter 16) by assuming that [ES] quickly reaches a steady value. With `solve_ivp` we can solve the full mechanism, with all four species, and *check* that assumption instead of making it. The mechanism is solved in full and compared with the Michaelis–Menten approximation:
 
 ```{code-cell} ipython3
 def enzyme(t, y, k1, km1, k2):
@@ -109,9 +135,11 @@ print(f"KM = {KM*1e3:.2f} mM, Vmax = {Vmax*1e6:.0f} μM/s")
 Systems with very different time scales are **stiff**. The default `RK45` solver becomes painfully slow on them; use `method="LSODA"`, `"BDF"` or `"Radau"`.
 ```
 
+The right panel shows the ratio [ES]/[E]₀ jumping up within a fraction of a second and afterwards changing only slowly, following the substrate as it is used up, exactly as the steady-state value $[\mathrm{S}]/(K_M + [\mathrm{S}])$ predicts. Because ES adjusts far faster than S is consumed, the quasi-steady-state assumption is justified for these rate constants.
+
 ## Oscillating reactions: the Oregonator
 
-The Belousov–Zhabotinsky reaction oscillates between red and blue for minutes. The scaled **Oregonator** model captures it with three variables.
+Most reactions run smoothly towards equilibrium, but some, far from equilibrium and with feedback in the mechanism, oscillate. The Belousov–Zhabotinsky (BZ) reaction, in which bromate oxidises malonic acid with a cerium or ferroin catalyst, oscillates between red and blue for minutes. The key is **autocatalysis**: an intermediate (HBrO₂) speeds up its own production until another step switches it off. The scaled **Oregonator** model captures it with three variables, x (HBrO₂), y (bromide) and z (the oxidised catalyst). Its rate constants differ by many orders of magnitude, which makes it **stiff**, so it needs a stiff solver (`Radau`) and tight tolerances (`rtol`, `atol`).
 
 ```{code-cell} ipython3
 def oregonator(t, y, eps=0.04, q=8e-4, f=1.0, epsp=2e-4):
@@ -131,7 +159,7 @@ plt.tight_layout(); plt.show()
 
 ## Fitting kinetic data
 
-Fit rate constants of A → B → C to noisy measurements of B by wrapping `solve_ivp` inside `curve_fit`.
+In the lab the question is reversed: you have measured concentrations and want the rate constants. When the model has no formula, you can still fit it by making the ODE solution itself the model function. `curve_fit` (Chapter 16) repeatedly calls `model_B` with trial values of $k_1$ and $k_2$, each call solves the ODEs and returns [B] at the measured times, and the optimiser adjusts the rate constants until the prediction matches the data. `bounds=(0, 10)` keeps the rate constants positive. Here the "measurements" are simulated with known constants plus noise, so we can check that the fit recovers them.
 
 ```{code-cell} ipython3
 rng = np.random.default_rng(0)
@@ -153,7 +181,7 @@ plt.xlabel("t / min"); plt.ylabel("[B]"); plt.legend(); plt.title("Fitting a mec
 
 ## Stochastic kinetics: the Gillespie algorithm
 
-With only a few molecules (inside a cell, on a catalyst particle), concentrations fluctuate. The Gillespie algorithm simulates individual reaction events.
+Rate equations treat concentrations as smooth quantities, which is excellent for a flask containing 10²⁰ molecules. With only a few molecules (inside a cell, on a catalyst particle), concentrations fluctuate, because each reaction is a random event. The **Gillespie algorithm** simulates these individual reaction events exactly. For a first-order decay with $n$ molecules, the total rate is $kn$, and the waiting time until the next reaction is random, drawn from an exponential distribution with mean $1/(kn)$. The algorithm repeatedly draws a waiting time, advances the clock and removes one molecule. Each run gives a different staircase, and their average follows the deterministic curve.
 
 ```{code-cell} ipython3
 def gillespie(n0, k, t_end, rng):
@@ -173,6 +201,17 @@ tt = np.linspace(0, 20, 200)
 ax.plot(tt, 30 * np.exp(-0.3 * tt), "k--", lw=2, label="deterministic")
 ax.set(xlabel="t", ylabel="molecules of A", title="Stochastic first-order decay of 30 molecules"); ax.legend()
 plt.show()
+```
+
+```{admonition} Summary
+:class: tip
+- Rate laws are differential equations; integrated laws for zero, first and second order linearise as $[A]$, $\ln[A]$ and $1/[A]$ against $t$.
+- `solve_ivp(f, (t0, t1), y0, args=...)` solves any mechanism numerically; `f` returns the rates of every species.
+- Competing pathways with different $E_a$ give temperature-dependent selectivity.
+- Full enzyme mechanisms confirm (or refute) the steady-state approximation.
+- Stiff systems need `LSODA`, `BDF` or `Radau`.
+- Wrapping `solve_ivp` in `curve_fit` fits rate constants to data.
+- The Gillespie algorithm simulates random reaction events for small molecule numbers.
 ```
 
 ## Exercises
