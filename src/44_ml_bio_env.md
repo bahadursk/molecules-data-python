@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 23, 25 and Part V.
 ```
 
-Two fields where chemistry meets life and the planet, and where machine learning has become everyday practice: protein structure and function {cite:p}`jumper2021`, and the prediction of how chemicals behave in air, water and organisms.
+Two fields where chemistry meets life and the planet, and where machine learning has become everyday practice: protein structure and function {cite:p}`jumper2021`, and the prediction of how chemicals behave in air, water and organisms. In biochemistry the central objects are proteins, chains of amino acids whose sequence decides how they fold and what they do, and the small molecules that bind to them. Reading a protein's sequence is now routine, but measuring its structure, its function or how tightly a molecule binds to it is slow, so models that predict those from sequence or from simple descriptors are everywhere. In environmental chemistry the question is what becomes of a chemical after it is released: whether it stays in water or collects in fatty tissue, how long it survives, and whether it is harmful. Regulators must form a view on tens of thousands of substances, most never tested, so they lean on **QSPR** and **QSAR** models (Chapter 36) that estimate these properties from structure. The chapter covers sequence features, a hydropathy plot, a binding model, a hybrid treatment of enzyme kinetics, environmental-fate screening and structural alerts.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -34,7 +34,14 @@ def load_data(name, **kw):
 
 ## Proteins as sequences
 
-A protein is a string over a 20-letter alphabet. Simple sequence features already predict a great deal.
+A protein is a string over a 20-letter alphabet. Simple sequence features already predict a great deal. Each letter stands for one amino acid, and each amino acid has known properties. The **Kyte–Doolittle** scale gives every amino acid a hydropathy value, positive for water-avoiding residues such as isoleucine and leucine, negative for water-loving ones such as arginine and aspartate; its average over a sequence is called **GRAVY**, the grand average of hydropathy, and it is high for proteins that sit in membranes. Aspartate and glutamate carry a negative charge near pH 7, lysine and arginine a positive one, so the net charge follows from counting letters. Python strings count and iterate directly (Chapter 3), so each feature is a single expression:
+
+```{code-cell} ipython3
+pep = "MKLLVAGDE"
+print(pep.count("L") / len(pep), sum(a in "DE" for a in pep), sum(a in "KR" for a in pep))
+```
+
+The amino-acid **composition**, the fraction of each of the twenty letters, supplies twenty more features. The three families below are synthetic, generated with different composition biases: one rich in hydrophobic residues, one in charged and polar ones, and one in glycine and proline.
 
 ```{code-cell} ipython3
 AA = "ACDEFGHIKLMNPQRSTVWY"
@@ -88,6 +95,14 @@ plt.tight_layout(); plt.show()
 
 ### A hydropathy plot: finding membrane helices
 
+A protein that crosses a lipid membrane does so with a stretch of roughly twenty hydrophobic residues wound into a helix. A **hydropathy plot** looks for those stretches by averaging the Kyte–Doolittle values over a sliding window of about nineteen residues; where the average rises above roughly 1.6, a membrane-spanning segment is likely. The moving average is a convolution with a flat window:
+
+```{code-cell} ipython3
+print(np.convolve([1, 2, 3, 4, 5], np.ones(3) / 3, mode="valid"))
+```
+
+Our sequences are random apart from their composition, so the peaks below are scattered rather than forming the clean blocks of a real membrane protein, but the calculation is the one used on real sequences.
+
 ```{code-cell} ipython3
 seq = prot.query("family == 'membrane'").seq.iloc[0][:220]
 window = 19
@@ -103,7 +118,12 @@ plt.show()
 
 ## Protein–ligand binding
 
-Binding affinity depends on both partners. A simple but instructive featurisation concatenates ligand descriptors with pocket descriptors.
+Binding affinity depends on both partners. A small molecule binds in a **pocket**, a cavity on the protein's surface, and how tightly depends on how well the two match in shape and in polarity: a greasy molecule fits a greasy pocket, a hydrogen-bond donor needs an acceptor to meet. A model of binding therefore needs features of both partners, and the simplest featurisation concatenates ligand descriptors with pocket descriptors. Here each pocket is summarised by three numbers, its preferred lipophilicity, how polar it is and its volume, and the simulated score rewards matching the ligand's logP and size to the pocket's, plus terms for hydrogen bonding in polar pockets and aromatic rings in greasy ones. The score is defined so that lower is better, as docking programs report it. The Gaussian terms give their maximum when ligand and pocket agree:
+
+```{code-cell} ipython3
+for lp in [1.0, 3.5, 6.0]:
+    print(lp, round(float(np.exp(-((lp - 3.5) / 2.2) ** 2)), 2))   # best match at the pocket's 3.5
+```
 
 ```{code-cell} ipython3
 LIGANDS = ["CC(=O)Oc1ccccc1C(=O)O", "CC(C)Cc1ccc(cc1)C(C)C(=O)O", "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
@@ -134,6 +154,8 @@ sns.heatmap(piv, cmap="RdYlGn_r", annot=True, fmt=".1f", yticklabels=[s[:26] for
 plt.title("Ligand × pocket selectivity matrix"); plt.tight_layout(); plt.show()
 ```
 
+Every ligand appears with every pocket, so the data can be split in two quite different ways with `GroupKFold` (Chapter 33). Grouping by ligand asks how well the model scores a new molecule against pockets it knows. Grouping by pocket asks how well it scores known molecules against a protein it has never seen, which is the situation whenever a project moves to a new target.
+
 ```{code-cell} ipython3
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import GroupKFold
@@ -150,7 +172,14 @@ Generalising to a **new target** is much harder than to a new ligand on a known 
 
 ## Enzyme kinetics meets ML
 
-A hybrid approach: fit mechanistic Michaelis–Menten parameters per variant, then learn how sequence changes shift those parameters.
+A hybrid approach: fit mechanistic Michaelis–Menten parameters per variant, then learn how sequence changes shift those parameters. An enzyme's rate rises with substrate concentration and then levels off, and the Michaelis–Menten equation $v = V_\max [S]/(K_M + [S])$ (Chapter 25) describes that with two numbers: $V_\max$, the rate when every enzyme molecule is occupied, and $K_M$, the concentration at which the rate reaches half of $V_\max$, which measures how tightly the substrate is held. A mutation can change either one, and the ratio $k_\mathrm{cat}/K_M$, here approximated by $V_\max/K_M$, measures the overall efficiency at low substrate concentration. Fitting the two parameters to measured rates is a non-linear least-squares problem for `curve_fit` (Chapter 16). The **Lineweaver–Burk** plot of $1/v$ against $1/[S]$ turns the curve into a straight line, which is how the parameters were read off before computers:
+
+```{code-cell} ipython3
+S_demo = np.array([1.0, 5.0, 20.0])
+print((12.0 * S_demo / (4.0 + S_demo)).round(2), "µM/s at Vmax = 12, KM = 4")
+```
+
+Fitting mechanism first and modelling only the parameters is a useful pattern in general: it keeps the physics explicit and leaves the model a much smaller job.
 
 ```{code-cell} ipython3
 from scipy.optimize import curve_fit
@@ -180,7 +209,11 @@ pd.DataFrame(fitted, index=["Vmax", "KM"]).T.assign(kcat_over_KM=lambda d: d.Vma
 
 ## Environmental fate and toxicity
 
-Three quantities govern what happens to a chemical released into the environment: how it partitions (log K_ow), how long it persists, and how much it accumulates in organisms.
+Three quantities govern what happens to a chemical released into the environment: how it partitions (log K_ow), how long it persists, and how much it accumulates in organisms. The **octanol–water partition coefficient** $K_\mathrm{ow}$ is the ratio of a chemical's concentration in octanol, a stand-in for fat, to that in water; its logarithm is the logP of Chapter 20. A high value means the chemical prefers fatty tissue, so it collects in organisms, measured as the **bioconcentration factor** (BCF), the ratio of its concentration in an organism to that in the surrounding water. **Persistence** is usually reported as a half-life in soil or water, and carbon–halogen bonds resist the enzymes that break molecules down, so halogenated compounds last longest. A substance that is persistent, bioaccumulative and toxic at once is flagged as **PBT** and restricted. The relations below are deliberately simple linear forms in the spirit of regulatory screening models, with simulated inputs:
+
+```{code-cell} ipython3
+print(round(0.85 * 5.0 - 0.70, 2), "log BCF for a chemical with logKow = 5")
+```
 
 ```{code-cell} ipython3
 mols = load_data("molecules_sim.csv")
@@ -210,6 +243,8 @@ plt.tight_layout(); plt.show()
 
 ### A structural-alert toxicity model
 
+A **structural alert** is a substructure associated with a hazard, such as a nitroaromatic group or an epoxide, and lists of them are used in regulatory screening. A model that sees substructures can learn such rules, whereas one given only bulk properties such as molecular weight and logP cannot. The comparison below trains the same classifier on descriptors, on Morgan fingerprints and on both, and reports the **ROC-AUC** (Chapter 31): the probability that a randomly chosen toxic molecule is ranked above a randomly chosen non-toxic one, where 0.5 is chance. `class_weight="balanced"` compensates for there being far fewer toxic molecules than safe ones.
+
 ```{code-cell} ipython3
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score, RocCurveDisplay
@@ -224,12 +259,13 @@ for X, name, c in [(Xd, "descriptors", "#e5487a"), (Xf, "fingerprints", "#0f9d8a
                    (np.hstack([Xd, Xf]), "both", "#6c4ad6")]:
     p = cross_val_predict(RandomForestClassifier(300, class_weight="balanced", n_jobs=-1, random_state=0), X,
                           mols.toxic_sim, cv=cv, method="predict_proba")[:, 1]
+    print(f"{name:14s} ROC-AUC = {roc_auc_score(mols.toxic_sim, p):.3f}")
     RocCurveDisplay.from_predictions(mols.toxic_sim, p, ax=ax, name=f"{name} (AUC {roc_auc_score(mols.toxic_sim, p):.2f})",
                                      curve_kwargs={"color": c})
-ax.plot([0, 1], [0, 1], "k:"); ax.set_title("Toxicity: substructures beat bulk properties"); plt.show()
+ax.plot([0, 1], [0, 1], "k:"); ax.set_title("Toxicity: substructures help, but not by much"); plt.show()
 ```
 
-Because the simulated labels were generated from structural alerts, fingerprints, which can see those substructures, win decisively. Real toxicity data behaves the same way, which is why regulatory tools combine alerts with statistical models.
+Fingerprints, which can see substructures, do better than bulk descriptors (ROC-AUC about 0.64 against 0.60), and combining the two is best, but none of the three is close to accurate. That is a fair reflection of real toxicity prediction: the signal is genuinely there, since substructures help, but a single label per molecule for a property that depends on dose, route and species is a hard target. Regulatory tools therefore combine alerts, statistical models and expert judgement rather than relying on any one.
 
 ```{code-cell} ipython3
 alerts = {"nitroaromatic": "c[N+](=O)[O-]", "aromatic amine": "c[NX3;H2]", "Michael acceptor": "C=CC=O",
@@ -241,6 +277,16 @@ plt.title("Structural alerts in the library"); plt.show()
 
 ```{warning}
 Structural alerts are hypotheses, not verdicts. Many safe drugs contain alerting groups, and a model trained on alerts will reproduce their biases. Regulatory use requires validated models, documented applicability domains and expert review.
+```
+
+```{admonition} Summary
+:class: tip
+- Amino-acid composition, GRAVY and net charge are cheap sequence features that already classify protein families.
+- A sliding-window hydropathy plot locates candidate membrane-spanning segments.
+- Binding models need features of both ligand and pocket; generalising to a new target is far harder than to a new ligand.
+- Fit mechanistic parameters such as $V_\max$ and $K_M$ first, then model how they change.
+- Environmental screening combines partitioning, persistence and bioaccumulation into PBT flags.
+- Fingerprints beat bulk descriptors for alert-driven toxicity; alerts are hypotheses, not verdicts.
 ```
 
 ## Exercises
