@@ -87,7 +87,12 @@ print(f"accuracy {accuracy_score(yte, p_te > 0.5):.3f}   ROC-AUC {roc_auc_score(
 
 ### Global: which features does the model use?
 
-Impurity-based importances are biased towards high-cardinality features. **Permutation importance** measures what actually happens to held-out performance when you destroy a feature, which is the question you meant to ask.
+Impurity-based importances are biased towards high-cardinality features. **Permutation importance** measures what actually happens to held-out performance when you destroy a feature, which is the question you meant to ask. The idea is one line: shuffle one column of the test set, so that feature keeps its distribution but loses all connection to the label, and see how much the score falls.
+
+```{code-cell} ipython3
+col = np.array([1.0, 2.0, 3.0, 4.0])
+print(np.random.default_rng(0).permutation(col))   # same values, no relation to the label
+```
 
 ```{code-cell} ipython3
 from sklearn.inspection import permutation_importance
@@ -192,7 +197,12 @@ The AUC is near-perfect and the explanation is honest about *what the model used
 
 ### Calibration
 
-A probability of 0.8 should be right 80% of the time. Check it, do not assume it.
+A probability of 0.8 should be right 80% of the time. Check it, do not assume it. A **calibration curve** sorts the test cases by predicted probability, groups them into bins, and plots the average prediction in each bin against the fraction that were actually positive; a well-calibrated model lies on the diagonal. The **Brier score** summarises the same thing in one number, the mean squared difference between the predicted probability and the 0/1 outcome, so lower is better. It punishes confident mistakes hardest:
+
+```{code-cell} ipython3
+for p in [0.9, 0.6, 0.1]:
+    print(p, "predicted for an event that happened → Brier", round((p - 1.0) ** 2, 2))
+```
 
 ```{code-cell} ipython3
 from sklearn.calibration import calibration_curve, CalibratedClassifierCV
@@ -224,7 +234,12 @@ Calibration is a monotone re-mapping, so it barely moves the AUC: the *ranking* 
 
 ### Two kinds of uncertainty
 
-*Aleatoric* uncertainty is noise in the system: more data will not remove it. *Epistemic* uncertainty is ignorance: more data will. Ensemble disagreement estimates the second, which is the one that tells you where to look next.
+*Aleatoric* uncertainty is noise in the system: more data will not remove it. *Epistemic* uncertainty is ignorance: more data will. Ensemble disagreement estimates the second, which is the one that tells you where to look next. The two are measured differently. Aleatoric uncertainty for a binary outcome is largest when the probability is 0.5, where even a perfect model cannot say which way a case will go, and is captured by $\sqrt{p(1-p)}$. Epistemic uncertainty is the spread of the individual trees' predictions: if every tree says 0.5, the model is sure the answer is a coin flip, whereas if half say 0 and half say 1, the model does not know.
+
+```{code-cell} ipython3
+trees_agree, trees_split = np.array([0.5, 0.5, 0.5]), np.array([0.0, 1.0, 0.5])
+print(trees_agree.mean(), trees_agree.std(), "|", trees_split.mean(), trees_split.std().round(2))
+```
 
 ```{code-cell} ipython3
 per_tree = np.stack([t.predict_proba(Xte.to_numpy())[:, 1] for t in clf.estimators_])

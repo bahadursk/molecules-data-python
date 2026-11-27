@@ -126,7 +126,13 @@ The in-range error looks excellent and the extrapolation is nonsense — a rando
 
 ## Step 2: hybrid modelling — keep the balances, learn the rate
 
-Now assume what a chemist actually knows: the stoichiometry $A \to B \to C$ and that the rates are first order. We do **not** assume Arrhenius; we let the data tell us how $k_1$ and $k_2$ depend on temperature. The ODE solver enforces mass balance for free, so the model can never predict negative concentrations or more product than feed.
+Now assume what a chemist actually knows: the stoichiometry $A \to B \to C$ and that the rates are first order. We do **not** assume Arrhenius; we let the data tell us how $k_1$ and $k_2$ depend on temperature. The two rate constants are fitted independently in each temperature bin, and only afterwards is an Arrhenius plot drawn to see whether $\ln k$ against $1/T$ is straight, which is the test rather than the assumption. A straight line there gives the activation energy from its slope, $-E_a/R$ (Chapter 25):
+
+```{code-cell} ipython3
+T_demo, k_demo = np.array([320.0, 350.0]), np.array([0.010, 0.080])
+slope = np.polyfit(1 / T_demo, np.log(k_demo), 1)[0]
+print(f"Ea = {-slope * 8.314 / 1000:.0f} kJ/mol")
+``` The ODE solver enforces mass balance for free, so the model can never predict negative concentrations or more product than feed.
 
 ```{code-cell} ipython3
 from scipy.optimize import curve_fit
