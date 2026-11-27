@@ -14,7 +14,7 @@ kernelspec:
 Assumes Chapters 27, 31 and 32.
 ```
 
-Analytical chemists were doing machine learning before it had that name: **chemometrics** has used principal components and partial least squares for decades {cite:p}`wold2001`. This chapter builds the classical tools, then adds modern classifiers and a shift predictor.
+Analytical chemists were doing machine learning before it had that name: **chemometrics** has used principal components and partial least squares for decades {cite:p}`wold2001`. Spectra are ideal input for data-driven methods. A single near-infrared (NIR) or IR measurement takes seconds, needs little or no sample preparation and produces hundreds of numbers, one absorbance per wavelength. The problem is that these numbers are strongly correlated and heavily overlapped: in a food sample the water, fat and sugar bands sit on top of one another, so no single wavelength measures any one component. **Calibration** is the task of learning, from samples of known composition, a model that turns a new spectrum into concentrations; **classification** assigns a spectrum to a category, such as the functional group present. Chemometric methods compress the many correlated wavelengths into a few meaningful directions before fitting, which is why they work with far fewer samples than wavelengths. This chapter builds the classical tools, then adds modern classifiers and a shift predictor.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -27,7 +27,16 @@ rng = np.random.default_rng(42)
 
 ## Simulating a spectral dataset
 
-We build NIR-like spectra of mixtures: three components with overlapping bands, random concentrations, plus baseline drift and noise. This is the classic calibration problem.
+We build NIR-like spectra of mixtures: three components with overlapping bands, random concentrations, plus baseline drift and noise. This is the classic calibration problem. By the Beer–Lambert law (Chapter 27), the spectrum of a mixture is the concentration-weighted sum of the pure-component spectra, which in matrix form is `C @ pure`: each row of `C` holds one sample's composition and each row of `pure` one component's spectrum. A two-component, three-wavelength example shows the multiplication:
+
+```{code-cell} ipython3
+pure_demo = np.array([[1.0, 0.5, 0.0],     # component A at three wavelengths
+                      [0.0, 0.5, 1.0]])    # component B
+C_demo = np.array([[0.8, 0.2]])            # 80 % A, 20 % B
+print(C_demo @ pure_demo)
+```
+
+The compositions are drawn from a **Dirichlet** distribution, which produces random fractions that always sum to 1. Real spectra also suffer **baseline drift**, a slowly varying offset caused by light scattering and instrument changes, which is added as a random tilt and offset for each sample.
 
 ```{code-cell} ipython3
 wl = np.linspace(1100, 2500, 300)                 # nm
@@ -53,6 +62,14 @@ plt.tight_layout(); plt.show()
 ```
 
 ## Preprocessing: the chemometrician's toolbox
+
+**Preprocessing** removes variation that has nothing to do with chemistry before any model is fitted. **Standard normal variate** (SNV) subtracts each spectrum's own mean and divides by its own standard deviation, which removes offsets and multiplicative scaling sample by sample. **Multiplicative scatter correction** (MSC) does something similar by fitting each spectrum as a straight-line function of the average spectrum and undoing that line. A **second derivative**, computed with the Savitzky–Golay filter (Chapter 27), removes constant offsets and linear slopes entirely and sharpens overlapping bands, at the cost of amplifying noise. SNV is easy to verify on a single spectrum: afterwards its mean is 0 and its standard deviation 1.
+
+```{code-cell} ipython3
+x_demo = np.array([[2.0, 3.0, 5.0, 4.0]])
+x_snv = (x_demo - x_demo.mean()) / x_demo.std()
+print(x_snv.round(2), x_snv.mean().round(2), x_snv.std().round(2))
+```
 
 ```{code-cell} ipython3
 def snv(X):
@@ -80,6 +97,10 @@ plt.tight_layout(); plt.show()
 
 ## PCA for exploration and outlier detection
 
+PCA (Chapter 33) is the first thing to run on a new spectral dataset. The **scores** are the coordinates of each sample along the principal components, and show how samples group; the **loadings** are the components themselves, spectra-like patterns that show which wavelengths vary together. Here the three compositions sum to 1, so only two directions of chemical variation exist, plus whatever drift survived preprocessing.
+
+PCA also detects **outliers**, samples unlike the calibration set, in two complementary ways. **Hotelling's T²** measures how far a sample lies from the centre *within* the PCA model, so a large value means an extreme but familiar kind of sample. The **Q residual** is the squared part of the spectrum that the model cannot reconstruct, so a large value means something new, such as a contaminant. The dashed lines mark the 95th percentile of each.
+
 ```{code-cell} ipython3
 from sklearn.decomposition import PCA
 pca = PCA(4).fit(snv(S))
@@ -101,7 +122,16 @@ plt.tight_layout(); plt.show()
 
 ## PLS regression: the chemometric workhorse
 
-PLS finds the directions in the spectra that best explain the **concentrations**, not just the variance.
+PLS finds the directions in the spectra that best explain the **concentrations**, not just the variance. **Partial least squares** regression is like PCA followed by linear regression, with one important difference: PCA chooses directions that capture the most variation in the spectra, which may be drift that is irrelevant to concentration, whereas PLS chooses directions (called *latent variables* or components) that are most strongly correlated with the property to be predicted. The number of components is the key setting: too few and the model misses real signal, too many and it fits the noise. It is chosen by cross-validation, from the **root-mean-square error of cross-validation** (RMSECV), at the point where adding components stops helping.
+
+On noise-free data built from two pure spectra, one PLS component per independent component is enough for a near-perfect fit:
+
+```{code-cell} ipython3
+from sklearn.cross_decomposition import PLSRegression
+c_toy = np.linspace(0, 1, 6)[:, None]
+X_toy = c_toy * np.array([1.0, 0.5, 0.0]) + (1 - c_toy) * np.array([0.0, 0.5, 1.0])
+print(PLSRegression(1).fit(X_toy, c_toy).score(X_toy, c_toy))
+```
 
 ```{code-cell} ipython3
 from sklearn.cross_decomposition import PLSRegression
@@ -132,6 +162,8 @@ plt.tight_layout(); plt.show()
 
 ### PLS versus other regressors
 
+PLS is not the only option. Ridge regression (Chapter 31) on the full spectrum handles correlated wavelengths by shrinking the coefficients instead of compressing the spectra, and a random forest can capture non-linear effects. Comparing them on the same folds shows whether the extra flexibility is worth anything.
+
 ```{code-cell} ipython3
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import make_pipeline
@@ -146,7 +178,11 @@ for name, m in models.items():
 pd.DataFrame(rows).set_index("model").round(3)
 ```
 
+The three linear models perform almost identically, as expected when the spectra follow the Beer–Lambert law. The random forest does better here, probably because SNV divides each spectrum by its own standard deviation, which makes the link between the preprocessed spectrum and the concentration slightly non-linear. A different preprocessing choice could reverse the ranking, which is why the comparison is worth running on every new dataset.
+
 ## Classification: identifying a functional group from IR
+
+Each simulated IR spectrum is built from the characteristic bands of its functional groups (Chapter 27), with random shifts in position, width and height so that no two are identical. The task is to name the compound class from the spectrum. A **support vector machine** (SVM) is a classifier that finds the boundaries separating the classes with the widest possible margin, and with its default kernel it can draw curved boundaries. The **classification report** lists, for each class, the *precision* (of the spectra predicted to be in the class, the fraction that really are) and the *recall* (of the spectra really in the class, the fraction found); the **confusion matrix** shows which classes are mistaken for which. `stratify=yir` keeps the class proportions the same in the training and test sets.
 
 ```{code-cell} ipython3
 from sklearn.svm import SVC
@@ -181,6 +217,8 @@ plt.title("IR functional-group classifier"); plt.tight_layout(); plt.show()
 
 ### Which wavenumbers did it use?
 
+**Permutation importance** works for any model: shuffle the values of one feature across the test samples, which destroys its information, and measure how much the accuracy drops. Wavenumbers whose shuffling hurts most are the ones the model relies on.
+
 ```{code-cell} ipython3
 from sklearn.inspection import permutation_importance
 imp = permutation_importance(svc, Xte, yte, n_repeats=3, random_state=0, n_jobs=-1).importances_mean
@@ -196,7 +234,14 @@ The peaks of importance land on the bands a chemist would use. Checking that a m
 
 ## NMR shift prediction
 
-Replace Chapter 27's hand-written rules with a model trained on atom environments. We generate training data from an additive rule plus noise, then let the model rediscover it from fingerprints.
+Replace Chapter 27's hand-written rules with a model trained on atom environments. We generate training data from an additive rule plus noise, then let the model rediscover it from fingerprints. The key change is that the prediction is made for each *atom*, not for the whole molecule. Each hydrogen-bearing carbon is described by an **atom-centred** fingerprint, a Morgan count fingerprint (Chapter 21) built only from the environments around that atom (`fromAtoms=[idx]`), so carbons in similar surroundings get similar vectors and similar shifts. The training labels come from a table of SMARTS patterns (Chapter 21) with typical ¹H shifts; when several patterns match an atom, the later, more specific one overrides the earlier one. A single pattern shows how atoms are matched:
+
+```{code-cell} ipython3
+from rdkit import Chem
+print(Chem.MolFromSmiles("CCO").GetSubstructMatches(Chem.MolFromSmarts("[CX4;H1,H2,H3][OX2]")))
+```
+
+The match contains the carbon and the oxygen; its first atom, atom 1 (the CH₂ next to oxygen), is the one labelled, and it would be labelled with a shift near 3.6 ppm.
 
 ```{code-cell} ipython3
 from rdkit import Chem
@@ -241,7 +286,17 @@ for smi in test:
     print(f"{smi:14s} predicted δ: {pred}")
 ```
 
-Research-grade predictors use graph networks trained on tens of thousands of assigned spectra, but the workflow (atom environment in, shift out) is exactly this.
+Most predictions sit close to the rule values, but two show the limits of a small training set. The CH₂ of propanoic acid is predicted at about 3.1 ppm instead of about 2.2, because no training molecule has a CH₂ between a methyl group and a carboxylic acid, and the acid's OH hydrogen receives a meaningless number because no rule ever labelled an OH. Both are applicability-domain failures (Chapter 36). Research-grade predictors use graph networks trained on tens of thousands of assigned spectra, but the workflow (atom environment in, shift out) is exactly this.
+
+```{admonition} Summary
+:class: tip
+- Mixture spectra are concentration-weighted sums of pure spectra (Beer–Lambert), so calibration is a linear problem.
+- Preprocess first: SNV and MSC remove scatter and offsets; second derivatives remove baselines.
+- PCA scores, loadings, Hotelling T² and Q residuals explore data and flag outliers.
+- PLS regression picks directions correlated with concentration; choose the number of components by RMSECV.
+- SVM classifiers identify functional groups; permutation importance checks that they use real bands.
+- Atom-centred fingerprints turn NMR shift prediction into a regression per atom.
+```
 
 ## Exercises
 
