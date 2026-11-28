@@ -36,7 +36,7 @@ All text, code and figures in this book are original. The datasets are either ge
 
 ## How this book was made
 
-I used an AI assistant tool (Claude) to draft text, the code examples and the illustrations. If you find a mistake, I would be glad to hear about it, by opening an issue on the book's GitHub page, so that it can be corrected in a future edition.
+I used an AI assistant tool (Claude) to draft text, the code examples and the illustrations. Every page was checked, verified and revised by me, every program was run, and I take full responsibility for what is published here. If you find a mistake, I would be glad to hear about it, by opening an issue on the book's GitHub page, so that it can be corrected in a future edition.
 
 Most of all, do not just read the code. Type it, break it on purpose, read the error messages and fix them. That is how every programmer learned, and it is the quickest way to make these ideas your own.
 
