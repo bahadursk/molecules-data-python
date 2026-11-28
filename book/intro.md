@@ -1,4 +1,4 @@
-# Molecules, Data and Python
+# Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science
 
 ```{image} _static/library_table.png
 :alt: "Periodic Table of Python for Chemists: coloured tiles for every library and method used in the book, such as NumPy, pandas, Matplotlib, RDKit, SciPy, scikit-learn and PyTorch, each labelled with the chapter that introduces it"
@@ -7,7 +7,7 @@
 
 ## An interactive introduction to Python, cheminformatics and machine learning for chemists
 
-*Molecules, Data and Python* teaches programming the way chemists actually use it: to calculate, to plot, to draw and search molecules, to simulate, and to learn from data. It starts at the very beginning (your first line of Python is a molar mass) and ends at the research frontier, with machine learning for drug discovery, catalysis, spectroscopy, batteries, polymers and materials, and with AI-driven discovery, sensing, imaging and prediction.
+*Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science* teaches programming the way chemists actually use it: to calculate, to plot, to draw and search molecules, to simulate, and to learn from data. It starts at the very beginning (your first line of Python is a molar mass) and ends at the research frontier, with machine learning for drug discovery, catalysis, spectroscopy, batteries, polymers and materials, and with AI-driven discovery, sensing, imaging and prediction.
 
 Every chapter is a Jupyter notebook. You can read it here, or press the 🚀 **launch** button at the top of any chapter to open it in **Google Colab** or **Binder** and run, edit and break the code yourself, with nothing to install. The ⬇️ **download** button gives you the notebook to run on your own computer.
 
@@ -131,14 +131,14 @@ This book is © 2026 Dr. Bahadur Sk. The text, figures and data are released und
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24583664.svg)](https://doi.org/10.5281/zenodo.24583664)
 
-> Sk, B. (2026). *Molecules, Data and Python* [Interactive book]. Zenodo. <https://doi.org/10.5281/zenodo.24583664>
+> Sk, B. (2026). *Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science* [Interactive book]. Zenodo. <https://doi.org/10.5281/zenodo.24583664>
 
 This DOI covers all versions and always resolves to the latest release. To cite version 1.0 specifically, use [10.5281/zenodo.24583665](https://doi.org/10.5281/zenodo.24583665).
 
 ```bibtex
 @book{sk2026molecules,
   author    = {Sk, Bahadur},
-  title     = {Molecules, Data and Python},
+  title     = {Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science},
   year      = {2026},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.24583664},

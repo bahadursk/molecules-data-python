@@ -121,10 +121,11 @@ def cover(w=8.0, h=12.0, name="cover.png", dpi=200):
     # title block
     ax.add_patch(FancyBboxPatch((0.45, 9.55), w - 0.9, 2.05, boxstyle="round,pad=0.02,rounding_size=0.12",
                                 fc=PAPER, ec="none", alpha=0.96))
-    ax.text(w / 2, 11.05, "Molecules, Data", ha="center", va="center", fontsize=34, weight="bold", color=INK)
-    ax.text(w / 2, 10.3, "and Python", ha="center", va="center", fontsize=34, weight="bold", color=TEAL)
-    ax.text(w / 2, 9.8, "From school chemistry to AI-driven research", ha="center", va="center",
-            fontsize=11, color=VIOLET, style="italic")
+    ax.text(w / 2, 11.12, "Coding Molecules", ha="center", va="center", fontsize=33, weight="bold", color=INK)
+    ax.text(w / 2, 10.42, "Python, Data Science and AI", ha="center", va="center",
+            fontsize=18, weight="bold", color=TEAL)
+    ax.text(w / 2, 9.92, "for Chemistry and Materials Science", ha="center", va="center",
+            fontsize=18, weight="bold", color=TEAL)
 
     # level ribbon
     for k, (lbl, c) in enumerate([("Python", TEAL), ("Cheminformatics", VIOLET),
@@ -149,10 +150,9 @@ def social_card():
                cmap=matplotlib.colors.ListedColormap(PALETTE), alpha=0.3, lw=0)
     for (smi, col), c in zip(COVER_MOLS[:4], [(7.6, 4.7), (10.4, 4.2), (8.0, 1.9), (10.7, 1.4)]):
         draw_mol(ax, smi, c, scale=0.33, colour=col, lw=2.4)
-    ax.text(0.7, 4.3, "Molecules, Data", fontsize=44, weight="bold", color=PAPER, va="center")
-    ax.text(0.7, 3.3, "and Python", fontsize=44, weight="bold", color=TEAL, va="center")
-    ax.text(0.7, 2.3, "An interactive book: Python, cheminformatics\nand machine learning for chemists",
-            fontsize=15, color=PAPER, va="center", alpha=0.9)
+    ax.text(0.7, 4.55, "Coding Molecules", fontsize=42, weight="bold", color=PAPER, va="center")
+    ax.text(0.7, 3.15, "Python, Data Science and AI for\nChemistry and Materials Science",
+            fontsize=23, weight="bold", color=TEAL, va="center", linespacing=1.45)
     ax.text(0.7, 0.9, "Dr. Bahadur Sk", fontsize=17, color=AMBER, weight="bold", va="center")
     fig.savefig(OUT / "social_card.png", dpi=100, facecolor=INK)
     plt.close(fig)
@@ -210,7 +210,7 @@ def library_table(name="library_table.png"):
         ax.text(c + 0.5, r + 0.79, nm, color="white", fontsize=5.6, ha="center", va="center", linespacing=0.9)
     ax.text(9, -1.2, "Periodic Table of Python for Chemists", ha="center", va="center",
             fontsize=21, weight="bold", color=INK)
-    ax.text(9, -0.55, "every tool and method used in Molecules, Data and Python\n(the small number on each tile is the chapter that introduces it)",
+    ax.text(9, -0.55, "every tool and method used in this book\n(the small number on each tile is the chapter that introduces it)",
             ha="center", va="center", fontsize=9.5, color="#555", linespacing=1.3)
     for k, (cat, (col, lbl)) in enumerate(CAT.items()):
         x = 2.6 + k * 2.75
@@ -233,8 +233,9 @@ def logo_with_title(name="logo_title.png"):
         ax.add_patch(Circle((cx + R * np.cos(a), cy + R * np.sin(a)), 0.1, color=PALETTE[k % 4], zorder=5))
     xs = np.linspace(-0.28, 0.28, 40)
     ax.plot(cx + xs, cy + 0.22 * np.tanh(4 * xs / 0.62) - 0.01, color=AMBER, lw=3, solid_capstyle="round")
-    ax.text(cx, 0.62, "Molecules, Data", ha="center", va="center", fontsize=13, weight="bold", color=VIOLET, style="italic")
-    ax.text(cx, 0.28, "and Python", ha="center", va="center", fontsize=13, weight="bold", color=TEAL, style="italic")
+    ax.text(cx, 0.72, "Coding Molecules", ha="center", va="center", fontsize=13, weight="bold", color=VIOLET, style="italic")
+    ax.text(cx, 0.33, "Python, Data Science and AI for\nChemistry and Materials Science", ha="center", va="center",
+            fontsize=7.4, weight="bold", color=TEAL, style="italic", linespacing=1.4)
     fig.savefig(OUT / name, transparent=True)
     plt.close(fig)
 

@@ -54,7 +54,7 @@ const PRINT_CSS = `
     printBackground: true,
     margin: { top: "18mm", bottom: "18mm", left: "16mm", right: "16mm" },
     displayHeaderFooter: true,
-    headerTemplate: `<div style="font-size:7pt;width:100%;text-align:right;padding-right:16mm;color:#888">Molecules, Data and Python</div>`,
+    headerTemplate: `<div style="font-size:7pt;width:100%;text-align:right;padding-right:16mm;color:#888">Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science</div>`,
     footerTemplate: `<div style="font-size:7pt;width:100%;text-align:center;color:#888"><span class="pageNumber"></span></div>`,
   });
   await browser.close();

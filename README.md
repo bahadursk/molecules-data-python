@@ -1,6 +1,6 @@
-# Molecules, Data and Python
+# Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science
 
-[![Molecules, Data and Python](book/_static/social_card.png)](https://bahadursk.github.io/molecules-data-python/intro.html)
+[![Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science](book/_static/social_card.png)](https://bahadursk.github.io/molecules-data-python/intro.html)
 
 <h2 align="center">
   📖 <a href="https://bahadursk.github.io/molecules-data-python/intro.html"><b>Read the book online → bahadursk.github.io/molecules-data-python</b></a>
@@ -46,6 +46,6 @@ Code: MIT. Text and figures: CC BY 4.0.
 
 ## How to cite
 
-> Sk, B. (2026). *Molecules, Data and Python*. Zenodo. https://doi.org/10.5281/zenodo.24583664
+> Sk, B. (2026). *Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science*. Zenodo. https://doi.org/10.5281/zenodo.24583664
 
 This DOI covers all versions and always resolves to the latest release. To cite version 1.0 specifically, use [10.5281/zenodo.24583665](https://doi.org/10.5281/zenodo.24583665). See also [`CITATION.cff`](CITATION.cff) or the "Cite this repository" button on GitHub. Each new GitHub release is archived on Zenodo automatically.

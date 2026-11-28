@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this book, please cite it as below."
 type: software
-title: "Molecules, Data and Python"
+title: "Coding Molecules: Python, Data Science and AI for Chemistry and Materials Science"
 abstract: >-
   An open, interactive Jupyter Book teaching Python through chemistry, from
   school level to research level, with machine learning across chemistry and
